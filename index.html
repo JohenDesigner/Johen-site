@@ -722,6 +722,40 @@ function scratchAt(x,y){
     ctx.globalCompositeOperation = 'source-over';
   }
 
+  var noiseBuffer = null;
+  function getNoiseBuffer(){
+    if(noiseBuffer) return noiseBuffer;
+    var bufferSize = audioCtx.sampleRate * 0.3;
+    noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    var data = noiseBuffer.getChannelData(0);
+    for(var i=0;i<bufferSize;i++){ data[i] = Math.random()*2-1; }
+    return noiseBuffer;
+  }
+  var lastScratchSound = 0;
+  function playScratchSound(){
+    var now = performance.now();
+    if(now - lastScratchSound < 85) return;
+    lastScratchSound = now;
+    try{
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+      var src = audioCtx.createBufferSource();
+      src.buffer = getNoiseBuffer();
+      var filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1600 + Math.random()*1200;
+      filter.Q.value = 0.7;
+      var gain = audioCtx.createGain();
+      var t = audioCtx.currentTime;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.16, t+0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t+0.08);
+      src.connect(filter).connect(gain).connect(audioCtx.destination);
+      src.start(t);
+      src.stop(t+0.09);
+    }catch(e){}
+  }
+
   function spawnParticles(x,y){
     var now = performance.now();
     if(now - lastParticleTime < 40) return;
@@ -829,6 +863,7 @@ function scratchAt(x,y){
     var pos = getPos(e);
     scratchAt(pos.x,pos.y);
     spawnParticles(pos.x,pos.y);
+    playScratchSound();
     e.preventDefault();
   }
   function onMove(e){
@@ -836,6 +871,7 @@ function scratchAt(x,y){
     var pos = getPos(e);
     scratchAt(pos.x,pos.y);
     spawnParticles(pos.x,pos.y);
+    playScratchSound();
     e.preventDefault();
   }
   function onUp(){
