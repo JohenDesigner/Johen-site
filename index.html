@@ -251,6 +251,15 @@ svg{display:block;width:clamp(74px,18vw,116px);height:auto;overflow:visible;}
   .hero-subtitle{font-size:clamp(17px,4.6vw,20px); margin-top:12px;}
   .icon-float img{width:clamp(68px,20vw,150px);}
   .icon-slot:not(:first-child){margin-left:clamp(-46px,-9.5vw,-24px);}
+  .icons-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    justify-items:center;
+    row-gap:18px;
+    column-gap:0;
+  }
+  .icon-slot{margin-left:0 !important;}
+  .icon-slot:not(:nth-child(3n+1)){margin-left:clamp(-46px,-9.5vw,-24px) !important;}
   .social-proof{font-size:clamp(15px,4vw,16px); margin-top:-10px;}
   .footer{gap:16px;}
   .wordmark-logo{height:clamp(34px,8vw,40px);}
