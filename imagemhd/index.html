@@ -1,1 +1,1488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ImagemHD — Ampliador sem IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --graphite-900:#F2F0EC;
+    --graphite-800:#FFFFFF;
+    --graphite-700:#F1EBE0;
+    --graphite-600:#DED4C3;
+    --ember:#E8650A;
+    --ember-dim:#FBDCC0;
+    --cyan:#00C2C7;
+    --cyan-dim:#CDEEF0;
+    --green:#2E9A66;
+    --yellow:#C97F0E;
+    --red:#C7402F;
+    --paper:#2A2622;
+    --mist:#8A8276;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background-color:var(--graphite-900);
+    background-image:
+      radial-gradient(ellipse 900px 500px at 8% -10%, rgba(232,101,10,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 0%, rgba(0,194,199,0.09), transparent 60%),
+      url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5Ojf/2wBDAQoKCg0MDRoPDxo3JR8lNzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzf/wAARCAOEA4QDASIAAhEBAxEB/8QAGQABAQEBAQEAAAAAAAAAAAAAAAECAwQH/8QAJBABAQEBAAEEAwEBAQEBAAAAAAERAjESIUFRAxNhcTKBkSL/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A+1gAoigAAKiwAAAAAAAABUUAABz76+IvfWePLkAAApF8AT2UJAIqxZARcXFkBIsXADBcAQUAAAAAABMFARLGksBms2N2IDDnZldWO/sGQAa4vw0xz5bBqKzGgTBrEwGWbG7EBzvsy6dT2cwU5vugDrGoxPEagNCAKIz31k/oJ33ntPLn7/YoIUQAXKekEGshkBkayGQGBv0xPSCI16UywBKAAACoAgqAoGUEWS1qSKBPYAFWJGgFiRQFRQAAAAAAAAAAAAUABYigBAAAAAAABUigMddemf1erk2uNtt2gW6RFgC+SLIAosgEiwWQDFiyKBIKAAAAAAAAAAAAAAAAAlZsbSgzXPv/AJdKz14oOQAEdI5ukBY3GI3ADFgCWM1us0Ga5We7rXO+aCAA1z4ajPPhoGorMUC3293G3brp+S+2OQKIANSYSZABFADFwBMMaMBnDGgGUaQGTI1iYCZD0qAz6T0tAJOTIoCKhs+wUTVAVIoLFQBqCRQFQBRFAAAAAAAAAABQAFQBQgAFAAAAAC3Peo599b48Az11eqgoBBYCz2UWQCRYRZAWRZCKAoAAAAAAAAAAAAAAAAAAAAAxWevFbY7/AOaDkgAOsc46QFjUZjUBqKkUEqKgM1x+XXu5zXIBUUFnhYjU8ANIA593emVvmgBz5StTwACgjQsgJi4pgJhjWGAyY0mAmJY1iUGUaMBlFtk8sXq3wDVsT1RgBfVU0UEAAP8AABZbPlZ3flkB0nc/xqOKy54B2Ncp3fn3bnUoNKhoKIoKIQFABcABAAAUAAAAFCAAAAACVXP8nWf6Cd9fEZQBQWQCKEgLGokagEjUhFgCgAAAAAAAAAAAaAAAAAAAAABRKCOf5b7Y6OP5LvX8BhQBZPdtjluAsajMbgLFSKCIrHdyAx+Trev8YAFJ5RZ4BY0kUFgAOXyi32QBqeGWp4AVI1AWKRQFAAAEUqAMtVkEZ66z2id977RgCooCCmAg16T0gyN5PowGB0yJ6Z9AwN3mJ6QZFQAAGp3nluWXw5E8g7Kxz19tA0MtaAqAKGgAKCKigAACgEAAAABLc96CddZNrjbt1ertQAgQFk1ogA1EkagEjUhGoBFJAAAAAAAAAAAAAAAAAAAAAAABmrazbJNoM99ZP7XJbdu1ADBZNoNcxRYCxpIoKACVx762/wAjp+S5P64gqGgE960SYoCwWACgOPXmo13PdkBYizyCxqMxqA1FiRYCgAqKgCKgDl318Rr8nWTJ5cgQAAWTV9oCTn7aRQAxcBBcAQVQZFwoInpjWAOdmI6JefoGBbMQBrnrP8ZAdZdajjLldObKDSoAoAKogCgCoKCKAAQABNAtce+tv8a7632jmAqKA1ISKAshI1IAsWRQJFgsAAAEtz3rHX5Z8e4N6a438nV/jN6t82g9GmvMA9GrrzLtB6NNeeddfdX19fYO+muM/JfmRqfk/gOujn+zn+r659g2M+qfcNBrRk0GjYzqXqTzYDWprN7nx7sXu3+A311J58ufVtvugAigI3JiSfLQCxI1AWLBQEqs9XJaDl+S7WQAXme6N8+AFIARqJI0AlUBjuezlXeuXUygyADUVmNA3FjMWA0ACoADNq1j8l9s+wc+r6rqACLJqNSYC+EUkAxZAkBTFkUEwxTAQxcMBMTGgGcRtMBlG7EBmzWLLHTEBhGrEBFlzwIDrz1quMuXY683YDQgDaoAoAKgoIogKCaBa599fEXrrPb5cgURQFkJNaAWI0BGokjUAaiRQFRLc8grHf5JPae9Y7/JevaeGAW29XbUAAAAAAAAABUAUAAABP8A0AAUAABBZNAWT7WTFABZAWLCRQIoAVy/LfaR0cvy/wDX/gMAASa3GeWoCkFgNRYkjUBBSgxY59/brWOoDkLZiANS7GSUHSLGWoDUVlqAAlArj3d6rrb8uAAALPKpPCgKRZAJFFAxTFwEFMAABBQEwxUBEaQGcGksBlnqfTaA5o3YyCLLiKDrLLBy9wHoBQFQBQARULQLWOusOusc7dA/oABJpPetyAeAWQCRqEjUgEUgCgloFuOHfV6v8O+vVf4yCgAGLJrWfQJOV9MUBMn0oAhkUBMieloBn0nprQDGUaAZGgGUbMBgdEBmSrOV00DIGgKEUBZCKAsIoCgDNcfyf9uzj+Sf/oGQAXlqM8tQFjUZnlqA1FSKAKgJWa1UoOfU2ObtXPqZQZQUF5vw1GG5QaaYjUBUAGe/+a5OnfhzoCCzyDQLAVYiwFi4KAAAAACghFQAwAQVAEUBmxLGgGGOp8uliA5DXUxkAAHpUAFQBQZtBbWOusiddYxboF9/eooADUmASYosAkWQjUgEWCgAX2Atcfydb7Twv5O/if8ArmAqALGpPtOZ8tAoLgIqrIDMVrDAZTG8MBgaxMBExrEwExMaqAmCgCAAAAmKARUAVYRYCrEWAoAAAI5/k8x0Y/JNgOSoAs8tMxYDTUYagNxWYoNSpQBEq0Bms2bMaqYDjZg31NnswAsuIA3K1HOVuA0IAz3/AMubp14rAIfKpQapABqNRmNA0IsAAAAAVAAAAAAAEFARK0gIzY0lBizZ7sWZcdKnU2f0GBAHpVFANRLQW1jrrP8AU67+J5YAvuAAsI1IBJii4BFFkAkagoAADHfWT+r11k2uFtt2gAANcxJNbgCo0AshjUgJi4qgkgpgIAAhrHX5JP6DSW453u3x7Me9B0vcT1/UYUF9VTaAAAAABtAF9VX1MgNzqNyuKwHVXKdVqdSg6RWTQaGdAWs3wt8JQcrMuI6dTWACIoNRYxK1KDbTEqwGg0ABALEaSwGGOo6VKDkLZiANS7GSewOgkuqA5+PZ0Y686CIALGmI3KCxpiNQGoJFBQAAAAAAAAAAAAAEUBEUBmxMaSg53n3GgHQ1lL1n+gtueWOurfHhm3QAABZNJNawCTFCQCRoWASKRQIqKAlpXL8nW+0BO+vVf4yACyajcmAsmQFkBZFkSNSAsikAFAAS1nrqTyC2sdfkk8e7n13ev8ZBq9XrygAAABi4CDU5XIDA3kAYGwGBvJ9GQGBq8p6aCC4gCoAs6sbnUrmoOmrrnK1KDQi6CVjqfLdQGEbs+mQRQBZ01K5rLgOukrM61QaEUAEAZaKDFmuddWOoDIALzca1hqeAVLNigMI11GQFlxEoOixiXP8AGoDSyooKrKgoaAAAAAAAAALUAAAEVAKlVAZwUBzvVqAABAFkJGgFFkAkWCyARZCKAAAWjHXWQDvrPb5cjdvuAA1zNA5jQAsWJGoCxYSKAAAmlrl13vtAXv8AJntPLnaAIoABI1JICTlcigAshgIq4Ahi4uAzhjWLgMDfpPSDGDfpPSDDOOnpT0gxYy6WJZoMC3nEBSeyKDcoxrUoNCRQEs1QHOzBtLz9AwKgDU6+2QHWVXKXHSUF0RQAASo0lgOVmI6WbHMAnsANjMaAYsxsoOYtmIAS4ANytRy1qdfYNrEgDQmqCiAKAAAAAAAAAACgiVQGRQHnUkWQCRYKAshI0CLgoEUAUAARLcnuB1cm1x6u3TrragKIsBY3PZJAFXCNARYSNQAABm1bXLrr1e08AnXW+PDKoACyAkjWHhQRTFwExqQxcBFXFwExZGpAE9JigGAAAAAQAwAZxLy2gOdjN5+nXEsBx8I69c65WYAsqANyrHOXGgbEiwBFAZs1mzGzAcxqxARZcQB01YxzfhqUGhFAKAM1jqfLpWbAcwvsANMryDQAJWepjaUGBqz6ZAqKAstjcuuZ48A6qxz19tAqsrKCqgCgAAAAAAAKAJRUBBQHCLFxZASRVXARpFgCgAqAKIlsk9/AFrl11t/h11vjwyAAA1zCT5aAWJGoCxqJIsBYoAJaWuf5OviAnfW+08MpoCgsgEigAshIoCyEjUgJIsFwDFAAAAAAAAAAAAAAAERQEsY651tKDh1MR16mxzvsCLzUUG1lYl1qUGlSKCYKAyzZjaA5i2e6ANSoT2BuVWVgNBABLFAcup8sutc7MuAgIDcuxWJcrYARQZSxpAYwbxmwEDABees8sgO0o583G5d8A1FZUFABQgAAAACgAAAgoDlirgBBQCKgCiKAJrHXeePcGr1kcuur1/iW75ARQAWQkaAVGoBGokawFipFBUtNZtyaCd9ZP646ttt2oCgsmgSNAA1IRZARqQxYBIuCgAAAAAAAAAAAAAAAAAAIACVUoM1jqa6M2A5I33PlgF58tMqDcqsxqA0iwBLEaSgxYy6MdTKDIANTwsZnlQbixmLAUAErHU10ZoOQ11MusgLzfhAGxN0BpLBQZFoDNjNbTAZRbEAWXKgDrLquXNyukoNRWYoKqAKAAACgAAACAIAACaCiaz11J5oNal6k8ud7t8ezINddWoAAACyfayKACwCRqRGoBGkUBUAK499bca7uezmAACxueySKAsIoLFkIsgEWCgAAAAAAAABoBFZAUQBRAFEAAAAAEVKCJVQGbNmObq59e1BlqeGWuQWNRlqA1FSKAKAzWep7N1KDiLZmoA15ZangFixlqA1FSKAzWkoM2ezlfZ1rPU0GEUAns15YWXAbABUxQExGksBmpY0YDmNdTGQGuL8MkB1Vnm6sBrVZjQKIsAFQFEUBFABAE1HH9nSXq3zaDtbJ5rF/JPj3cwGr1b/EAAFADGpATFkwUAWQAWQkaAi4SKB4EAW1nq5NK593bgJbtQAVeYk925PYBYjUAiyEjUAiigAAAAAAAgAAAmmgomoDWms6aC6ammg1qamgLpoAaAAACBQGax26VjvwDBPITyDSxFgNRqMxqAokUEStJQcu2W+/DAC8+UWeQWtRCA1GozGoB8lAGay3YyDHfPzGXSsdTAZABeb8Vtza5oNkTVBUUBEaSwGb7xizHRmzYDAqAsuVtzb5BuLGYoNKkUBUAFQAUAAAeNUUBTKsgILigmLkUADFkAXBZATGsMWQBZCRQAARKtZt9gTrrI5rbtQBRZNBeYooEWCwFjUIAoAAAAJQXUAAS1AXUKmgqalqaDWjJoNDIDQzpoNGppoLqsqCiAKqGgFQoJWO/Ddc+roMrPKLPINLEWAsajMagKqKCFPkBnrxXN1rkCLABogs8gsWIoNAAiVUoM1LPZrEoOVmVHSzZjnZgIADcuxqOcuXW5QaVlYCgAlRpmwGOpl1l0s2OYC83KgDqsZ5uxYDUajMWAoEBQAAUEwUB5cn0LhgIq4AhjQCYsiyLICYSLFwBTFBFAFRUAVEtAtc+ut9l6rAAAGe7fgkUBqJI1AJGkkagCkAAAAQCgUBBKAmlqWgazbiWoC+q/CW37EBBUBTb9oA16qvqlZAb1XPVnQNrKzKA0IaDQmmgrIloJ1WRAGufLLXPgFWC4BGkigKigUKAlcr5dXK+aAADXws8osBpUWApAgFRQGalaqAxWepraUHKxHTqfLAI1z7IA20xzWoDUEjQIjSUGa5dTLXaufc8AwqAN8fTbnzfd0BY1GYsBogoAEBQAAAecxoBMMVQTFwxQRcUAUAAAFQ+QAKAx1cLc96xboJaAA1zPtJNansCkFgK1IkjUBYCgAAAAgACACVFrNArFpagAACKuAyjeAMK17JkBEa9KWACACyiA1KvqjIDXqh6oyAt6QAEUwCTW0kxQFSNQCKAKAAioBXL5dLfZzAABsgQGo1GY1AUgAIqUEqNICYzWkoMufU93Sp1NgOQtQFlxuObfPgG4sZjUBRFBKx34rdZ68UHFUAWeXSObpAWNRlqA1FSKChABUUAUBwXAAwDAFTFgCgAAAABogBUtLcc7doFuoAANSAs9lCQFkaiRqQFikgCgAAAIUABAEq1mgM9X2Vjq+4IACgAAuAhjWLgMYNYWAiLgDOJY2AwNYZAZFwwEFwwEFxZASRZ7CgBi4BGokUBUUAABFSgz34YXuoATyLyDSxFgLGokagC/CKCAAiKlBErSUGalaZoOfc92W+p7MANcsrPINxqMtQFIACVUoOCp8qA6c+I5unPiArUZagNRYkWAoLAFQAABzABFABYgCgAAAVBLZAWsddZ/qddb4ZAt0AAGpPmgSKoBFGpAJGpBYAoAAAAAioAVABL4RagI5t3xWAFQBQWAsWJGpAMGpDAZwxoBjDG0wGMLGrEwGUbxMBkXDAQXDAQXFBMXBYCYqgEVFAAARUBWatY7vtgM33oQAa5RoBSLAWNJFgCkAEWoCVGqgIi/CAM1UoMdeK5ut+XIBUWA21GVgNAAtZrTN8A43yigDpPEc3SeAVqMtQFjbEaBVABQAAByAAAAAAVNTcBdLWOu58e7nerfIOl7k8e7Ftt90AIoAEM1qTAJMaCAKLAJGoSKCkFgAAAABQBAAQAEqLUBnrww3WACeQBViLAajUZjUBVRQMABBTAQVATExowGcTG0BnDGjAZwxrDAQABUUAAAABFZtAt9nO+9Xq6gALAI0kUFixI1AVUjQAGAItQD4RfhASotQBmtM0Ger7ObffjHMFILPINLEWA0ABU78VWO77A5qAI6MTy3AVqMtQGo0zGgWBAFgAAoDjprn+yfTP7L9A66OX7Or9Jbb5oO16k81m/k5/1yAbvd+Izbb5QAUAAXAFk+yRQFIuALCNSASCrAIoAKigAAAAIqAFCggAJUWoDNZvy0nQMggNRYzK0DUajEagNLEgDSAAKAgAAAINICCmAypgBgAIKgAICoaloLrn1d8F61AAAGpEkaAWI0BGokaAVFAAAqLUAqFARAArNKz3cgMdXaiAKvKNSZAVqMxuACgI5fkvu6Vxt26CiRQa5aZ5ns0BGokagLGkigsVIoAAAAPCqAKBAAAFJGpAZi4oBAWQEWKoEXDFgEaQBQigsEXQAAAAUQBUoAAAgAInypQZrNaQGKjXU+WQGpWSA3GozLqwG5VZlaBVQgKAAFADABBQEFAQAEoACLazoBrN6jNtoLesZt3yAAACyaSNAAsAkahIoCigAYAABUKfAJUWoCJSpaCdXI5dXavV1AQFkBeY0SYoEaiYoCiUGPyXJ/rnq93azAVUa5BpSKBPDUSLAajUZjUAVFgAJaC6Od/JAHmyklaASRcVAMii4CCmAYSKoIKoJiqAYqaaC6M3qRm9/QOh6pPlx9VvmoDre5/T9k+q5gOn7P4v7J/XIB3nfN+V151ls8UHdXPnvfPs2CiaoAIALUBAARKtTyDLNjaWaDAtQFlxphZQblalYalBuKzFBoRQAAAAAAVABAqWgrNZvf0xbb5oNXufHuzbagAAAC4CNSEigC4ALFkXAIsFAAAAABLQEqpQRLS1jrrAXq571z6u/wCJbbfdAAAMa5hIoCwjUAigA5/k69satye7lbt2ggAEbkyJzPfWgWLEWAsaiRqAqooBvsax31gL11JNrl11ev8AGbbbtAAADFADFAAAAUAKnqn2DSsXuT7ZvdB1S9Sea5Xq35QHS9/UZtt81mKAAAqKAGVcoIL6amUAABvnvPasAO8qufHXw2CgAqAAioCJfZpARKoDFjLozYDJCgNSqw1KDcrUc9bgNwZlaBRFAAAAANHPvvPaAvXcnt8uVtt90AAAAi4CLi5J4UEyKYsgIq4YAuLgApFAAAAAAtAQ1m0FtZtkZ6/JPhzt2+4Ndd/TAAgADUhIoAuKBiiwApXPvr4gM93ageQQVeYDUmQFBYsIoLF8CwCLqM9dZAOusjlbbdpbvlAEUAFnP2Ax6qeqsgNeunrrIDXrv8PXWVBfVftNt+UAVUigAAAAoSL6fsEXK1JngBMXAAFwwAMATEsaKDAtmIBHWXY5NcX4B1VlQUFBAARFARFAZqNJYDNjLbNmAgANS75alYjUoNxqOcrUoN+SJKoKAAUS320Ge+snt5cV6u3agALJoJ5akJFABcBFxYuAzIrWEgJIuKACgAAAABqalsnkFtS2fLn1+T6Ytt80G7+T6Ytt81ABFQAIsn2CSNSYKCLISKApi4BgrHfWe08gnfWe0c1QEVFnuCyNCwEakRqARqJFgKDPXWf6C9dSOVu33S227QFRQE+WpCRQAAcBfSYCDWGAkDFwEFyLkBkbkgDMlXK0AmLIKCKYYAuEigmKsi4DK4qgziNYAyipQTrww2yAS5dEB2ajHPiVqA1FRQEUBEUoIioBUVASp5a8pQYsxG77sALLjKg21KxzWoDcqxmNQFVIAtcvy34dK493eqDIAEbxOVAUxZARZFkakBMFxQQxQAAAAAS1Lc8gupbJ5c+vyfX/ANYt3yDfX5PpjdACoUABZAZ8tSfagGAuAi4uGAYouAijHfee08gd9Z48uS6gAYsnuCSa3hFgAEBYsSKCxdZtkYvVoNXv6/8ArAoIKALIsmAC4kjUAwWQBwRNNBTU00FEiygoACwWAYYqyAYLi4DK4uLgJIq4AYYoCKAIVagM1mt1m+AZS+WmegQRQb48Nxz4rcBppmNQCB8qCBUBBpARFSggqAyljViAwLYgDcuxhZQdIsZWUG1YlaBNca63xXMEBQahBYCxqRI1AJFAAAAAAABLUt+a59db49gXruTw52233AAEBQkakgM5q+loBlTFwGVVcBFkXAAFBAY76+IB318RzoAihPcCe7WYSLIBFAAEvX0DX+sXr6S3fIAAAQWQCNZgAEVYBFkJGpAQaAeIABUUEAAalZUG5Vc/DfN0Go2zFgLFxGoBFQBQUAAAABlpAZrNbrNBlnrw1YnwDIALPLpHKOkvsDcajErUBoRQEqgIioCCgMlVATylilBlix0ZsBk0oDXNajDUBpdZWAt8OTq5UBUgDaxmNQG41GI1AUAAAAEtBdY66xO+s/1zt3yC275ZFBBSTQTNWc/bWYAAsgJi4uLgM4Y1hgM40KCCmAgrl318QF76+I5gCAs50CTWs+jMUExTEvWAqXr6Zt1AW21BYCKABP4uLAJMFAFJFwCNSEiyASNJFAAB4spiqDOGVoBnKjYDItn0gCxFB0l2NRyl93SA2sZlWAqxFBRFAAAAASqlBKzWkBii1AZs90jVmsgNc1lQdNajnzWoDasyqCqgAACFioCCoCCoCVGkoOd8o3Z7MARqezKg0sSANMdT3aToGQAWNzww1KDcajEagNCaoAazaC2uffee08nXfxHMFQAAnu3JgJIosAXBQSRcXDAMFAQUwEAAKVjvrP8AQTvr4YAEFXnnfIJzNa8KlANkS1kFt1ABAAFMUDBSAKSKCYuLFkAkVZFBMaiKAAAKA8mGLi4DK4uGAyY1iYDOFmtJgMi2IA3xfZheblB0jUYjUBuKzGgFRQBFAAAABmpWqgM1mt1kEZrSUGRUAb56+2AHaLHKdY6Sg1BFBQAQVAAAQAESqgIxZldGep7AwQAaisxoFgkUGLMGrNjICy4gDpzZV1yWdUHXTXP13+JerfkHS9SMddW/4yAAALJpJrQEBYAsIsgEiigAuAgAAAIBQS3Jtcbdu1ru7f4yABJtBZNaXxGergHVxnygAoAIuGAki5igAuGAmLIqyAiyLIsgEWQxQAUAAAAANAcBcMBFADEq4AzYmNFBiz2Zbs9mAAAdIsZnhqA1GozGoCqhAUAAAAABlpKDNRpAZrLdjNBEVAQUBGpcZAdZ1sacZcrpOtBvRnV0FAAAARQESqUGUrSA51Gu/OsgRqMrAVplYCp1z8xqEBzG7zrNlgIAAAAC+n/wEakWSQABcAkUjUgGLgoIoAFEAAAQoAz3cjVcvyXb/gMKigNyYzzFtwDq5/rAAAAoACkWQEVcMAXCRQMXBQIqKABoAamg0axepPNZv5J8QHTTXG99Xx7M22+fcHb18/cHAB1AAAAABKjSUGevFc2+/DAAE8g3FIA1GozGoDRAgKAAAAAAACWI0gMpY0lBmxltmwGRagIKgCy57oA6S605S5XSUGlZWAqoAqKAiKAyjV8oDHU9mHSufyAQAbIk8LAWKkUFKAM2RPTG0wGfSemNYYCeFMMBFxcAFwkWAYsFAAABAAAAQAAEtz3cfLp34rmAIsBqeGbfdbfhkAABRQRZCRoEjUhIoGCyKCYuAAACiMX8knj3BtL1J5rlerflAbv5PqM3q35QAAAAAAB0AAAAAAQrHfWTIDPV2oigLz5RqewNAQGo1GY1AVYKAAAAAAAAAACI0gM2JW2bAYqWN2MgyLYgMqtjILrXF+GCfYO0qxiVqUGoqKAqAKgoM1GqyCWOfXl0rHcBkAF5ajPPloFaiTwsBQAMTGgGRrDAZxcXDATFXAExYKAAAAAgAAAgABQoOf5PEc2/yeYwAvPlIvwBagALEaApBYC4shGoBigAAAKloDPXUjPXee0cwa66tRAFAAFwwEXKqgz6VxQAAFAAA0AS9Z5rn13vgF77z2nlzRQUACe9aiRqAqxGoCxYQBVSLAUAAAAAAAAAAAERpAZsSxuxMBjErWJQZYrox1PcEABvi7Goxx8tQG5VZjUBVRQRQBEVASsd+G6z14oOYAE8tsfLWg1GoxG4DQkUAUwAAAFBAAUQBREBRAFENBUAAABKqXyDn+TzGPh0/J4YBAAAAWKTwARqJI1AWNJFAVFBFQAc++viNd9ZP640AAFMJPpqTASRZMUBBcXATDGsMBMGsMBBcAcvXz9w/Zz9uIDrfyT4lZv5Or/GUBbdRYAASARowBYsSRqAsjURYCxUUCKACoAoAAAAAAAAAAACKAxUbZoMsdt1jryDIANcfLUZ4agNRphqA0RFgKkUASqlBms1tmg5AANMNgsajMagNRUUFgkUAAFQAAAAQBNLXO9/UB001znf20DQkqgKigAAIqAx34c3auICoACLz5BogsBY1EjUAWBAUAEKrHdzmg59XayACyajcmQFAAXBQDFxZATFUBMXFATP4KA8IZfpcoIplXAQawBJFFwEWRYuALISKCxRQAAFQBQAFQBQAAAAAAAAAAQBmtM0Erlbt1vu+2OYAANc+FhPCwFajMa+AaIRYAAAigM/DNarNByFqAjc8MtQFjUZagNQSKCxUigiiAogCoqAFEoMfkvww1+T7YAb5vswvPtQdFY1YDYkqgoQARagJXPuZXSs9z2BzRUAXlF58A0sRYDUajMaBVRQQUBHP8t8R0rj+T/oGQAa5nu0zy0BFIsgEjUIsAwUAAAAAAB41XFBkaAZXFMAwxcXAMUwwBYKAqKAAAAAACiKAaAKIugAAAACAAWpoFrPVz3p1ZHO3fIJfeoqALPsa+AFiLAaixI1AWLEWAFAAAGWevFarH5PAMVAAaZnloFWJFBpUUFBQRUAVFQFEAEq1KDHU2ObrXPqZQQEBuXVjEuNwGo1GI1KCrEUBFT5AZsaqUHK+ahfNQBqeGWp4BViLAajSRQVWWgRQBHH8n/Tq5fk/wCgZABrnw0zy1AWNRI1AI0kUAAAAAAAAHnwxVBMMVcBnFUwEXBQTFAAAAAFEUAAAAAAFENBRAFAAE00FTU2Tyx1+T6Bu3J71zvf0zbb5qAvkQABqTAWTAAVYKCxYkaAVFAAAABK5fk846Vx6u2ggALFTlQWNRmNQGoqKBAAAAAAAAEVARnqbG6zQckb6nyyAsrIDo1HOXGpQblVmLAUABKqUHGotQBqeGW54AWIsBuKzGgVUUAAGXP8nxXVjubyDkACzy3HNuUGo3GI1AaipFAAAAAABRAHIMAUAAAAAAAAAAABUAURQAAA1NBRDQU1m2Tyze4DemuV/Jb49mbbfN0HW9yfLN7t8MALfdAAVFBFk0k+2gJMAgDSY1AIosAiigAAAAJVSgx3cjk13dufTIAEBoFkBViRqAsBQAAAAAAAPkACgiKlBK59TP8AHRKDkL1MQBqXGQHWVXOXG5QaipDQVKqUHG+UXr/qoA3PDDfPgBYiwG4sZjUBVRQAASs1qpQcbMqOnU2f1gEWXEAdJ7tSuUuOkug3FjMqyg0AAAAAAADloAKIoAAAGgBpoAmmgoiaDSM3qT5S9z+g6aa5fs/ieug66WuN6v3UB2vc+0/ZPiVyAbv5L8ezN6t81FABAVFARYGUAWRQMBQAxcAkUWAkjRFgGKAKAAAAACM93I1XHq7QZFQBqeGY0AsRoFiwigKAAAAAAAAAAACKgIlaqAxZvlizHXGbN9gcxbMQCNSsgOsqufNb0GkRdBy7/wCka/J8MwBrlDnyDSwoDUajMagKqAKACI0lBmsdT5dKzQchq8sgpEAdJ03K4rLZ8g7arlO/uNzqX5BsZ1dBRNUANAcTXD19fdPVb80Hc159v2A9Gz7PVPuPOA7/ALOftP2c/wBcVB1/ZPpP2X4jmA3+zr+Je+vtkBdt+QAAAAUEFAEFygC5T0gg1kATKuKAgpIALgCYqmAEiyLgEMXFBFABQAAAAAQZ76ye3kGfydfEczdAAWQCTFFkAiwjUAigCwIAAAAAAAAAAAAAgqAiWNVAYs1zsx1sSzQcwAG5dYWXAdBFgM9eGXS+HIAgA2sZnvGgWNRmeWoDQigoAAAJWWkBlnrn6bxAch0slYsoBUAUACWz5a9fTIDc/JfmL+yfVcwHX9nP9HIByAAAAABQxcoIL6aemgg16f6vpgMjWQyAyY2AzlX0qAmGRTAAxZAEXFwGcXFUGcXFwkBFXFBnFxcXATFxcATFAAFBFAAAAAATWe+s/wBA66xyt27U3fIAABI0eACNYkagEWCgKigCoACggAAGgAAAAAAAAiVQEZrVSgx1N94w6sdTKDKoA1zWmGtBWOvatp1PYGAAXlphueAWNRmNQGoqRQURQAAEqgMo0lBnExtMBixPS2A54NpgMjWRMBBcMoILlAc/TDI1hgJkMjWGAzirhgILi4CC4YCGLigyuKYCYY1hgImNYYCYY1hgJhjWAM4uLhgJirhgJhjQCYuAAGKCCgAAAAAICiAKlS3PLn13v+AvXfxPLmAAACyYsgAQaAjUSLAUgAoAAigGiAaAAAAKgAACoAKACCgiVQGUs2Y1UByv0jfc+WAUiKDQkqgwL1EAa5vsys9gbixlYDcVmNQFVFAAAAARQERpAZTG0wGRrEwExMawBkUBBcAYwxrFwGMXGsAZwxrAGcMaxcBjFxoBMMUwExcXAEMUBMGgEwxQExQAAAFARQAEUAQBRAFTQABAUS1i9/QN6xe/pi23ygLbvlAABZASe7WYAAuGANJGgFiKCggKmJe+Z8s/s+oDY53us+q35oO2xL3J8xyQHW/kifsn1XMB0/b/ABP2fxgBv9l+j9n8YAdP2T+rO5flyAd9NcJc8N89/YOmiS74NBQAFQASqlBmxzsyutY7nsDBoAsaYbnvALNjDbPUyggIDcrUY5vu0DUbjEagNEAFAAAAAAFQAMMBMMUBMRowGRcXAYwbwBgTV0ANAAUEVAFDTQA0AAAA0BUUAAAAAAAAANQFENBRNAXRm9SeazfyQG9Ncr+S/EZtt80HW9yfLN/J9MALbvlAAUAD/CRrAST7UABUBSCgozeozeqDduJe4wA1e6zbvmiAAAAAAABlMoAZVz+gyq4ZQQXKgAeEBqdWV0l2OLXNyg66rGqDQQAKAIlaZBy6mVHTubP65gLzcqANp1Niy7FBzFvlmgrc93NrkG41PLDUBuKzGgIqKABAAAAAUAAAEFAQUBBQHj9fX2v7OvtkBr9nX8X9nX8YAb/bfqL+2/UcwHT9t+oft/jmA6/t/h+2fTnoDr+yf0/Zz/XEB3/Zz9nr5+3EB39fP3D1c/ccAHf1T7i7PuOADvs+4bPuOADvpv8AjgQHfYbHAB39U+4nrn3HEB29fP2n7I5AOn7P4l/JfpgBq99fabfmoAAAKgCgZQBr0/a4DMjUmCggKACWwFTZGbdQGr0gAAgKIAC4YCGVoBPSSRVwEwXDAQXDAQaAZGjAZFsTASxltmz3AQUGpfZqMctQG4rMWAoAAAMufU93WsdTYDmKgLLjTC80F6nsw6eY5gLEAdIsZ5vs1AajUZjUBViAKAAAAAAACiAKAAACiAPENemHpBka9J6f6DI16f6npBBfSemggemmUAMv0uX6ADL9GAAAAAAoAigAAAAIuGX6BFPTV9NBBqc/1cgMGN+ygxOavpaAJAAAUANiWgqagBaioCCgAYsgIY0Azi4uAGGKAmDUhgINYYDJjeAM4Y0YDOGNYYDOGNYYDOJjeJgMYz15dK59eQRABrlqMxYDUajLUBQUCoqAlRpKDn3Plh1rnZlBAAalTqIu7AZABebldHJ05uwGmoxGpQbgkUFEigAAAAAAAAAAKgCiAPMoAAAIoCKAIKAgoAAAKmAL/wCJi4B7GQwAwwUEMUwEDAAXDAQXDAQXFwGVXAExRcBMF9ktBE36UBBQEFMBDFxcBJCSKoIYq4DODWGAzi40AmGKYACghigIKgCgAAAAAgAz1cmuS99bUBFCTbgNTwpAFajLQKAClAESrQGU6mtYgOVnujp1NYs+wQABFARZcogOkrUc5cbl3wDcqysRdBsSVdADQAAFE00FE00FGdNBoYvU+4l/JP6Dpo5fs/gCYYuAJhimAmGKAzi4uAM4Y1hgM4Y1hgM4YuLgM4Y1hgM4Y1iYCCrgILiYBv8AAwAFwwEUxcBMMXFwEwUBMXAA9ommLgM4Y1hgM4NYYDI1hgM4NYYCC4oM4uKAmKABigAAAAAAAAAAAAAAAhbnvQK5d977Twd9b/jAKIArXMSRqALBQIsIsAVFAAARQEqKWAyzZrdZwHOzEdbNYvOeAZAAAAPeeKANTv7anU+2EB2lVwPcHc1wAd/VPuJ659uKg6fsn9T9n8rADX7L9J6+vtAF235qAAAAADsKAmCmAhimAmGKYCGLhgJhjSYCYYqgzhjSAmGNAM4Y0gJkMaAZwxpKCYY0gGGBgAYuAgLgIKAgpgILgCCgIYoCCgJgoBgAAAAigAAAAAAAAAACAKjN7k/rF6tBvruT+1z6tvmoAhVARZFkaAhBQFFBQgAsRQAAAAEUBGWgGajSAxZrNmOiA5jdiXkGRfTTKCAAAAAoIKYAi5foygir6T0giN5DJ9AyZW0BMo0A6gAAAAAAAAAqCgioAAAoAIKAgAAAAKAIAAaAAAqGgqCaCiaaCiKACAoigAgKAABoAJoKJoCiaaCjOmz7BpGb3J/WL+S/EB1S9Sea5Xq35ZB0v5PqMXq3zUAURQCCyAjUn2smAAKBii4AsRQBQAAAAAAAAEFARLFAZFwBlMaQEwUBExrEwEyGRcATJ9KYYALhgILgCCgIY0Azi4uGAmC5AGxFABAUEBQQFEAUQBRAF01AF01FA0RdA0QBTU00FQNADQFQ1NBRNAaRDQUQ0FGdn2eqfYNDPrn2nrgN6a5+uf09c+gdNNcv2fw9d+gddNcvXf4eug66OPq6+09V+wdhx2/aaDvbieqfccQHX1z7PXP65AOl/J9Rn9lZAX1W+bRAAAFQAFMWcghjWKCSYoAGKAKSKAsRYACgAAAAAAAAAAAAIoCGKgJhigImNYYDIuAM4NYYDK4YoJhigJg1hgMquGAhi4AmCgAoCCaAohoKM+qfcPVPuA1ox6+fs9fP2Demuf7J/U/ZPqg66a5ftn0fs/gOuo5fsv0fs6+JAddNcvX0evr7B101x9V+zb90HbTXAB29U/h6p9xxAdfXPs9c+3IB19c/qfsn9cwHT9n8T9n8YAb/AGX6T13+MgL6+vs9fX2iAvqv3Tb91FAAAVAAVAAAAAAABQEFARQARTP4CDXpp6f6DI36YvpgOa5WwGfT9rkUADFBDFUEwXFBDFMAUABQAAAAAAAAAAAAAAAAAADBUAABBcAQUBMFAQUBFDAEXDAQXAAAAAHnvV+6m3PNABAAqACgAIACgAACgAAAAAAAAAqAAAAAAAAgAoABABQAAAAAAAFwAXIZAAyAAsAAAAAAigAAAoAKAAALAAAAU+AAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFAAAB//Z');
+    background-repeat:no-repeat, no-repeat, no-repeat;
+    background-position:0 0, 0 0, center;
+    background-size:auto, auto, cover;
+    background-attachment:scroll, scroll, fixed;
+    color:var(--paper);
+    font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .display{font-family:'Space Grotesk',sans-serif;}
 
+  header{
+    padding:22px 20px 14px;
+    border-bottom:1px solid var(--graphite-700);
+    display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+  }
+  header .logo{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700; font-size:22px; letter-spacing:-0.02em;
+    display:flex; align-items:center; gap:8px;
+  }
+  header .logo .dot{color:var(--ember);}
+  header .tag{
+    color:var(--mist); font-size:12.5px; font-family:'JetBrains Mono',monospace;
+    letter-spacing:0.02em;
+  }
+
+  main{
+    max-width:1220px; margin:0 auto; padding:22px 16px 80px;
+    display:flex; gap:22px; flex-wrap:wrap;
+    align-items:flex-start;
+  }
+
+  .panel{
+    background:var(--graphite-800);
+    border:1px solid var(--graphite-700);
+    border-radius:14px;
+    padding:18px;
+  }
+
+  .controls{
+    width:100%; max-width:360px; flex-shrink:0;
+    position:sticky; top:16px;
+    display:flex; flex-direction:column; gap:16px;
+  }
+  @media (max-width:860px){
+    .controls{ position:static; max-width:100%; order:2; }
+    main{ flex-direction:column; }
+  }
+  @media (min-width:861px){
+    #previewPanel{ display:flex !important; }
+  }
+
+  .section-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--mist); margin:0 0 10px;
+  }
+
+  .dropzone{
+    border:1.5px dashed var(--graphite-600);
+    border-radius:12px;
+    padding:24px 14px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color .15s, background .15s;
+  }
+  .dropzone:hover, .dropzone.drag{
+    border-color:var(--ember);
+    background:rgba(232,101,10,0.06);
+  }
+  .dropzone svg{opacity:0.6; margin-bottom:8px;}
+  .dropzone .main-txt{font-size:14px; font-weight:500;}
+  .dropzone .sub-txt{font-size:12px; color:var(--mist); margin-top:4px;}
+  input[type=file]{display:none;}
+
+  /* use-case segmented control */
+  .usecase-grid{
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .usecase-btn{
+    display:flex; align-items:center; gap:10px;
+    background:var(--graphite-700);
+    border:1px solid var(--graphite-600);
+    color:var(--paper);
+    border-radius:10px;
+    padding:11px 12px;
+    cursor:pointer;
+    text-align:left;
+    transition:all .12s;
+  }
+  .usecase-btn .ic{font-size:17px; width:22px; text-align:center; flex-shrink:0;}
+  .usecase-btn .tx{display:flex; flex-direction:column; gap:1px;}
+  .usecase-btn .tx .t1{font-size:13.5px; font-weight:600;}
+  .usecase-btn .tx .t2{font-size:11.5px; color:var(--mist);}
+  .usecase-btn:hover{border-color:var(--cyan);}
+  .usecase-btn.active{ background:rgba(232,101,10,0.12); border-color:var(--ember); }
+  .usecase-btn.active .tx .t2{color:var(--paper); opacity:.75;}
+
+  .subpanel{
+    display:none;
+    flex-direction:column; gap:14px;
+    padding-top:2px;
+  }
+  .subpanel.show{display:flex;}
+
+  .scale-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
+  }
+  .scale-btn{
+    background:var(--graphite-700);
+    border:1px solid var(--graphite-600);
+    color:var(--paper);
+    border-radius:9px;
+    padding:10px 0;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px; font-weight:600;
+    cursor:pointer;
+    transition:all .12s;
+  }
+  .scale-btn:hover{border-color:var(--cyan);}
+  .scale-btn.active{
+    background:var(--ember);
+    border-color:var(--ember);
+    color:#1a0d05;
+  }
+
+  select, .cm-input{
+    width:100%; background:var(--graphite-700); border:1px solid var(--graphite-600);
+    color:var(--paper); border-radius:9px; padding:10px 11px; font-size:13.5px;
+    font-family:'Inter',sans-serif;
+  }
+  select:focus, .cm-input:focus{outline:1px solid var(--cyan);}
+
+  .cm-row{display:flex; gap:8px; align-items:center;}
+  .cm-row .cm-input{flex:1; font-family:'JetBrains Mono',monospace;}
+  .cm-row .x{color:var(--mist); font-size:13px;}
+
+  .field{display:flex; flex-direction:column; gap:8px;}
+  .field-row{display:flex; justify-content:space-between; align-items:baseline;}
+  .field-row label{font-size:13.5px; font-weight:500;}
+  .field-row .val{font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--cyan);}
+
+  input[type=range]{
+    -webkit-appearance:none; appearance:none;
+    width:100%; height:4px; border-radius:2px;
+    background:var(--graphite-600);
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none;
+    width:16px; height:16px; border-radius:50%;
+    background:var(--ember);
+    border:2px solid var(--graphite-900);
+    cursor:pointer;
+    margin-top:-6px;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:14px; height:14px; border-radius:50%;
+    background:var(--ember); border:2px solid var(--graphite-900); cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-runnable-track{ height:4px; border-radius:2px; background:var(--graphite-600); }
+
+  .toggle-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 12px;
+    background:var(--graphite-700);
+    border-radius:9px;
+    gap:10px;
+  }
+  .toggle-row .lbl{font-size:13.5px;}
+  .toggle-row .sub{font-size:11.5px; color:var(--mist); margin-top:2px;}
+  .switch{
+    position:relative; width:38px; height:22px; flex-shrink:0;
+  }
+  .switch input{display:none;}
+  .switch .track{
+    position:absolute; inset:0; background:var(--graphite-600);
+    border-radius:11px; transition:background .15s; cursor:pointer;
+  }
+  .switch .track::after{
+    content:''; position:absolute; top:2px; left:2px;
+    width:18px; height:18px; border-radius:50%;
+    background:var(--paper); transition:transform .15s;
+  }
+  .switch input:checked + .track{background:var(--cyan-dim); }
+  .switch input:checked + .track::after{ transform:translateX(16px); background:var(--cyan); }
+
+  .btn{
+    width:100%; padding:13px; border-radius:10px; border:none;
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14.5px;
+    cursor:pointer; transition:filter .12s, transform .05s;
+  }
+  .btn:active{transform:scale(0.98);}
+  .btn-primary{ background:var(--ember); color:#1a0d05; }
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-primary:disabled{ background:var(--graphite-600); color:var(--mist); cursor:not-allowed; }
+  .btn-secondary{ background:var(--graphite-700); color:var(--paper); border:1px solid var(--graphite-600); }
+  .btn-secondary:hover{ border-color:var(--cyan); }
+  .btn-ghost{ background:transparent; color:var(--cyan); border:1px solid var(--cyan-dim); font-size:13px; padding:10px; }
+  .btn-ghost:hover{ background:rgba(0,194,199,0.08); }
+  .btn-row{display:flex; gap:8px;}
+  .btn-row .btn{flex:1;}
+
+  .p-whatsapp{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background:#1F8A50; color:#fff; text-decoration:none;
+  }
+
+  .stats{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  }
+  .stat-box{
+    background:var(--graphite-700); border-radius:9px; padding:10px 12px;
+  }
+  .stat-box .k{font-size:10.5px; color:var(--mist); font-family:'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:.05em;}
+  .stat-box .v{font-family:'JetBrains Mono',monospace; font-size:14.5px; margin-top:3px; color:var(--paper);}
+  .stat-box .v.accent{color:var(--cyan);}
+
+  /* verdict badge */
+  .verdict{
+    border-radius:11px; padding:13px 14px; border:1px solid;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .verdict.ok{ background:rgba(63,178,127,0.10); border-color:rgba(63,178,127,0.35); }
+  .verdict.mid{ background:rgba(245,166,35,0.10); border-color:rgba(245,166,35,0.35); }
+  .verdict.bad{ background:rgba(232,76,61,0.10); border-color:rgba(232,76,61,0.35); }
+  .verdict .head{ display:flex; align-items:center; gap:8px; font-weight:600; font-size:13.5px; }
+  .verdict.ok .head{color:var(--green);}
+  .verdict.mid .head{color:var(--yellow);}
+  .verdict.bad .head{color:var(--red);}
+  .verdict .dot{width:8px; height:8px; border-radius:50%; background:currentColor;}
+  .verdict .desc{font-size:12.5px; color:var(--mist); line-height:1.5;}
+  .verdict .msgbox{
+    background:var(--graphite-900); border:1px solid var(--graphite-700); border-radius:8px;
+    padding:10px; font-size:12px; color:var(--paper); line-height:1.5; font-family:'Inter',sans-serif;
+  }
+
+  .preview-panel{
+    flex:1; min-width:300px;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .stage{
+    position:relative;
+    background:
+      linear-gradient(45deg, #E6DECD 25%, transparent 25%),
+      linear-gradient(-45deg, #E6DECD 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #E6DECD 75%),
+      linear-gradient(-45deg, transparent 75%, #E6DECD 75%);
+    background-size:20px 20px;
+    background-position:0 0, 0 10px, 10px -10px, -10px 0px;
+    background-color:#F8F4EC;
+    border:1px solid var(--graphite-700);
+    border-radius:14px;
+    overflow:hidden;
+    min-height:280px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:crosshair;
+    user-select:none;
+  }
+  .stage.empty{ cursor:default; }
+  .stage.empty .empty-msg{
+    color:var(--mist); font-size:13.5px; text-align:center; padding:40px 20px;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .compare-wrap{
+    position:relative; max-width:100%; line-height:0;
+  }
+  .compare-wrap img, .compare-wrap canvas{
+    display:block; max-width:100%; height:auto;
+  }
+  .img-after{
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    object-fit:contain; clip-path:inset(0 0 0 50%);
+  }
+  .divider{
+    position:absolute; top:0; bottom:0; left:50%;
+    width:2px; background:var(--paper); box-shadow:0 0 0 1px rgba(0,0,0,.4);
+    transform:translateX(-1px);
+    pointer-events:none;
+  }
+  .divider::after{
+    content:'⇔'; position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:34px; height:34px; border-radius:50%;
+    background:var(--paper); color:var(--graphite-900);
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; box-shadow:0 2px 8px rgba(0,0,0,.4);
+  }
+  .tag-before,.tag-after{
+    position:absolute; top:10px; font-family:'JetBrains Mono',monospace;
+    font-size:10.5px; letter-spacing:.06em; padding:4px 9px; border-radius:5px;
+    background:rgba(20,23,26,0.72); pointer-events:none;
+  }
+  .tag-before{left:10px;}
+  .tag-after{right:10px; color:var(--cyan);}
+
+  .loupe{
+    position:absolute; width:150px; height:150px; border-radius:50%;
+    border:2px solid var(--cyan);
+    box-shadow:0 4px 18px rgba(0,0,0,.5), inset 0 0 0 1px rgba(0,0,0,.3);
+    pointer-events:none; overflow:hidden; display:none;
+    background:#000;
+  }
+  .loupe canvas{ image-rendering:pixelated; }
+  .loupe .lbl{
+    position:absolute; bottom:4px; left:0; right:0; text-align:center;
+    font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--cyan);
+    background:rgba(0,0,0,.5); padding:2px 0;
+  }
+
+  .progress-overlay{
+    position:absolute; inset:0; background:rgba(20,23,26,0.85);
+    display:none; align-items:center; justify-content:center; flex-direction:column; gap:12px;
+    backdrop-filter:blur(2px);
+  }
+  .progress-overlay.show{display:flex;}
+  .spinner{
+    width:34px; height:34px; border-radius:50%;
+    border:3px solid var(--graphite-600); border-top-color:var(--ember);
+    animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .progress-overlay .txt{font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--mist);}
+
+  .warn{
+    font-size:12px; color:#F5A623; background:rgba(245,166,35,0.08);
+    border:1px solid rgba(245,166,35,0.25); border-radius:8px; padding:9px 11px;
+    display:none; font-family:'JetBrains Mono',monospace; line-height:1.5;
+  }
+  .warn.show{display:block;}
+
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--graphite-700); border:1px solid var(--cyan-dim); color:var(--paper);
+    padding:11px 18px; border-radius:9px; font-size:13px; font-family:'JetBrains Mono',monospace;
+    opacity:0; pointer-events:none; transition:all .25s; z-index:50;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  .footer-note{
+    font-size:11.5px; color:var(--mist); text-align:center; margin-top:6px;
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  .locked{
+    opacity:.42; filter:grayscale(.4); pointer-events:none;
+    transition:opacity .2s;
+    display:flex; flex-direction:column; gap:16px;
+  }
+  .locked.unlocked{ opacity:1; filter:none; pointer-events:auto; }
+
+  .crop-wrap{
+    position:relative; width:100%; border-radius:10px; overflow:hidden;
+    background:
+      linear-gradient(45deg, #E6DECD 25%, transparent 25%),
+      linear-gradient(-45deg, #E6DECD 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #E6DECD 75%),
+      linear-gradient(-45deg, transparent 75%, #E6DECD 75%);
+    background-size:16px 16px;
+    background-position:0 0, 0 8px, 8px -8px, -8px 0px;
+    background-color:#F8F4EC;
+    border:1px solid var(--graphite-600);
+  }
+  .crop-wrap canvas{ display:block; width:100%; height:auto; cursor:grab; touch-action:none; }
+  .crop-wrap.grabbing canvas{ cursor:grabbing; }
+  .crop-hint{
+    position:absolute; bottom:6px; left:50%; transform:translateX(-50%);
+    font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--mist);
+    background:rgba(20,23,26,0.7); padding:3px 8px; border-radius:6px; pointer-events:none;
+  }
+
+  ::selection{background:var(--ember); color:#1a0d05;}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="dot">◆</span>Imagem<span style="color:var(--cyan)">HD</span></div>
+  <div class="tag">pensado pra gráfica: resolução de impressão, prova pro cliente e preparo pra laser — sem IA, roda no navegador</div>
+</header>
+
+<main>
+  <div class="controls panel">
+    <div>
+      <p class="section-label">01 · Imagem</p>
+      <div class="dropzone" id="dropzone">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8A8276" stroke-width="1.6"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+        <div class="main-txt">Toque para escolher uma imagem</div>
+        <div class="sub-txt">ou arraste aqui — JPG, PNG, WEBP</div>
+        <input type="file" id="fileInput" accept="image/*">
+      </div>
+      <div class="warn" id="warnBox"></div>
+    </div>
+
+    <div class="locked" id="controlsLocked">
+    <div>
+      <p class="section-label">02 · Pra que é essa imagem?</p>
+      <div class="usecase-grid" id="usecaseGrid">
+        <div class="usecase-btn active" data-mode="livre">
+          <span class="ic">↕</span>
+          <span class="tx"><span class="t1">Ampliar livremente</span><span class="t2">escala simples, uso geral</span></span>
+        </div>
+        <div class="usecase-btn" data-mode="impressao">
+          <span class="ic">🖨</span>
+          <span class="tx"><span class="t1">Vai imprimir em tamanho físico</span><span class="t2">cartão, banner, pôster, adesivo…</span></span>
+        </div>
+        <div class="usecase-btn" data-mode="laser">
+          <span class="ic">✂</span>
+          <span class="tx"><span class="t1">Preparar p/ gravação a laser</span><span class="t2">converte pra P&B de alto contraste</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODO LIVRE -->
+    <div class="subpanel show" id="panel-livre">
+      <div>
+        <p class="section-label">Escala</p>
+        <div class="scale-grid">
+          <button class="scale-btn" data-scale="1.5">1.5×</button>
+          <button class="scale-btn active" data-scale="2">2×</button>
+          <button class="scale-btn" data-scale="3">3×</button>
+          <button class="scale-btn" data-scale="4">4×</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODO IMPRESSAO -->
+    <div class="subpanel" id="panel-impressao">
+      <div class="field">
+        <p class="section-label">Formato</p>
+        <select id="presetSelect">
+          <option value="cartao">Cartão de visita (9×5cm)</option>
+          <option value="adesivo">Adesivo (10×10cm)</option>
+          <option value="poster">Pôster / Quadro (30×40cm)</option>
+          <option value="banner">Banner / Faixa — visto de longe (100×70cm)</option>
+          <option value="painel">Painel / Fachada — visto de longe (200×100cm)</option>
+          <option value="caneca">Caneca / Produto (20×8cm)</option>
+          <option value="custom">Personalizado</option>
+        </select>
+      </div>
+      <div class="field">
+        <p class="section-label">Tamanho final e DPI</p>
+        <div class="cm-row">
+          <input class="cm-input" id="wCm" type="number" min="1" value="9" step="0.5">
+          <span class="x">×</span>
+          <input class="cm-input" id="hCm" type="number" min="1" value="5" step="0.5">
+          <span class="x">cm</span>
+        </div>
+        <div class="cm-row">
+          <select id="dpiSelect" style="flex:1;">
+            <option value="300">300 DPI — visto de perto (padrão foto/cartão)</option>
+            <option value="150">150 DPI — visto de 1-2m (banner)</option>
+            <option value="100">100 DPI — visto de longe (fachada/painel)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <p class="section-label">Enquadramento</p>
+        <div class="scale-grid" style="grid-template-columns:1fr 1fr;">
+          <button class="scale-btn fit-mode-btn" data-fit="contain">Mostrar tudo</button>
+          <button class="scale-btn fit-mode-btn active" data-fit="cover">Preencher e cortar</button>
+        </div>
+        <div class="crop-wrap" id="cropWrap">
+          <canvas id="cropCanvas" width="320" height="320"></canvas>
+          <div class="crop-hint" id="cropHint">arraste pra reposicionar</div>
+        </div>
+        <div class="field" id="zoomField" style="margin-top:2px;">
+          <div class="field-row"><label for="zoomRange">Zoom</label><span class="val" id="zoomVal">100%</span></div>
+          <input type="range" id="zoomRange" min="100" max="300" value="100">
+        </div>
+      </div>
+      <div class="verdict" id="verdictBox" style="display:none;"></div>
+    </div>
+
+    <!-- MODO LASER -->
+    <div class="subpanel" id="panel-laser">
+      <div>
+        <p class="section-label">Escala antes de converter</p>
+        <div class="scale-grid">
+          <button class="scale-btn laser-scale-btn" data-scale="1">1×</button>
+          <button class="scale-btn laser-scale-btn active" data-scale="2">2×</button>
+          <button class="scale-btn laser-scale-btn" data-scale="3">3×</button>
+          <button class="scale-btn laser-scale-btn" data-scale="4">4×</button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-row"><label for="posterizeRange">Tons de cinza (posterizar)</label><span class="val" id="posterizeVal">4</span></div>
+        <input type="range" id="posterizeRange" min="2" max="8" value="4">
+      </div>
+      <div class="field">
+        <div class="field-row"><label for="contrastRange">Contraste</label><span class="val" id="contrastVal">40%</span></div>
+        <input type="range" id="contrastRange" min="0" max="100" value="40">
+      </div>
+      <div class="toggle-row">
+        <div><div class="lbl">Inverter (fundo preto)</div><div class="sub">útil pra gravação em relevo invertido</div></div>
+        <label class="switch"><input type="checkbox" id="invertToggle"><span class="track"></span></label>
+      </div>
+    </div>
+
+    <div>
+      <p class="section-label">03 · Ajustes gerais</p>
+      <div class="field" id="sharpField">
+        <div class="field-row"><label for="sharpRange">Nitidez</label><span class="val" id="sharpVal">55%</span></div>
+        <input type="range" id="sharpRange" min="0" max="100" value="55">
+      </div>
+    </div>
+
+    <div class="toggle-row">
+      <div>
+        <div class="lbl">Foto veio do WhatsApp / rede social</div>
+        <div class="sub">ativa limpeza extra de artefatos de compressão</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="whatsappToggle">
+        <span class="track"></span>
+      </label>
+    </div>
+
+    <div class="toggle-row">
+      <div>
+        <div class="lbl">Reduzir ruído antes de ampliar</div>
+        <div class="sub">grão de scan ou foto em ambiente escuro</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="denoiseToggle">
+        <span class="track"></span>
+      </label>
+    </div>
+
+    <button class="btn btn-primary" id="processBtn" disabled>Processar imagem</button>
+    </div>
+
+    <div id="resultActions" style="display:none; flex-direction:column; gap:8px;">
+      <button class="btn btn-secondary" id="downloadBtn">Baixar versão final (alta resolução)</button>
+      <div class="warn show" style="margin-top:2px;">⚠ Depois de baixar, mande pelo WhatsApp como <b>Documento</b> (📎), não como Foto — assim ela não é comprimida e chega na qualidade certa.</div>
+      <a class="btn p-whatsapp" id="waSendBtn" href="#" target="_blank" rel="noopener">Abrir WhatsApp da gráfica</a>
+      <button class="btn btn-ghost" id="proofBtn">Baixar prova com marca d'água (p/ aprovação do cliente)</button>
+    </div>
+
+    <div class="stats" id="statsBox" style="display:none;">
+      <div class="stat-box">
+        <div class="k">Original</div>
+        <div class="v" id="statOrig">—</div>
+      </div>
+      <div class="stat-box">
+        <div class="k">Ampliada</div>
+        <div class="v accent" id="statNew">—</div>
+      </div>
+    </div>
+    <div class="footer-note">Tudo é processado localmente no seu navegador — nenhuma imagem é enviada para servidor.</div>
+  </div>
+
+  <div class="preview-panel" id="previewPanel" style="display:none;">
+    <div class="panel" style="padding:0; overflow:hidden;">
+      <div class="stage empty" id="stage">
+        <div class="empty-msg">nenhuma imagem carregada ainda<br><span style="opacity:.6">o antes/depois aparece aqui — arraste o divisor para comparar</span></div>
+        <div class="progress-overlay" id="progressOverlay">
+          <div class="spinner"></div>
+          <div class="txt" id="progressTxt">processando…</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-note" id="compareHint" style="display:none;">na tela, as duas versões aparecem do mesmo tamanho — passe o mouse/dedo sobre a imagem pra ver a lupa com o zoom real e notar a diferença de nitidez</div>
+  </div>
+</main>
+
+<div class="toast" id="toast">copiado!</div>
+
+<script src="https://cdn.jsdelivr.net/npm/heic2any/dist/heic2any.min.js"></script>
+<script>
+(function(){
+  // ---------- state ----------
+  let srcImg = null;
+  let srcCanvas = null;
+  let resultCanvas = null;
+  let currentScale = 2;
+  let laserScale = 2;
+  let mode = 'livre'; // livre | impressao | laser
+  const MAX_OUTPUT_PIXELS = 18_000_000;
+
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const controlsLocked = document.getElementById('controlsLocked');
+  const previewPanel = document.getElementById('previewPanel');
+  const stage = document.getElementById('stage');
+  const progressOverlay = document.getElementById('progressOverlay');
+  const progressTxt = document.getElementById('progressTxt');
+  const processBtn = document.getElementById('processBtn');
+  const resultActions = document.getElementById('resultActions');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const proofBtn = document.getElementById('proofBtn');
+  const statsBox = document.getElementById('statsBox');
+  const statOrig = document.getElementById('statOrig');
+  const statNew = document.getElementById('statNew');
+  const warnBox = document.getElementById('warnBox');
+  const sharpRange = document.getElementById('sharpRange');
+  const sharpVal = document.getElementById('sharpVal');
+  const sharpField = document.getElementById('sharpField');
+  const denoiseToggle = document.getElementById('denoiseToggle');
+  const whatsappToggle = document.getElementById('whatsappToggle');
+  const toast = document.getElementById('toast');
+
+  // print mode elements
+  const presetSelect = document.getElementById('presetSelect');
+  const wCm = document.getElementById('wCm');
+  const hCm = document.getElementById('hCm');
+  const dpiSelect = document.getElementById('dpiSelect');
+  const verdictBox = document.getElementById('verdictBox');
+  const cropWrap = document.getElementById('cropWrap');
+  const cropCanvas = document.getElementById('cropCanvas');
+  const zoomField = document.getElementById('zoomField');
+  const zoomRange = document.getElementById('zoomRange');
+  const zoomVal = document.getElementById('zoomVal');
+
+  let fitMode = 'cover'; // contain | cover
+  let cropZoom = 1;
+  let cropPanX = 0; // -1..1
+  let cropPanY = 0; // -1..1
+
+  // laser mode elements
+  const posterizeRange = document.getElementById('posterizeRange');
+  const posterizeVal = document.getElementById('posterizeVal');
+  const contrastRange = document.getElementById('contrastRange');
+  const contrastVal = document.getElementById('contrastVal');
+  const invertToggle = document.getElementById('invertToggle');
+
+  const printPresets = {
+    cartao:   {w:9,   h:5,   dpi:300},
+    adesivo:  {w:10,  h:10,  dpi:300},
+    poster:   {w:30,  h:40,  dpi:300},
+    banner:   {w:100, h:70,  dpi:150},
+    painel:   {w:200, h:100, dpi:100},
+    caneca:   {w:20,  h:8,   dpi:300},
+    custom:   {w:20,  h:20,  dpi:300}
+  };
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(()=> toast.classList.remove('show'), 1800);
+  }
+
+  // ---------- use-case switching ----------
+  document.querySelectorAll('.usecase-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.usecase-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      mode = btn.dataset.mode;
+      document.querySelectorAll('.subpanel').forEach(p=>p.classList.remove('show'));
+      document.getElementById('panel-'+mode).classList.add('show');
+      sharpField.style.display = (mode === 'laser') ? 'none' : 'flex';
+      if(srcCanvas){
+        if(mode === 'laser'){ fastPosterizePreview(); }
+        else { renderInitialPreview(); }
+      }
+      if(mode === 'impressao'){ resizeCropCanvasElement(); renderCropPreview(); updateVerdict(); }
+    });
+  });
+
+  document.querySelectorAll('.scale-btn:not(.laser-scale-btn):not(.fit-mode-btn)').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.scale-btn:not(.laser-scale-btn):not(.fit-mode-btn)').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      currentScale = parseFloat(btn.dataset.scale);
+      updateEstimate();
+    });
+  });
+  document.querySelectorAll('.laser-scale-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.laser-scale-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      laserScale = parseFloat(btn.dataset.scale);
+      updateEstimate();
+    });
+  });
+
+  document.querySelectorAll('.fit-mode-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.fit-mode-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      fitMode = btn.dataset.fit;
+      zoomField.style.display = (fitMode === 'cover') ? 'flex' : 'none';
+      document.getElementById('cropHint').style.display = (fitMode === 'cover') ? 'block' : 'none';
+      cropZoom = 1; cropPanX = 0; cropPanY = 0;
+      zoomRange.value = 100; zoomVal.textContent = '100%';
+      renderCropPreview();
+      updateVerdict();
+    });
+  });
+
+  zoomRange.addEventListener('input', ()=>{
+    cropZoom = parseInt(zoomRange.value,10)/100;
+    zoomVal.textContent = zoomRange.value + '%';
+    cropPanX = Math.max(-1, Math.min(1, cropPanX));
+    cropPanY = Math.max(-1, Math.min(1, cropPanY));
+    renderCropPreview();
+    updateVerdict();
+  });
+
+  (function wireCropDrag(){
+    let dragging = false, startX=0, startY=0, startPanX=0, startPanY=0;
+    cropCanvas.addEventListener('pointerdown', e=>{
+      if(fitMode !== 'cover' || !srcCanvas) return;
+      dragging = true; startX = e.clientX; startY = e.clientY;
+      startPanX = cropPanX; startPanY = cropPanY;
+      cropWrap.classList.add('grabbing');
+      cropCanvas.setPointerCapture(e.pointerId);
+    });
+    cropCanvas.addEventListener('pointermove', e=>{
+      if(!dragging || !srcCanvas) return;
+      const r = getCropRect();
+      if(!r) return;
+      const pxToSrc = r.sw / cropCanvas.getBoundingClientRect().width;
+      const w = parseFloat(wCm.value)||1, h = parseFloat(hCm.value)||1;
+      const targetAspect = w/h;
+      const srcW = srcCanvas.width, srcH = srcCanvas.height;
+      const srcAspect = srcW/srcH;
+      let baseW, baseH;
+      if(srcAspect > targetAspect){ baseH = srcH; baseW = srcH*targetAspect; }
+      else { baseW = srcW; baseH = srcW/targetAspect; }
+      const cw = baseW/cropZoom, ch = baseH/cropZoom;
+      const slackX = Math.max(1,(srcW-cw)/2), slackY = Math.max(1,(srcH-ch)/2);
+      const dxSrc = (e.clientX-startX) * pxToSrc;
+      const dySrc = (e.clientY-startY) * (r.sh/cropCanvas.getBoundingClientRect().height);
+      cropPanX = Math.max(-1, Math.min(1, startPanX - dxSrc/slackX));
+      cropPanY = Math.max(-1, Math.min(1, startPanY - dySrc/slackY));
+      renderCropPreview();
+    });
+    const endDrag = ()=>{ if(dragging){ dragging=false; cropWrap.classList.remove('grabbing'); updateVerdict(); } };
+    cropCanvas.addEventListener('pointerup', endDrag);
+    cropCanvas.addEventListener('pointercancel', endDrag);
+  })();
+
+  sharpRange.addEventListener('input', ()=>{ sharpVal.textContent = sharpRange.value + '%'; });
+  posterizeRange.addEventListener('input', ()=>{ posterizeVal.textContent = posterizeRange.value; fastPosterizePreview(); });
+  contrastRange.addEventListener('input', ()=>{ contrastVal.textContent = contrastRange.value + '%'; fastPosterizePreview(); });
+  invertToggle.addEventListener('change', fastPosterizePreview);
+
+  presetSelect.addEventListener('change', ()=>{
+    const p = printPresets[presetSelect.value];
+    wCm.value = p.w; hCm.value = p.h; dpiSelect.value = p.dpi;
+    cropZoom = 1; cropPanX = 0; cropPanY = 0;
+    zoomRange.value = 100; zoomVal.textContent = '100%';
+    resizeCropCanvasElement();
+    renderCropPreview();
+    updateVerdict();
+  });
+  [wCm, hCm, dpiSelect].forEach(el=> el.addEventListener('input', ()=>{
+    resizeCropCanvasElement();
+    renderCropPreview();
+    updateVerdict();
+  }));
+
+  // ---------- file loading ----------
+  dropzone.addEventListener('click', ()=> fileInput.click());
+  fileInput.addEventListener('change', e=>{
+    if(e.target.files[0]) loadFile(e.target.files[0]);
+  });
+  ['dragover','dragenter'].forEach(ev=>{
+    dropzone.addEventListener(ev, e=>{ e.preventDefault(); dropzone.classList.add('drag'); });
+  });
+  ['dragleave','drop'].forEach(ev=>{
+    dropzone.addEventListener(ev, e=>{ e.preventDefault(); dropzone.classList.remove('drag'); });
+  });
+  dropzone.addEventListener('drop', e=>{
+    const f = e.dataTransfer.files[0];
+    if(f) loadFile(f);
+  });
+
+  function isHeic(file){
+    const type = (file.type||'').toLowerCase();
+    const name = (file.name||'').toLowerCase();
+    return type.includes('heic') || type.includes('heif') || name.endsWith('.heic') || name.endsWith('.heif');
+  }
+
+  async function loadFile(file){
+    if(!file.type.startsWith('image/') && !isHeic(file)){
+      showWarn('Esse arquivo não parece ser uma imagem.');
+      return;
+    }
+    clearWarn();
+    let workingFile = file;
+    if(isHeic(file)){
+      dropzone.querySelector('.main-txt').textContent = 'Convertendo foto HEIC…';
+      try{
+        if(typeof heic2any === 'undefined') throw new Error('conversor indisponível');
+        const convertedBlob = await heic2any({blob:file, toType:'image/jpeg', quality:0.92});
+        workingFile = new File([convertedBlob], file.name.replace(/\.(heic|heif)$/i,'.jpg'), {type:'image/jpeg'});
+      }catch(err){
+        dropzone.querySelector('.main-txt').textContent = 'Toque para escolher uma imagem';
+        showWarn('Essa foto está em HEIC (padrão da câmera do iPhone) e não consegui converter automaticamente aqui. Tente abrir o arquivo .html direto pelo Safari do celular (fora do preview do app), ou exporte a foto como JPEG e envie de novo.');
+        return;
+      }
+      dropzone.querySelector('.main-txt').textContent = 'Toque para escolher uma imagem';
+    }
+    const url = URL.createObjectURL(workingFile);
+    const img = new Image();
+    img.onload = ()=>{
+      srcImg = img;
+      srcCanvas = document.createElement('canvas');
+      srcCanvas.width = img.naturalWidth;
+      srcCanvas.height = img.naturalHeight;
+      srcCanvas.getContext('2d').drawImage(img,0,0);
+      resultCanvas = null;
+      resultActions.style.display = 'none';
+      processBtn.disabled = false;
+      controlsLocked.classList.add('unlocked');
+      cropZoom = 1; cropPanX = 0; cropPanY = 0;
+      zoomRange.value = 100; zoomVal.textContent = '100%';
+      printedSignature = null;
+      if(mode === 'laser'){
+        fastPosterizePreview();
+      } else {
+        previewPanel.style.display = 'flex';
+        renderInitialPreview();
+      }
+      updateEstimate();
+      if(mode==='impressao'){ resizeCropCanvasElement(); renderCropPreview(); updateVerdict(); }
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = ()=> showWarn('Não consegui abrir essa imagem. Tente outro arquivo.');
+    img.src = url;
+  }
+
+  function showWarn(msg){
+    warnBox.textContent = '⚠ ' + msg;
+    warnBox.classList.add('show');
+  }
+  function clearWarn(){ warnBox.classList.remove('show'); }
+
+  function updateEstimate(){
+    if(!srcCanvas) return;
+    clearWarn();
+    const scale = mode === 'laser' ? laserScale : currentScale;
+    let outW = Math.round(srcCanvas.width * scale);
+    let outH = Math.round(srcCanvas.height * scale);
+    if(outW*outH > MAX_OUTPUT_PIXELS){
+      showWarn('Essa combinação geraria uma imagem muito grande pro navegador processar — vou limitar a resolução final automaticamente.');
+    }
+    statsBox.style.display = 'grid';
+    statOrig.textContent = srcCanvas.width + ' × ' + srcCanvas.height;
+    statNew.textContent = '≈ ' + outW + ' × ' + outH;
+  }
+
+  // ---------- print verdict ----------
+  let lastVerdictTier = null;
+  let lastVerdictScale = 1;
+  let printedSignature = null;
+
+  function currentPrintSignature(){
+    return [wCm.value, hCm.value, dpiSelect.value, fitMode, cropZoom.toFixed(2), cropPanX.toFixed(2), cropPanY.toFixed(2)].join('|');
+  }
+
+  function updateVerdict(){
+    if(!srcCanvas){ verdictBox.style.display='none'; return; }
+    const w = parseFloat(wCm.value)||1;
+    const h = parseFloat(hCm.value)||1;
+    const dpi = parseFloat(dpiSelect.value)||300;
+    const sizeTxt = w + '×' + h + 'cm';
+
+    if(printedSignature && printedSignature === currentPrintSignature() && resultCanvas){
+      lastVerdictTier = 'ok';
+      verdictBox.className = 'verdict ok';
+      verdictBox.style.display = 'flex';
+      verdictBox.innerHTML =
+        '<div class="head"><span class="dot"></span>Prontinho — resolução ideal</div>' +
+        '<div class="desc">Essa imagem já foi ampliada e está pronta pra imprimir em ' + sizeTxt + ' com boa qualidade.</div>';
+      return;
+    }
+
+    const reqW = (w/2.54)*dpi;
+    const reqH = (h/2.54)*dpi;
+
+    let effW, effH;
+    if(fitMode === 'cover'){
+      const r = getCropRect();
+      effW = r ? r.sw : srcCanvas.width;
+      effH = r ? r.sh : srcCanvas.height;
+    } else {
+      effW = srcCanvas.width;
+      effH = srcCanvas.height;
+    }
+    const scaleW = reqW/effW;
+    const scaleH = reqH/effH;
+    const neededScale = fitMode==='contain'
+      ? Math.max(Math.min(scaleW, scaleH), 1)
+      : Math.max(scaleW, scaleH, 1);
+    lastVerdictScale = Math.min(neededScale, 6);
+
+    const srcAspect = srcCanvas.width/srcCanvas.height;
+    const tgtAspect = w/h;
+    const aspectMismatch = Math.abs(srcAspect-tgtAspect)/tgtAspect > 0.08;
+
+    let tier, headTxt, desc, msg;
+    if(neededScale <= 1.15){
+      tier='ok'; headTxt='Ótima qualidade';
+      desc='A imagem original já tem resolução suficiente pra esse tamanho, praticamente sem precisar ampliar.';
+      msg = 'Oi! Sua foto está em ótima qualidade pra imprimir em ' + sizeTxt + ' 🙌 Já vou preparar aqui!';
+    } else if(neededScale <= 2.2){
+      tier='ok'; headTxt='Boa qualidade após ampliação';
+      desc='Precisa ampliar cerca de ' + neededScale.toFixed(1) + '×, mas o resultado deve ficar nítido.';
+      msg = 'Oi! Consigo imprimir sua foto em ' + sizeTxt + ' com boa qualidade 👍 Vou ampliar um pouco aqui e já preparo pra impressão.';
+    } else if(neededScale <= 3.5){
+      tier='mid'; headTxt='Aceitável — pode perder um pouco de nitidez';
+      desc='Precisa ampliar cerca de ' + neededScale.toFixed(1) + '×. Fica bom pra ver de uma certa distância, mas de perto pode notar leve suavização.';
+      msg = 'Oi! Consigo imprimir sua foto em ' + sizeTxt + ', mas como a imagem original é um pouco pequena pra esse tamanho, pode perder um pouquinho de nitidez de perto. Ainda fica com qualidade boa. Quer que eu prepare assim mesmo?';
+    } else {
+      tier='bad'; headTxt='Resolução baixa pro tamanho pedido';
+      desc='Precisaria ampliar cerca de ' + neededScale.toFixed(1) + '×. Consigo imprimir, mas o resultado deve ficar visivelmente mais suave de perto.';
+      msg = 'Oi! Analisando sua foto aqui — pra imprimir em ' + sizeTxt + ' com boa nitidez, o ideal seria uma versão maior da imagem (de preferência sem ter passado pelo WhatsApp, que comprime bastante). Posso imprimir do jeito que está, mas pode ficar mais "suave" de perto. Você tem uma versão maior, ou posso seguir assim mesmo?';
+    }
+    lastVerdictTier = tier;
+
+    let html = '<div class="head"><span class="dot"></span>' + headTxt + '</div>';
+    html += '<div class="desc">' + desc + '</div>';
+    if(aspectMismatch && fitMode==='contain'){
+      html += '<div class="desc">⚠ A proporção da foto não bate com ' + sizeTxt + ' — no modo "Mostrar tudo" vão sobrar bordas brancas dos lados. Se preferir preencher sem borda, use "Preencher e cortar".</div>';
+    } else if(aspectMismatch && fitMode==='cover'){
+      html += '<div class="desc">✂ A proporção não bate exatamente com ' + sizeTxt + ' — algumas partes das bordas serão cortadas pra preencher o formato. Ajuste o quadro ao lado se quiser escolher o que fica de fora.</div>';
+    }
+    if(neededScale > 1.05){
+      html += '<button class="btn btn-primary" id="autoUpscaleBtn" type="button">Ampliar automaticamente pra qualidade ideal (' + neededScale.toFixed(1) + '×)</button>';
+    }
+    html += '<div class="msgbox" id="verdictMsg">' + msg + '</div>';
+    html += '<button class="btn btn-ghost" id="copyMsgBtn" type="button">Copiar mensagem pro cliente</button>';
+    verdictBox.className = 'verdict ' + tier;
+    verdictBox.style.display = 'flex';
+    verdictBox.innerHTML = html;
+    document.getElementById('copyMsgBtn').addEventListener('click', ()=>{
+      const text = document.getElementById('verdictMsg').textContent;
+      copyToClipboard(text);
+    });
+    const autoBtn = document.getElementById('autoUpscaleBtn');
+    if(autoBtn){
+      autoBtn.addEventListener('click', ()=>{ processBtn.click(); });
+    }
+  }
+
+  // ---------- crop / fit tool (print mode) ----------
+  function resizeCropCanvasElement(){
+    const w = parseFloat(wCm.value)||1, h = parseFloat(hCm.value)||1;
+    const targetAspect = w/h;
+    const boxW = 320;
+    const boxH = Math.round(boxW/targetAspect);
+    cropCanvas.width = boxW;
+    cropCanvas.height = Math.max(60, Math.min(560, boxH));
+  }
+
+  function getCropRect(){
+    if(!srcCanvas) return null;
+    const w = parseFloat(wCm.value)||1, h = parseFloat(hCm.value)||1;
+    const targetAspect = w/h;
+    const srcW = srcCanvas.width, srcH = srcCanvas.height;
+    const srcAspect = srcW/srcH;
+    let baseW, baseH;
+    if(srcAspect > targetAspect){ baseH = srcH; baseW = srcH*targetAspect; }
+    else { baseW = srcW; baseH = srcW/targetAspect; }
+    const cw = baseW/cropZoom, ch = baseH/cropZoom;
+    const slackX = Math.max(0,(srcW-cw)/2), slackY = Math.max(0,(srcH-ch)/2);
+    const cx = srcW/2 + cropPanX*slackX;
+    const cy = srcH/2 + cropPanY*slackY;
+    return { sx: cx-cw/2, sy: cy-ch/2, sw: cw, sh: ch };
+  }
+
+  function renderCropPreview(){
+    if(!srcCanvas || mode !== 'impressao') return;
+    const ctx = cropCanvas.getContext('2d');
+    const bw = cropCanvas.width, bh = cropCanvas.height;
+    ctx.clearRect(0,0,bw,bh);
+    if(fitMode === 'contain'){
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0,0,bw,bh);
+      const scale = Math.min(bw/srcCanvas.width, bh/srcCanvas.height);
+      const dw = srcCanvas.width*scale, dh = srcCanvas.height*scale;
+      ctx.drawImage(srcCanvas, (bw-dw)/2, (bh-dh)/2, dw, dh);
+    } else {
+      const r = getCropRect();
+      if(!r) return;
+      ctx.drawImage(srcCanvas, r.sx, r.sy, r.sw, r.sh, 0, 0, bw, bh);
+    }
+  }
+
+  // ---------- laser live preview ----------
+  function fastPosterizePreview(){
+    if(mode !== 'laser' || !srcCanvas) return;
+    const maxDim = 640;
+    const ratio = Math.min(1, maxDim/Math.max(srcCanvas.width, srcCanvas.height));
+    const pw = Math.max(1, Math.round(srcCanvas.width*ratio));
+    const ph = Math.max(1, Math.round(srcCanvas.height*ratio));
+    const tmp = document.createElement('canvas');
+    tmp.width = pw; tmp.height = ph;
+    const tctx = tmp.getContext('2d');
+    tctx.drawImage(srcCanvas, 0, 0, pw, ph);
+    let data = tctx.getImageData(0,0,pw,ph).data;
+    const levels = parseInt(posterizeRange.value,10);
+    const contrastPct = parseInt(contrastRange.value,10);
+    data = grayscaleContrastPosterize(data, pw, ph, levels, contrastPct, invertToggle.checked);
+    tctx.putImageData(new ImageData(data,pw,ph), 0, 0);
+    showLaserLivePreview(tmp);
+  }
+
+  function showLaserLivePreview(previewCanvas){
+    previewPanel.style.display = 'flex';
+    stage.classList.remove('empty');
+    stage.innerHTML = '';
+    stage.appendChild(progressOverlay);
+    const wrap = document.createElement('div');
+    wrap.className = 'compare-wrap';
+    wrap.id = 'compareWrap';
+    const img = document.createElement('img');
+    img.src = previewCanvas.toDataURL();
+    img.className = 'img-before';
+    wrap.appendChild(img);
+    const liveTag = document.createElement('div');
+    liveTag.className = 'tag-after';
+    liveTag.style.right = '10px'; liveTag.style.left = 'auto';
+    liveTag.textContent = 'PRÉVIA AO VIVO';
+    wrap.appendChild(liveTag);
+    stage.appendChild(wrap);
+    document.getElementById('compareHint').style.display = 'none';
+  }
+
+  function copyToClipboard(text){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(()=> showToast('mensagem copiada — cole no WhatsApp'));
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); showToast('mensagem copiada'); }catch(e){}
+      document.body.removeChild(ta);
+    }
+  }
+
+  function renderInitialPreview(){
+    stage.classList.remove('empty');
+    stage.innerHTML = '';
+    stage.appendChild(progressOverlay);
+    const wrap = document.createElement('div');
+    wrap.className = 'compare-wrap';
+    wrap.id = 'compareWrap';
+    const before = document.createElement('img');
+    before.src = srcCanvas.toDataURL();
+    before.className = 'img-before';
+    wrap.appendChild(before);
+    stage.appendChild(wrap);
+    document.getElementById('compareHint').style.display = 'none';
+  }
+
+  // ---------- core: Lanczos resample (separable) ----------
+  function lanczos(x, a){
+    if(x === 0) return 1;
+    if(x <= -a || x >= a) return 0;
+    const px = Math.PI * x;
+    return (a * Math.sin(px) * Math.sin(px/a)) / (px*px);
+  }
+
+  function computeAxisWeights(srcSize, dstSize, a){
+    const scale = dstSize / srcSize;
+    const filterScale = scale < 1 ? 1/scale : 1;
+    const support = a * filterScale;
+    const out = new Array(dstSize);
+    for(let i=0;i<dstSize;i++){
+      const center = (i+0.5)/scale - 0.5;
+      let start = Math.floor(center - support);
+      let end = Math.ceil(center + support);
+      const wts = [];
+      let sum = 0;
+      for(let j=start;j<=end;j++){
+        const w = lanczos((center - j)/filterScale, a);
+        wts.push(w);
+        sum += w;
+      }
+      if(sum === 0) sum = 1;
+      for(let k=0;k<wts.length;k++) wts[k] /= sum;
+      out[i] = {start, wts};
+    }
+    return out;
+  }
+
+  function resizeLanczos(srcData, srcW, srcH, dstW, dstH, a){
+    const wX = computeAxisWeights(srcW, dstW, a);
+    const wY = computeAxisWeights(srcH, dstH, a);
+
+    const mid = new Float32Array(dstW*srcH*4);
+    for(let y=0; y<srcH; y++){
+      const rowOff = y*srcW*4;
+      for(let x=0; x<dstW; x++){
+        const {start, wts} = wX[x];
+        let r=0,g=0,b=0,al=0;
+        for(let k=0;k<wts.length;k++){
+          let sx = start+k;
+          if(sx<0) sx=0; else if(sx>=srcW) sx=srcW-1;
+          const idx = rowOff + sx*4;
+          const w = wts[k];
+          r += srcData[idx]*w;
+          g += srcData[idx+1]*w;
+          b += srcData[idx+2]*w;
+          al += srcData[idx+3]*w;
+        }
+        const outIdx = (y*dstW+x)*4;
+        mid[outIdx]=r; mid[outIdx+1]=g; mid[outIdx+2]=b; mid[outIdx+3]=al;
+      }
+    }
+
+    const out = new Uint8ClampedArray(dstW*dstH*4);
+    for(let x=0; x<dstW; x++){
+      for(let y=0; y<dstH; y++){
+        const {start, wts} = wY[y];
+        let r=0,g=0,b=0,al=0;
+        for(let k=0;k<wts.length;k++){
+          let sy = start+k;
+          if(sy<0) sy=0; else if(sy>=srcH) sy=srcH-1;
+          const idx = (sy*dstW+x)*4;
+          const w = wts[k];
+          r += mid[idx]*w;
+          g += mid[idx+1]*w;
+          b += mid[idx+2]*w;
+          al += mid[idx+3]*w;
+        }
+        const outIdx = (y*dstW+x)*4;
+        out[outIdx]=r; out[outIdx+1]=g; out[outIdx+2]=b; out[outIdx+3]=al;
+      }
+    }
+    return out;
+  }
+
+  function boxBlurPass(data, w, h, radius){
+    if(radius<=0) return data;
+    const tmp = new Float32Array(data.length);
+    const norm = 1/(radius*2+1);
+    for(let y=0;y<h;y++){
+      const rowOff = y*w*4;
+      for(let c=0;c<4;c++){
+        let acc=0;
+        for(let k=-radius;k<=radius;k++){
+          let xx = Math.min(w-1, Math.max(0,k));
+          acc += data[rowOff + xx*4 + c];
+        }
+        tmp[rowOff + c] = acc*norm;
+        for(let x=1;x<w;x++){
+          const addX = Math.min(w-1, x+radius);
+          const remX = Math.max(0, x-radius-1);
+          acc += data[rowOff + addX*4 + c] - data[rowOff + remX*4 + c];
+          tmp[rowOff + x*4 + c] = acc*norm;
+        }
+      }
+    }
+    const out = new Float32Array(data.length);
+    for(let x=0;x<w;x++){
+      for(let c=0;c<4;c++){
+        let acc=0;
+        for(let k=-radius;k<=radius;k++){
+          let yy = Math.min(h-1, Math.max(0,k));
+          acc += tmp[yy*w*4 + x*4 + c];
+        }
+        out[x*4+c] = acc*norm;
+        for(let y=1;y<h;y++){
+          const addY = Math.min(h-1, y+radius);
+          const remY = Math.max(0, y-radius-1);
+          acc += tmp[addY*w*4+x*4+c] - tmp[remY*w*4+x*4+c];
+          out[y*w*4+x*4+c] = acc*norm;
+        }
+      }
+    }
+    return out;
+  }
+
+  function unsharpMask(data, w, h, amount){
+    if(amount<=0) return data;
+    const blurred = boxBlurPass(Float32Array.from(data), w, h, 1);
+    const out = new Uint8ClampedArray(data.length);
+    for(let i=0;i<data.length;i+=4){
+      out[i]   = data[i]   + (data[i]   - blurred[i])   * amount;
+      out[i+1] = data[i+1] + (data[i+1] - blurred[i+1]) * amount;
+      out[i+2] = data[i+2] + (data[i+2] - blurred[i+2]) * amount;
+      out[i+3] = data[i+3];
+    }
+    return out;
+  }
+
+  function denoiseData(data, w, h, strength){
+    const radius = strength > 0.6 ? 2 : 1;
+    const blend = 0.25 + strength*0.35;
+    const blurred = boxBlurPass(Float32Array.from(data), w, h, radius);
+    const out = new Uint8ClampedArray(data.length);
+    for(let i=0;i<data.length;i++){
+      out[i] = data[i]*(1-blend) + blurred[i]*blend;
+    }
+    return out;
+  }
+
+  function grayscaleContrastPosterize(data, w, h, levels, contrastPct, invert){
+    const out = new Uint8ClampedArray(data.length);
+    const contrast = contrastPct/100 * 1.3; // 0..1.3
+    const factor = (259*(contrast*255+255)) / (255*(259-contrast*255));
+    const step = 255/(levels-1);
+    for(let i=0;i<data.length;i+=4){
+      let gray = 0.299*data[i] + 0.587*data[i+1] + 0.114*data[i+2];
+      gray = factor*(gray-128)+128;
+      gray = Math.max(0, Math.min(255, gray));
+      let q = Math.round(gray/step)*step;
+      q = Math.max(0, Math.min(255, q));
+      if(invert) q = 255-q;
+      out[i]=q; out[i+1]=q; out[i+2]=q; out[i+3]=data[i+3];
+    }
+    return out;
+  }
+
+  // ---------- process pipeline ----------
+  processBtn.addEventListener('click', ()=>{
+    if(!srcCanvas) return;
+    previewPanel.style.display = 'flex';
+    renderInitialPreview();
+    progressOverlay.classList.add('show');
+    processBtn.disabled = true;
+    progressTxt.textContent = 'preparando…';
+    setTimeout(runProcess, 40);
+  });
+
+  function runProcess(){
+    try{
+      let workingCanvas = srcCanvas;
+      if(mode === 'impressao' && fitMode === 'cover'){
+        const r = getCropRect();
+        if(r){
+          const cropTemp = document.createElement('canvas');
+          cropTemp.width = Math.max(1, Math.round(r.sw));
+          cropTemp.height = Math.max(1, Math.round(r.sh));
+          cropTemp.getContext('2d').drawImage(srcCanvas, r.sx, r.sy, r.sw, r.sh, 0, 0, cropTemp.width, cropTemp.height);
+          workingCanvas = cropTemp;
+        }
+      }
+
+      const ctx = workingCanvas.getContext('2d');
+      let srcData = ctx.getImageData(0,0,workingCanvas.width, workingCanvas.height).data;
+      let srcW = workingCanvas.width, srcH = workingCanvas.height;
+
+      const wantDenoise = denoiseToggle.checked || whatsappToggle.checked;
+      if(wantDenoise){
+        progressTxt.textContent = 'limpando artefatos / ruído…';
+        const strength = whatsappToggle.checked ? 0.85 : 0.4;
+        srcData = denoiseData(srcData, srcW, srcH, strength);
+      }
+
+      let scale;
+      if(mode === 'impressao') scale = lastVerdictScale || 1;
+      else if(mode === 'laser') scale = laserScale;
+      else scale = currentScale;
+
+      let reqW = null, reqH = null;
+      if(mode === 'impressao'){
+        const wCmVal = parseFloat(wCm.value)||1, hCmVal = parseFloat(hCm.value)||1, dpiVal = parseFloat(dpiSelect.value)||300;
+        reqW = Math.round((wCmVal/2.54)*dpiVal);
+        reqH = Math.round((hCmVal/2.54)*dpiVal);
+        if(reqW*reqH > MAX_OUTPUT_PIXELS){
+          const f = Math.sqrt(MAX_OUTPUT_PIXELS/(reqW*reqH));
+          reqW = Math.round(reqW*f); reqH = Math.round(reqH*f);
+        }
+      }
+
+      let outW = Math.round(srcW * scale);
+      let outH = Math.round(srcH * scale);
+      if(mode === 'impressao'){
+        outW = Math.min(outW, reqW);
+        outH = Math.min(outH, reqH);
+      } else if(outW*outH > MAX_OUTPUT_PIXELS){
+        const factor = Math.sqrt(MAX_OUTPUT_PIXELS/(outW*outH));
+        outW = Math.round(outW*factor);
+        outH = Math.round(outH*factor);
+      }
+      outW = Math.max(1, outW); outH = Math.max(1, outH);
+
+      progressTxt.textContent = 'ampliando (Lanczos)…';
+      let resized = resizeLanczos(srcData, srcW, srcH, outW, outH, 3);
+
+      if(mode === 'laser'){
+        progressTxt.textContent = 'convertendo pra P&B alto contraste…';
+        const levels = parseInt(posterizeRange.value,10);
+        const contrastPct = parseInt(contrastRange.value,10);
+        resized = grayscaleContrastPosterize(resized, outW, outH, levels, contrastPct, invertToggle.checked);
+      } else {
+        const sharpAmount = (parseInt(sharpRange.value,10)/100) * 1.4;
+        if(sharpAmount>0){
+          progressTxt.textContent = 'aplicando nitidez…';
+          resized = unsharpMask(resized, outW, outH, sharpAmount);
+        }
+      }
+
+      if(mode === 'impressao' && fitMode === 'contain' && (outW < reqW || outH < reqH)){
+        const inner = document.createElement('canvas');
+        inner.width = outW; inner.height = outH;
+        inner.getContext('2d').putImageData(new ImageData(resized, outW, outH), 0, 0);
+        resultCanvas = document.createElement('canvas');
+        resultCanvas.width = reqW; resultCanvas.height = reqH;
+        const rctx = resultCanvas.getContext('2d');
+        rctx.fillStyle = '#ffffff';
+        rctx.fillRect(0,0,reqW,reqH);
+        rctx.drawImage(inner, Math.round((reqW-outW)/2), Math.round((reqH-outH)/2));
+        statNew.textContent = reqW + ' × ' + reqH + ' (com borda branca)';
+      } else {
+        resultCanvas = document.createElement('canvas');
+        resultCanvas.width = outW; resultCanvas.height = outH;
+        resultCanvas.getContext('2d').putImageData(new ImageData(resized, outW, outH), 0, 0);
+        statNew.textContent = outW + ' × ' + outH;
+      }
+
+      showCompare();
+      resultActions.style.display = 'flex';
+      var waMsg = encodeURIComponent('Oi! Preparei minha imagem no ImagemHD e vou te mandar aqui como Documento (não como Foto) pra não perder qualidade 🙂');
+      document.getElementById('waSendBtn').href = 'https://wa.me/5511982877142?text=' + waMsg;
+      if(mode === 'impressao'){
+        printedSignature = currentPrintSignature();
+        updateVerdict();
+      }
+    }catch(err){
+      console.error(err);
+      showWarn('Algo deu errado ao processar essa imagem: ' + err.message);
+    }finally{
+      progressOverlay.classList.remove('show');
+      processBtn.disabled = false;
+    }
+  }
+
+  // ---------- before/after compare UI ----------
+  let dividerPct = 50;
+  function showCompare(){
+    stage.classList.remove('empty');
+    const wrap = document.getElementById('compareWrap');
+    wrap.querySelectorAll('.img-after,.divider,.tag-before,.tag-after,.loupe').forEach(n=>n.remove());
+    document.getElementById('compareHint').style.display = 'block';
+
+    const after = document.createElement('img');
+    after.src = resultCanvas.toDataURL('image/png');
+    after.className = 'img-after';
+    after.id = 'afterImg';
+    wrap.appendChild(after);
+
+    const div = document.createElement('div');
+    div.className = 'divider'; div.id = 'divider';
+    wrap.appendChild(div);
+
+    const tb = document.createElement('div'); tb.className='tag-before'; tb.textContent='ANTES'; wrap.appendChild(tb);
+    const ta = document.createElement('div'); ta.className='tag-after';
+    ta.textContent='DEPOIS' + (mode==='laser' ? ' · laser' : '');
+    wrap.appendChild(ta);
+
+    const loupe = document.createElement('div');
+    loupe.className = 'loupe'; loupe.id = 'loupe';
+    const loupeCanvas = document.createElement('canvas');
+    loupeCanvas.width = 150; loupeCanvas.height = 150;
+    loupe.appendChild(loupeCanvas);
+    const lbl = document.createElement('div'); lbl.className='lbl'; lbl.textContent='zoom 4× · pixels reais';
+    loupe.appendChild(lbl);
+    wrap.appendChild(loupe);
+
+    setDivider(50);
+    wireCompareEvents(wrap, loupeCanvas);
+  }
+
+  function setDivider(pct){
+    dividerPct = Math.max(2, Math.min(98, pct));
+    const after = document.getElementById('afterImg');
+    const div = document.getElementById('divider');
+    if(after) after.style.clipPath = `inset(0 0 0 ${dividerPct}%)`;
+    if(div) div.style.left = dividerPct + '%';
+  }
+
+  function wireCompareEvents(wrap, loupeCanvas){
+    let dragging = false;
+    const onMove = (clientX, clientY, rect)=>{
+      const pct = ((clientX-rect.left)/rect.width)*100;
+      if(dragging) setDivider(pct);
+      updateLoupe(clientX, clientY, rect);
+    };
+    const updateLoupe = (clientX, clientY, rect)=>{
+      const loupe = document.getElementById('loupe');
+      if(!resultCanvas) return;
+      const relX = (clientX-rect.left)/rect.width;
+      const relY = (clientY-rect.top)/rect.height;
+      if(relX<0||relX>1||relY<0||relY>1){ loupe.style.display='none'; return; }
+      loupe.style.display='block';
+      loupe.style.left = (clientX-rect.left-75)+'px';
+      loupe.style.top = (clientY-rect.top-75)+'px';
+      const lctx = loupeCanvas.getContext('2d');
+      lctx.imageSmoothingEnabled = false;
+      const srcX = relX*resultCanvas.width;
+      const srcY = relY*resultCanvas.height;
+      const zoomSrc = 150/4;
+      lctx.clearRect(0,0,150,150);
+      lctx.drawImage(resultCanvas,
+        srcX-zoomSrc/2, srcY-zoomSrc/2, zoomSrc, zoomSrc,
+        0,0,150,150);
+    };
+
+    wrap.addEventListener('mousedown', e=>{ dragging=true; const r=wrap.getBoundingClientRect(); onMove(e.clientX,e.clientY,r); });
+    window.addEventListener('mouseup', ()=> dragging=false);
+    wrap.addEventListener('mousemove', e=>{ const r=wrap.getBoundingClientRect(); onMove(e.clientX,e.clientY,r); });
+    wrap.addEventListener('mouseleave', ()=>{ const loupe=document.getElementById('loupe'); if(loupe) loupe.style.display='none'; });
+
+    wrap.addEventListener('touchstart', e=>{ dragging=true; const t=e.touches[0]; const r=wrap.getBoundingClientRect(); onMove(t.clientX,t.clientY,r); }, {passive:true});
+    wrap.addEventListener('touchmove', e=>{ const t=e.touches[0]; const r=wrap.getBoundingClientRect(); onMove(t.clientX,t.clientY,r); }, {passive:true});
+    wrap.addEventListener('touchend', ()=> dragging=false);
+  }
+
+  // ---------- downloads ----------
+  downloadBtn.addEventListener('click', ()=>{
+    if(!resultCanvas) return;
+    const link = document.createElement('a');
+    link.download = 'imagemhd-final-' + resultCanvas.width + 'x' + resultCanvas.height + '.png';
+    link.href = resultCanvas.toDataURL('image/png');
+    link.click();
+  });
+
+  proofBtn.addEventListener('click', ()=>{
+    if(!resultCanvas) return;
+    const maxSide = 1100;
+    const ratio = Math.min(1, maxSide/Math.max(resultCanvas.width, resultCanvas.height));
+    const pw = Math.round(resultCanvas.width*ratio);
+    const ph = Math.round(resultCanvas.height*ratio);
+    const pc = document.createElement('canvas');
+    pc.width = pw; pc.height = ph;
+    const pctx = pc.getContext('2d');
+    pctx.drawImage(resultCanvas, 0,0,pw,ph);
+
+    pctx.save();
+    pctx.globalAlpha = 0.22;
+    pctx.fillStyle = '#ffffff';
+    pctx.font = 'bold ' + Math.round(pw*0.045) + 'px Inter, sans-serif';
+    pctx.textAlign='center';
+    const label = 'PROVA \u2022 JOHEN ARTE GR\u00C1FICA';
+    const step = pw*0.42;
+    pctx.translate(pw/2, ph/2);
+    pctx.rotate(-Math.PI/8);
+    for(let y=-ph; y<ph*2; y+=step*0.55){
+      for(let x=-pw; x<pw*2; x+=step){
+        pctx.fillText(label, x-pw/2, y-ph/2);
+      }
+    }
+    pctx.restore();
+
+    const link = document.createElement('a');
+    link.download = 'imagemhd-prova-' + pw + 'x' + ph + '.jpg';
+    link.href = pc.toDataURL('image/jpeg', 0.85);
+    link.click();
+  });
+
+  resizeCropCanvasElement();
+
+})();
+</script>
+</body>
+</html>
