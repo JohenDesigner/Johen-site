@@ -153,6 +153,8 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .cabeca-cat p{color:var(--tinta-2);max-width:58ch;margin:10px 0 0}
 .filtros{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-block:18px}
 .filtros::-webkit-scrollbar{display:none}
+.filtros{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent)}
+.filtros button:last-child{margin-right:24px}
 .filtros button{flex:none;height:36px;padding:0 15px;border-radius:999px;border:1px solid var(--linha);background:var(--branco);font-size:14px;font-weight:500;cursor:pointer;color:var(--tinta-2)}
 .filtros button[aria-pressed="true"]{background:var(--azul);border-color:var(--azul);color:#fff}
 .grade{display:grid;grid-template-columns:1fr 1fr;gap:24px 14px}
