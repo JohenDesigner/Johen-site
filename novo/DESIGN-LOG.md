@@ -9,6 +9,7 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 - 2026-10-28 — Menu de categorias (todas as páginas): a última categoria que não cabe na tela era cortada seca ("Adesiv"), parecendo erro. Agora a borda direita do menu some num degradê suave, indicando que dá para arrastar, e ao chegar no fim "Pra seu Comércio" aparece inteira. (site.css: `mask-image` em `.nav-cat` + respiro no último link)
 - 2026-10-28 — Páginas de categoria: os filtros (Todos, Couché Brilho, Fosco + Verniz…) que não cabiam em 390px eram cortados secos na borda. Agora somem num degradê suave, igual ao menu de categorias, e o último filtro aparece inteiro ao arrastar. (site.css: `mask-image` em `.filtros` + respiro no último botão)
 - 2026-10-28 — Acessibilidade (todas as páginas): o contorno de foco (quem navega pelo teclado) era turquesa claro e quase sumia no fundo claro (contraste 2,1:1). Agora usa o turquesa escuro da marca (4,2:1) e, na faixa azul do topo e no rodapé azul, fica branco. Visual normal no toque não muda. (site.css: `:focus-visible`)
+- 2026-10-28 — A pedido do Johen: botão redondo flutuante do Instagram (@johen_artgrafica), no mesmo modelo do botão do WhatsApp, logo acima dele, com o degradê do Instagram. Some no editor, igual ao do WhatsApp. (build.py: `.insta-flut` + ícone; site.css)
 
 ## Sugestões para o Johen (não feitas)
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.

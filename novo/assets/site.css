@@ -246,6 +246,8 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 /* botão flutuante WhatsApp */
 .wpp-flut{position:fixed;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));width:52px;height:52px;border-radius:50%;background:#1e9e55;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.18);z-index:40}
 .wpp-flut svg{width:26px;height:26px;color:#fff}
+.insta-flut{position:fixed;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(82px + env(safe-area-inset-bottom,0px));width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fd5949 45%,#d6249f 60%,#285aeb 90%);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.18);z-index:40}
+.insta-flut svg{width:26px;height:26px;color:#fff}
 
 /* toast */
 .toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tinta);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;font-weight:500;z-index:90;display:flex;gap:12px;align-items:center;max-width:calc(100vw - 32px)}
@@ -268,7 +270,7 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .ed-plus{width:58px;height:58px;border-radius:50%;background:var(--azul);color:#fff;border:0;font-size:30px;font-weight:300;line-height:1;cursor:pointer;margin-top:-26px;box-shadow:0 6px 16px rgba(0,0,0,.18)}
 .ed-mais{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);display:flex;gap:10px;padding:12px;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -6px 18px rgba(0,0,0,.06)}
 .ed-mais .btn{white-space:nowrap}
-body:has(.editor) .wpp-flut{display:none}
+body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.hero-midia img:first-of-type{opacity:1}}
 
