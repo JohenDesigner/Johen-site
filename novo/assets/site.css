@@ -47,6 +47,8 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .resultados p{margin:0;padding:14px;color:var(--tinta-2);font-size:15px}
 .nav-cat{display:flex;gap:24px;overflow-x:auto;scrollbar-width:none;white-space:nowrap;padding-bottom:11px;font-size:14px;font-weight:500;color:var(--tinta-2)}
 .nav-cat::-webkit-scrollbar{display:none}
+.nav-cat{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent)}
+.nav-cat a:last-child{margin-right:28px}
 .nav-cat a{text-decoration:none;padding:3px 0;border-bottom:1.5px solid transparent}
 .nav-cat a[aria-current="page"],.nav-cat a:hover{border-color:var(--laranja);color:var(--tinta)}
 
