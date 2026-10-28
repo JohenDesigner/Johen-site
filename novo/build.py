@@ -97,7 +97,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
     open(caminho, "w").write(doc)
 
 def pcard(c, p, fundo):
-    un = " o m²" if p.get("m2") else (" " + p["opcoes"][0]["label"] if " un." in p["opcoes"][0]["label"] else "")
+    un = " o m²" if p.get("m2") else ""
     return f'''<a class="pcard" href="{p['id']}/" data-sub="{p['sub']}"><div class="pcard-img {fundo}"><img src="../{p['img']}" alt="{E(p['nome'])}" loading="lazy"></div>
 <div class="pcard-rod"><b>{E(p['nome'])}</b><small>{E(p['subNome'])}</small><div class="preco-de">a partir de <strong>{brl(pmin(p))}</strong>{E(un)}</div></div></a>'''
 
@@ -235,45 +235,49 @@ corpo = f'''<div class="wrap editor">
 pagina("editor/index.html", "Personalizar caneca | Johen Arte Gráfica", "Monte sua caneca com a sua arte e veja como fica antes de pedir.", corpo, "canecas", '<script src="../assets/editor.js" defer></script>')
 
 # ---------- home ----------
-hero_fotos = ["cartoes-p1","canecas-p2","adesivos-p16","panfletos-p5","camisetas-p8","canecas-p9","adesivos-p13"]
-trab = ["panfletos-p2","cartoes-p1","canecas-p3","adesivos-p28","panfletos-p8","cartoes-p4","adesivos-p19","panfletos-p9","camisetas-p2","adesivos-p2"]
+hero_fotos = ["cartoes-p1","canecas-p2","cartoes-p3","canecas-p9","camisetas-p5","cartoes-p7"]
+trab = ["cartoes-p1","canecas-p6","adesivos-p20","cartoes-p5","camisetas-p3","canecas-p2","cartoes-p6","adesivos-p21","canecas-p5","cartoes-p4"]
 faixa = "".join(f'<img src="img/produtos/{t}.webp" alt="" loading="lazy">' for t in trab) * 2
-vit = "".join(f'''<a class="vcard" href="{s}/"><div class="vcard-img {f}"><img src="{foto}" alt="{E(n)}" loading="lazy"></div><div class="vcard-rod"><span class="link-seta">Ver {E(n.lower() if s!="cartoes" else "cartões de visita")}</span><small>a partir de {brl(min(pmin(p) for p in D[s]))}</small></div></a>''' for s,n,m,f,r,foto in CATS)
-vit += "".join(f'''<a class="vcard" href="{s}/"><div class="vcard-img {f}"><img src="{foto}" alt="{E(n)}" loading="lazy"></div><div class="vcard-rod"><span class="link-seta">{E(n)}</span><small>{E(r)}</small></div></a>''' for s,n,foto,f,r in SERVS[:2])
+VFOTO = {"cartoes":"img/produtos/cartoes-p1.webp","panfletos":"img/produtos/panfletos-p5.webp","banners":"img/produtos/banners-p2.webp","adesivos":"img/produtos/adesivos-p20.webp","camisetas":"img/produtos/camisetas-p5.webp","canecas":"img/produtos/canecas-p2.webp"}
+vit = "".join(f'''<a class="vcard" href="{s}/"><div class="vcard-img {f}"><img src="{VFOTO[s]}" alt="{E(n)}" loading="lazy"></div><div class="vcard-rod"><span class="vcard-nome">{E(n)}</span><small>a partir de {brl(min(pmin(p) for p in D[s]))}</small></div></a>''' for s,n,m,f,r,foto in CATS)
 masc = "".join(f'<a class="mascote" href="{s}/"><img src="img/mascotes/{m}.webp" alt="" width="120" height="120"><span>{E(n.split(" e ")[0].replace(" de Visita",""))}</span></a>' for s,n,m,*_ in CATS)
 corpo = f'''
-<section class="hero">
+<section class="hero"><div class="wrap hero-grid">
+  <div class="hero-txt">
+    <span class="sobre">Gráfica e personalizados · Jardim Selma, SP</span>
+    <h1>Sua ideia, impressa com capricho.</h1>
+    <p>Cartões, adesivos, banners, camisetas e canecas. Escolha no site, veja o preço na hora e finalize pelo WhatsApp.</p>
+    <div class="hero-acoes"><a class="btn btn-pri" href="#produtos">Ver produtos</a><a class="link-seta" href="{wpp('Olá! Vim pelo site e quero um orçamento.')}">Falar com a gente</a></div>
+  </div>
   <div class="hero-midia" aria-hidden="true">
     <video autoplay muted loop playsinline preload="metadata"><source src="video/hero.mp4" type="video/mp4"></video>
     {"".join(f'<img src="img/produtos/{h}.webp" alt="">' for h in hero_fotos)}
+    <span class="rascunho">Rascunho: vídeo da loja</span>
   </div>
-  <span class="rascunho">Rascunho: aqui entra o vídeo da loja</span>
-  <div class="wrap hero-txt">
-    <h1>Sua ideia, impressa e entregue no Jardim Selma.</h1>
-    <p>Cartões, adesivos, banners, camisetas e canecas. Peça pelo site e acompanhe pelo WhatsApp.</p>
-    <div><a class="btn btn-pri" href="#produtos">Ver produtos</a></div>
-  </div>
-</section>
+</div></section>
 <section class="secao" id="produtos"><div class="wrap">
-  <div class="secao-tit"><div><h2>O que vamos imprimir hoje?</h2><p>Toque num personagem e veja preços e modelos.</p></div></div>
+  <div class="secao-tit"><h2>Comece por aqui</h2></div>
   <div class="mascotes">{masc}</div>
 </div></section>
-<section style="padding-bottom:10px"><div class="wrap secao-tit" style="margin-bottom:12px"><div><h2>Feito aqui</h2><p>Trabalhos que já saíram da nossa loja.</p></div><span class="rascunho">Rascunho: trocar por fotos reais de clientes</span></div>
+<section class="secao secao-branca"><div class="wrap">
+  <div class="secao-tit"><h2>Mais pedidos</h2><a class="link-seta" href="cartoes/">Ver tudo</a></div>
+  <div class="vitrine">{vit}</div>
+</div></section>
+<section class="secao"><div class="wrap secao-tit"><div><h2>Feito aqui</h2><p>Trabalhos que já saíram da nossa loja.</p></div><span class="rascunho">Rascunho: fotos reais de clientes</span></div>
 <div class="faixa" aria-hidden="true"><div class="faixa-trilho">{faixa}</div></div></section>
-<section class="secao"><div class="wrap"><div class="vitrine">{vit}</div></div></section>
-<section class="wrap"><div class="comercio"><div class="wrap">
-  <h2>Pra seu comércio</h2><p class="lead">Tudo que um comércio do bairro precisa pra ser visto, num lugar só.</p>
+<section class="secao"><div class="wrap"><div class="comercio">
+  <div><span class="sobre">Pra seu comércio</span><h2>Tudo pro seu negócio ser visto, num lugar só.</h2></div>
   <div class="serv">
-    <a href="../cardapio-ar/"><span class="novo">Novidade</span><b>Cardápio em 3D</b><span>O prato aparece em tamanho real na mesa do cliente.</span></a>
+    <a href="../cardapio-ar/"><b>Cardápio em 3D <em>novo</em></b><span>O prato aparece em tamanho real na mesa do cliente.</span></a>
     <a href="comercio/"><b>Site com mensalidade</b><span>Seu negócio no Google, com WhatsApp.</span></a>
     <a href="envelopamento/"><b>Fachada e vitrine</b><span>Adesivo aplicado por nós.</span></a>
     <a href="gravacao-laser/"><b>Brindes gravados</b><span>Garrafas e copos com sua marca.</span></a>
   </div>
 </div></div></section>
-<section class="secao"><div class="wrap"><div class="beneficios">
-  <div><b>Mais de 5.000</b><span>clientes atendidos</span></div>
-  <div><b>3 a 5 dias úteis</b><span>prazo da maioria dos produtos</span></div>
-  <div><b>Arte inclusa?</b><span>a gente cria se você não tiver</span></div>
+<section class="secao" style="padding-top:8px"><div class="wrap"><div class="beneficios">
+  <div><b>+5.000</b><span>clientes atendidos</span></div>
+  <div><b>3 a 5 dias</b><span>prazo da maioria dos produtos</span></div>
+  <div><b>Sem arte?</b><span>a gente cria pra você</span></div>
   <div><b>Retire na loja</b><span>Jardim Selma, São Paulo</span></div>
 </div></div></section>'''
 pagina("index.html", "Johen Arte Gráfica | Gráfica e personalizados no Jardim Selma, SP", "Cartões de visita, panfletos, banners, adesivos, camisetas e canecas personalizadas em São Paulo. Peça pelo site e acompanhe pelo WhatsApp.", corpo)
