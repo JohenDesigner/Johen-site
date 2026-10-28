@@ -36,10 +36,7 @@ ICO = {
 MASC = json.load(open("dados/mascotes.json"))
 def masc_anim(nome, R="", i=0):
     m = MASC[nome]; W, H = m["w"], m["h"]
-    if "piv" in m:
-        camadas = f'<img class="camada" style="position:absolute;inset:0;width:100%;height:100%" src="{R}img/mascotes/{nome}-corpo.webp" alt=""><img class="camada mao" src="{R}img/mascotes/{nome}-mao.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;transform-origin:{m["piv"][0]}% {m["piv"][1]}%">'
-    else:
-        camadas = f'<img class="camada" style="position:absolute;inset:0;width:100%;height:100%" src="{R}img/mascotes/{nome}.webp" alt="">'
+    camadas = f'<img class="camada" style="position:absolute;inset:0;width:100%;height:100%" src="{R}img/mascotes/{nome}.webp" alt="">'
     olhos = "".join(f'<ellipse cx="{x}" cy="{y}" rx="{rx+6}" ry="{ry+6}" fill="{cor}"/><path d="M{x-rx} {y+4} q{rx} {ry*0.55:.0f} {2*rx} 0" fill="none" stroke="#1b1b1f" stroke-width="7" stroke-linecap="round"/>' for x,y,rx,ry,cor in m["olhos"])
     return f'<span class="masc-anim" style="position:relative;display:block;width:100%;max-width:100px;margin:0 auto;aspect-ratio:{W}/{H};--d:{i*0.55:.2f}s;--d2:{(i*1.3)%4.6:.2f}s">{camadas}<svg class="palp" style="position:absolute;inset:0;width:100%;height:100%;opacity:0" viewBox="0 0 {W} {H}" aria-hidden="true">{olhos}</svg></span>'
 
