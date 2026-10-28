@@ -99,7 +99,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
 def pcard(c, p, fundo):
     un = " o m²" if p.get("m2") else ""
     return f'''<a class="pcard" href="{p['id']}/" data-sub="{p['sub']}"><div class="pcard-img {fundo}"><img src="../{p['img']}" alt="{E(p['nome'])}" loading="lazy"></div>
-<div class="pcard-rod"><b>{E(p['nome'])}</b><small>{E(p['subNome'])}</small><div class="preco-de">a partir de <strong>{brl(pmin(p))}</strong>{E(un)}</div></div></a>'''
+<div class="pcard-rod"><b>{E(p['nome'])}</b><small>{E(p['subNome'])}</small></div></a>'''
 
 # ---------- categorias e produtos ----------
 for slug, nome, masc, fundo, resumo, foto in CATS:
