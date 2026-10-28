@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cardápio AR Bistrô</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600&display=swap">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
+<style>
+/* Layout: cardápio de uma coluna no celular; visor 3D grande no topo, abas dos pratos, ficha do prato, rodapé azul da marca */
+:root{
+  --bg:#f7f9f9; --surface:#ffffff; --fg:#14262a; --muted:#5b6f73; --line:#dde6e7;
+  --turq:#00a9ae; --turq-soft:#e2f6f6; --orange:#e8650a; --yellow:#f5a623; --foot:#0b5f73; --foot-fg:#ffffff;
+  --stage:radial-gradient(120% 90% at 50% 30%,#ffffff 0%,#e9f1f1 70%,#dbe7e8 100%);
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1719; --surface:#142225; --fg:#e8f1f2; --muted:#9db0b3; --line:#24373a;
+  --turq:#2fd0d4; --turq-soft:#123638; --orange:#ff8a3d; --yellow:#f5b84a; --foot:#0a3f4c; --foot-fg:#e8f1f2;
+  --stage:radial-gradient(120% 90% at 50% 30%,#22373b 0%,#152427 70%,#0f1b1d 100%); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1719; --surface:#142225; --fg:#e8f1f2; --muted:#9db0b3; --line:#24373a;
+  --turq:#2fd0d4; --turq-soft:#123638; --orange:#ff8a3d; --yellow:#f5b84a; --foot:#0a3f4c; --foot-fg:#e8f1f2;
+  --stage:radial-gradient(120% 90% at 50% 30%,#22373b 0%,#152427 70%,#0f1b1d 100%); color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 28px;display:flex;flex-direction:column;gap:16px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--turq);font-weight:600}
+h1{font-family:var(--display);font-weight:800;font-size:30px;line-height:1.05;margin:2px 0 0;text-wrap:balance}
+.mesa{font-family:var(--display);font-weight:600;font-size:13px;border:1.5px solid var(--line);border-radius:999px;padding:5px 11px;white-space:nowrap;color:var(--muted)}
+.stage{position:relative;border-radius:22px;overflow:hidden;background:var(--stage);border:1px solid var(--line)}
+model-viewer{width:100%;height:min(62vh,420px);--poster-color:transparent;background:transparent}
+.size-tag{position:absolute;left:12px;top:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.size-tag b{color:var(--fg);font-family:var(--display);font-size:15px}
+.hint{position:absolute;right:12px;top:12px;font-size:11px;color:var(--muted);background:var(--surface);border-radius:999px;padding:4px 9px;border:1px solid var(--line)}
+.ar-btn{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:var(--orange);color:#fff;border:0;border-radius:999px;padding:12px 20px;font:600 15px var(--body);box-shadow:0 6px 18px rgba(232,101,10,.35);cursor:pointer;white-space:nowrap}
+.ar-btn:focus-visible,.tab:focus-visible{outline:3px solid var(--turq);outline-offset:2px}
+.ar-off{position:absolute;left:12px;right:12px;bottom:12px;text-align:center;font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tab{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:10px 8px;text-align:left;cursor:pointer;color:var(--fg);font:inherit;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tab span{font-family:var(--display);font-weight:600;font-size:14px;line-height:1.15}
+.tab small{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.tab[aria-selected="true"]{border-color:var(--turq);background:var(--turq-soft)}
+.ficha{display:flex;flex-direction:column;gap:8px}
+.ficha-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+h2{font-family:var(--display);font-weight:800;font-size:24px;margin:0;line-height:1.1}
+.preco{font-family:var(--display);font-weight:800;font-size:22px;color:var(--orange);white-space:nowrap;font-variant-numeric:tabular-nums}
+.desc{margin:0;color:var(--muted);max-width:60ch}
+.medidas{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 0;padding:0;list-style:none}
+.medidas li{font-size:12px;border:1px solid var(--line);border-radius:8px;padding:4px 8px;color:var(--muted);font-variant-numeric:tabular-nums}
+.medidas li b{color:var(--fg)}
+.como{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.como h3{margin:0 0 6px;font-family:var(--display);font-size:16px}
+.como ol{margin:0;padding-left:20px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+footer{background:var(--foot);color:var(--foot-fg);border-radius:22px 22px 0 0;margin-top:6px}
+footer .in{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:4px;font-size:13px}
+footer strong{font-family:var(--display);font-size:16px}
+footer .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--yellow);margin-right:6px}
+@media (prefers-reduced-motion:reduce){model-viewer{--progress-bar-height:0}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Cardápio em realidade aumentada</div>
+      <h1>Bistrô do Bairro</h1>
+    </div>
+    <div class="mesa">Mesa 07</div>
+  </header>
+
+  <div class="stage">
+    <model-viewer id="mv" src="hamburguer.glb" alt="Modelo 3D do prato selecionado"
+      ar ar-modes="webxr scene-viewer quick-look" ar-scale="fixed" ar-placement="floor"
+      camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="1500" rotation-per-second="18deg"
+      camera-orbit="30deg 62deg auto" shadow-intensity="1.1" shadow-softness="0.8" exposure="1.05"
+      environment-image="neutral" interaction-prompt="none">
+      <button slot="ar-button" class="ar-btn" id="arbtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg>
+        Ver na sua mesa
+      </button>
+    </model-viewer>
+    <div class="size-tag">tamanho real <b id="tamanho">Ø 11 cm</b></div>
+    <div class="hint">arraste para girar</div>
+    <div class="ar-off" id="aroff" hidden>Abra pelo QR code no celular para ver o prato em cima da mesa.</div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Pratos">
+    <button class="tab" role="tab" id="t-hamburguer" data-k="hamburguer" aria-selected="true"><span>Smash da Casa</span><small>R$ 34,90</small></button>
+    <button class="tab" role="tab" id="t-pf" data-k="pf" aria-selected="false"><span>PF Completo</span><small>R$ 27,90</small></button>
+    <button class="tab" role="tab" id="t-pizza" data-k="pizza" aria-selected="false"><span>Pizza Calabresa</span><small>R$ 59,90</small></button>
+  </div>
+
+  <section class="ficha" aria-live="polite">
+    <div class="ficha-top"><h2 id="nome">Smash da Casa</h2><div class="preco" id="preco">R$ 34,90</div></div>
+    <p class="desc" id="desc">Pão brioche com gergelim, blend de 150 g, cheddar, alface e tomate. Acompanha batata frita na tábua.</p>
+    <ul class="medidas" id="medidas"></ul>
+  </section>
+
+  <section class="como">
+    <h3>Como funciona na mesa</h3>
+    <ol>
+      <li>O cliente aponta a câmera para o QR code da mesa.</li>
+      <li>Escolhe o prato e toca em <b>Ver na sua mesa</b>.</li>
+      <li>O prato aparece em tamanho real em cima da mesa, pela câmera.</li>
+    </ol>
+  </section>
+</div>
+
+<footer><div class="in">
+  <strong><span class="dot"></span>Demo criada por Johen Arte Grafica</strong>
+  <span>Cardápio AR + QR code de mesa · @johen_artgrafica</span>
+  <span>WhatsApp 11 98287-7142</span>
+</div></footer>
+
+<script>
+const pratos={
+  hamburguer:{src:"hamburguer.glb",nome:"Smash da Casa",preco:"R$ 34,90",tam:"Ø 11 cm",
+    desc:"Pão brioche com gergelim, blend de 150 g, cheddar, alface e tomate. Acompanha batata frita na tábua.",
+    med:[["Pão","11 cm"],["Altura","9 cm"],["Tábua","30 × 20 cm"]]},
+  pf:{src:"prato-feito.glb",nome:"PF Completo",preco:"R$ 27,90",tam:"Ø 27 cm",
+    desc:"Arroz, feijão, bife acebolado, ovo frito e salada de alface e tomate. Serve bem uma pessoa.",
+    med:[["Prato","27 cm"],["Bife","11 × 8 cm"],["Porção","~550 g"]]},
+  pizza:{src:"pizza.glb",nome:"Pizza Calabresa",preco:"R$ 59,90",tam:"Ø 35 cm",
+    desc:"Média de 8 fatias com molho de tomate, muçarela, calabresa, cebola e azeitona. Servida na tábua.",
+    med:[["Pizza","35 cm"],["Fatias","8"],["Tábua","38 cm"]]}
+};
+const mv=document.getElementById("mv");
+function mostrar(k){
+  const p=pratos[k];
+  mv.src=p.src;
+  document.getElementById("nome").textContent=p.nome;
+  document.getElementById("preco").textContent=p.preco;
+  document.getElementById("desc").textContent=p.desc;
+  document.getElementById("tamanho").textContent=p.tam;
+  document.getElementById("medidas").innerHTML=p.med.map(m=>`<li>${m[0]} <b>${m[1]}</b></li>`).join("");
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.k===k?"true":"false"));
+}
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>mostrar(t.dataset.k)));
+mostrar("hamburguer");
+mv.addEventListener("load",()=>{ if(!mv.canActivateAR) document.getElementById("aroff").hidden=false; });
+</script>
+</body>
+</html>
