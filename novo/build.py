@@ -31,6 +31,17 @@ ICO = {
  "wpp": '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.1 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>',
 }
 
+
+MASC = json.load(open("dados/mascotes.json"))
+def masc_anim(nome, R="", i=0):
+    m = MASC[nome]; W, H = m["w"], m["h"]
+    if "piv" in m:
+        camadas = f'<img class="camada" src="{R}img/mascotes/{nome}-corpo.webp" alt=""><img class="camada mao" src="{R}img/mascotes/{nome}-mao.webp" alt="" style="transform-origin:{m["piv"][0]}% {m["piv"][1]}%">'
+    else:
+        camadas = f'<img class="camada" src="{R}img/mascotes/{nome}.webp" alt="">'
+    olhos = "".join(f'<ellipse cx="{x}" cy="{y}" rx="{rx+6}" ry="{ry+6}" fill="{cor}"/><path d="M{x-rx} {y+4} q{rx} {ry*0.55:.0f} {2*rx} 0" fill="none" stroke="#1b1b1f" stroke-width="7" stroke-linecap="round"/>' for x,y,rx,ry,cor in m["olhos"])
+    return f'<span class="masc-anim" style="aspect-ratio:{W}/{H};--d:{i*0.55:.2f}s;--d2:{(i*1.3)%4.6:.2f}s">{camadas}<svg class="palp" viewBox="0 0 {W} {H}" aria-hidden="true">{olhos}</svg></span>'
+
 def brl(v): return ("R$ " + f"{v:,.2f}").replace(",", "X").replace(".", ",").replace("X", ".")
 def pmin(p): return p["m2"] if p.get("m2") else min(o["preco"] for o in p["opcoes"])
 def wpp(msg): import urllib.parse; return f"https://wa.me/{WPP}?text=" + urllib.parse.quote(msg)
@@ -239,6 +250,7 @@ hero_fotos = ["cartoes-p1","canecas-p2","cartoes-p3","canecas-p9","camisetas-p5"
 CARDS = [("cartoes/","Cartões de Visita","cartoes-p3"),("canecas/","Canecas e Térmicos","canecas-p2"),("adesivos/","Adesivos e Etiquetas","adesivos-p20"),
          ("camisetas/","Camisetas","camisetas-p5"),("panfletos/","Panfletos","panfletos-p5"),("banners/","Banners e Placas","banners-p2"),
          ("gravacao-laser/","Gravação a Laser","canecas-p9"),("envelopamento/","Envelopamento e Vitrine","adesivos-p16"),("comercio/","Pra seu Comércio","adesivos-p12")]
+masc = "".join(f'<a class="mascote" href="{sl}/">{masc_anim(m, "", i)}<span>{E(n.split(" e ")[0].replace(" de Visita",""))}</span></a>' for i,(sl,n,m,*_) in enumerate(CATS))
 cards = "".join(f'<a class="mcard" href="{h}"><div class="mcard-img"><img src="img/produtos/{f}.webp" alt="" loading="lazy"></div><span>Ver {E(n)}</span></a>' for h,n,f in CARDS)
 corpo = f'''
 <section class="inicio"><div class="wrap">
@@ -250,7 +262,8 @@ corpo = f'''
     </div>
   </a>
   <h1 class="inicio-tit">Sua ideia, impressa com capricho.</h1>
-  <div class="mcards" id="produtos">{cards}</div>
+  <div class="mascotes" id="produtos">{masc}</div>
+  <div class="mcards">{cards}</div>
 </div></section>'''
 pagina("index.html", "Johen Arte Gráfica | Gráfica e personalizados no Jardim Selma, SP", "Cartões de visita, panfletos, banners, adesivos, camisetas e canecas personalizadas em São Paulo. Peça pelo site e acompanhe pelo WhatsApp.", corpo)
 print("ok")
