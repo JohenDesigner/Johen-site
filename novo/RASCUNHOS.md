@@ -6,6 +6,5 @@
 4. Textos e preços das páginas de Gravação a Laser, Envelopamento e Criação de Arte.
 5. Cores do copo térmico no editor 3D: hoje mostra Preto e Branco (as da foto). Confirmar quais cores existem.
 6. Rodapé > Sobre: conferir a lista "Também fazemos" (`build.py`).
-7. Camiseta 3D: confirmar o tamanho máximo da estampa DTF (hoje 28 x 35 cm na frente e nas costas, em `assets/editor.js`, MODELOS camiseta).
 
 Para atualizar produtos e preços: editar `dados/produtos.json` e rodar `python3 build.py` dentro de `novo/`.
