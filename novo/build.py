@@ -118,8 +118,12 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
 
 def pcard(c, p, fundo):
     un = " o m²" if p.get("m2") else ""
+    # subtítulo só quando acrescenta algo (ex.: "Couché Brilho" já está em "Couché 250g — Couché Brilho")
+    norm = lambda x: " ".join(x.lower().split())
+    sub = p.get('subNome', '')
+    sub_html = f"<small>{E(sub)}</small>" if sub and norm(sub) not in norm(p['nome']) else ""
     return f'''<a class="pcard" href="{p['id']}/" data-sub="{p['sub']}"><div class="pcard-img {fundo}"><img src="../{p['img']}" alt="{E(p['nome'])}" loading="lazy"></div>
-<div class="pcard-rod"><b>{E(p['nome'])}</b><small>{E(p['subNome'])}</small></div></a>'''
+<div class="pcard-rod"><b>{E(p['nome'])}</b>{sub_html}</div></a>'''
 
 # ---------- categorias e produtos ----------
 for slug, nome, masc, fundo, resumo, foto in CATS:

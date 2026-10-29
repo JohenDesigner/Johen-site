@@ -48,6 +48,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-29 — A pedido do Johen (camiseta 3D): estava "parecendo boneco" (peito marcado, ombro alto e quadrado, manga espetada). Refeita no caimento de camiseta pendurada, como a referência de catálogo que ele mandou: tronco reto com leve abertura na barra e seção mais achatada, ombros descendo inclinados da gola, mangas caídas (lado de fora inclinado desde o ombro, lado de dentro curto encostando no corpo, boca da manga quase reta) e cava "colada" no tronco, sem fresta. Dobras diagonais leves saindo da cava. Balanço das mangas na caminhada ficou menor. (mockup3d.js: `montarCamiseta`)
 
+- 2026-10-29 — Cards de produto (páginas de categoria e "Veja também" no produto): a linha cinza embaixo do nome repetia o que já estava no nome (ex.: "Couché 300g — Couché Brilho" / "Couché Brilho"). Agora essa linha só aparece quando acrescenta algo (ex.: "Placas PS", "Com Recorte", "Canecas"); some em 33 dos 76 produtos. Cards mais limpos e a página de Cartões ~90px mais curta em 390px. Nenhum dado de produto mudou. (build.py: `pcard`)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.
