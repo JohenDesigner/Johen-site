@@ -116,6 +116,9 @@ function iniciarProduto() {
     if (qtdOut) qtdOut.textContent = qtd;
   }
   [sel, larg, alt, cx].forEach(el => el?.addEventListener("input", render));
+  // leva a escolha da caixinha para o editor
+  const pers = $("#personalizar");
+  if (pers && cx) cx.addEventListener("change", () => { const u = new URL(pers.href); cx.checked ? u.searchParams.set("cx", "1") : u.searchParams.delete("cx"); pers.href = u.toString(); });
   $("#menos")?.addEventListener("click", () => { qtd = Math.max(1, qtd - 1); render(); });
   $("#mais")?.addEventListener("click", () => { qtd++; render(); });
   $("#add")?.addEventListener("click", () => {

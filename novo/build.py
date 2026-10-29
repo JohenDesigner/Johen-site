@@ -21,7 +21,7 @@ SERVS = [  # slug, nome, foto, fundo, resumo
   ("gravacao-laser", "Gravação a Laser", "img/produtos/canecas-p9.webp", "bg-azul", "Nome, logo ou frase gravados pra sempre em garrafa, copo, madeira e acrílico."),
   ("envelopamento",  "Envelopamento e Vitrine", "img/produtos/adesivos-p16.webp", "bg-turquesa", "Adesivo de frota, fachada e vitrine aplicado por nós."),
   ("design",         "Criação de Arte", "img/produtos/panfletos-p2.webp", "bg-laranja", "Não tem a arte? A gente cria seu logo, cartão, panfleto ou post."),
-  ("comercio",       "Pra seu Comércio", "img/produtos/adesivos-p12.webp", "bg-amarelo", "Cardápio em 3D na mesa, site com mensalidade e comunicação visual completa."),
+  ("comercio",       "Para seu Comércio", "img/produtos/adesivos-p12.webp", "bg-amarelo", "Cardápio em 3D na mesa, site com mensalidade e comunicação visual completa."),
 ]
 
 ICO = {
@@ -64,13 +64,14 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
 <meta property="og:description" content="{E(desc)}">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#ffffff">
+<script>/* recarregou ou entrou direto (sem vir de outra página do site)? vai para a página inicial */(function(){{try{{var h=new URL(document.documentElement.dataset.root||"./",location.href).pathname;if(location.pathname===h||location.pathname===h+"index.html")return;var n=performance.getEntriesByType("navigation")[0],t=n?n.type:"",r=document.referrer,doSite=false;try{{var u=new URL(r);doSite=u.origin===location.origin&&u.pathname.indexOf(h)===0}}catch(e){{}}if(t==="reload"||(t==="navigate"&&!doSite))location.replace(h)}}catch(e){{}}}})()</script>
 <link rel="icon" href="{R}img/marca/logo-icone.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Outfit:wght@500;600&display=swap">
 <link rel="stylesheet" href="{R}assets/site.css?v={VER}">
 </head>
 <body>
-<div class="promo">5% OFF na primeira compra · <a href="{wpp('Olá! Quero meu desconto de 5% na primeira compra.')}">peça pelo WhatsApp</a></div>
+<div class="promo">5% OFF na sua primeira compra</div>
 <header class="topo">
   <div class="wrap">
     <div class="topo-linha">
@@ -92,10 +93,17 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
       <img class="marca" src="{R}img/marca/logo-wordmark.webp" alt="Johen Artes Gráficas">
       <p>R. Pedro Fernandes Aragão, 269 · Jardim Selma · São Paulo, SP</p>
       <p>WhatsApp (11) 98287-7142 · @johen_artgrafica</p>
-      <p class="cnpj">CNPJ 65.480.613/0001-19</p>
     </div>
     <div><h3>Produtos</h3><ul>{"".join(f'<li><a href="{R}{s}/">{E(n)}</a></li>' for s,n,*_ in CATS)}</ul></div>
-    <div><h3>Serviços</h3><ul>{"".join(f'<li><a href="{R}{s}/">{E(n)}</a></li>' for s,n,*_ in SERVS)}<li><a href="https://instagram.com/johen_artgrafica">Instagram</a></li><li><a href="https://g.page/r/CWKTHinBP02gEAI/review">Avaliar no Google</a></li></ul></div>
+    <div><h3>Serviços</h3><ul>{"".join(f'<li><a href="{R}{s}/">{E(n)}</a></li>' for s,n,*_ in SERVS)}<li><a href="https://instagram.com/johen_artgrafica">Instagram</a></li><li><a href="https://g.page/r/CWKTHinBP02gEAI/review">Nos avalie no Google</a></li></ul></div>
+    <div class="sobre-rod"><h3>Sobre</h3>
+      <p class="destaque">Mais de 5 mil projetos aprovados.</p>
+      <p><b>Também fazemos:</b> convites, crachás, blocos e talões, envelopes, pastas, calendários, ímãs de geladeira, tags, cardápios e carimbos.</p>
+      <p><b>Grande quantidade?</b> Pedidos grandes têm desconto. <a href="{wpp('Olá! Quero um orçamento para grande quantidade.')}">Peça seu orçamento</a></p>
+      <p><b>Horário:</b> <span class="rascunho">Rascunho: horário de funcionamento</span></p>
+      <p><b>Pagamento:</b> <span class="rascunho">Rascunho: formas de pagamento</span></p>
+      <p class="cnpj">CNPJ 65.480.613/0001-19</p>
+    </div>
   </div>
 </footer>
 <a class="insta-flut" href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener" aria-label="Instagram @johen_artgrafica">{ICO['insta']}</a>
@@ -124,7 +132,7 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
 <section class="cabeca-cat"><div class="migalha"><a href="../">Início</a> › {E(nome)}</div><h1>{E(nome)}</h1><p>{E(resumo)} Produção em {E(prazo)}.</p></section>
 <div class="filtros" role="group" aria-label="Filtrar por tipo">{filtros}</div>
 <div class="grade">{"".join(pcard(slug,p,fundo) for p in ps)}</div>
-<p class="envio-arte" style="margin-top:22px">Não achou o que precisa? <a href="{wpp(f'Olá! Procuro algo em {nome} que não achei no site.')}">Fale com a gente no WhatsApp</a> que a gente faz sob medida.</p>
+<p class="envio-arte" style="margin-top:22px">Não achou o que precisa? <a href="{wpp(f'Olá! Procuro algo em {nome} que não achei no site.')}">Fale conosco no WhatsApp</a></p>
 </div>'''
     pagina(f"{slug}/index.html", f"{nome} | Johen Arte Gráfica", f"{nome} personalizados em São Paulo. {resumo}", corpo, slug)
 
@@ -136,13 +144,12 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
             rot = "Quantidade" if " un." in p["opcoes"][0]["label"] else "Escolha a opção"
             opc = f'<div class="campo"><label for="opcao">{rot}</label><select id="opcao">' + "".join(f'<option>{E(o["label"])} — {brl(o["preco"])}</option>' for o in p["opcoes"]) + '</select></div>'
         else:
-            opc = f'<div class="campo"><span class="rot">Preço</span><span>{brl(p["opcoes"][0]["preco"])} {E(p["opcoes"][0]["label"])}</span></div>'
-        if p.get("caixinha"):
-            opc += f'<div class="campo"><label class="check"><input type="checkbox" id="caixinha"> Caixinha personalizada (+ {brl(p["caixinha"])})</label></div>'
+            opc = ""  # preço único já aparece logo abaixo do título
         opc += '<div class="campo campo-qtd"><span class="rot">Quantas peças?</span><div class="qtd"><button id="menos" aria-label="Menos">−</button><output id="qtd">1</output><button id="mais" aria-label="Mais">+</button></div></div>'
         editavel = slug == "canecas" and (p["sub"] == "canecas" or p["id"] in ("p6", "p7nt99ze"))  # canecas e copos térmicos têm editor 3D
-        botoes = (f'<a class="btn btn-pri btn-bloco" href="../../editor/?c={slug}&p={p["id"]}">Personalizar com sua arte</a><button class="btn btn-sec btn-bloco" id="add">Adicionar ao pedido</button>'
-                  if editavel else '<button class="btn btn-pri btn-bloco" id="add">Adicionar ao pedido</button>')
+        caixinha = (f'<label class="check caixinha-op"><input type="checkbox" id="caixinha"><img src="../../img/produtos/canecas-caixinha.webp" alt="" width="44" height="44" loading="lazy"><span class="cx-txt">Caixinha personalizada<small><b>+ {brl(p["caixinha"])}</b> · opcional</small></span></label>' if p.get("caixinha") else "")
+        personalizar = (f'<a class="btn btn-pri btn-bloco" id="personalizar" href="../../editor/?c={slug}&p={p["id"]}">Personalize sem sair do site</a>' if editavel else "")
+        botoes = ('<button class="btn btn-sec btn-bloco" id="add">Adicionar ao pedido</button>' if editavel else '<button class="btn btn-pri btn-bloco" id="add">Adicionar ao pedido</button>')
         botoes += f'<a class="btn btn-wpp btn-bloco" id="pedir-agora" href="https://wa.me/{WPP}">{ICO["wpp"]} Pedir agora no WhatsApp</a>'
         specs = "".join(f"<dt>{k}</dt><dd>{E(v)}</dd>" for k,v in [("Material",p["material"]),("Acabamento",p["acab"]),("Impressão",p["impressao"]),("Prazo",p["prazo"])] if v)
         relac = [q for q in ps if q["sub"]==p["sub"] and q["id"]!=p["id"]][:4]; relac = (relac + [q for q in ps if q["id"]!=p["id"] and q not in relac])[:4]
@@ -152,14 +159,19 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
 <div class="produto">
   <div class="foto {fundo}"><img src="../../{p['img']}" alt="{E(p['nome'])}"></div>
   <div class="conf">
-    <div><h1>{E(p["nome"])}</h1><p class="sub">{E(p["obs"])}</p></div>
-    <dl class="specs">{specs}</dl>
+    <h1>{E(p["nome"])}</h1>
+    <div class="preco-topo"><div class="total"><strong id="total">{brl(pmin(p))}</strong><span id="total-un"></span></div>{caixinha}</div>
+    {personalizar}
     {opc}
-    <div class="total"><small>Valor total</small><strong id="total">{brl(pmin(p))}</strong><span id="total-un"></span></div>
     <div class="acoes">{botoes}</div>
     <p class="envio-arte">Já tem a arte? Mande na conversa do WhatsApp ou <a href="{FORM}">envie pelo formulário</a>. Não tem? <a href="../../design/">A gente cria pra você.</a></p>
-    {f'<div class="alerta">{E(p["alerta"])}</div>' if p.get("alerta") else ""}
-    {f'<div class="caixa-info"><h3>Você sabia?</h3><p>{E(p["curiosidade"])}</p></div>' if p.get("curiosidade") else ""}
+    <section class="detalhes" aria-labelledby="det-tit">
+      <h2 id="det-tit">Detalhes do produto</h2>
+      <p class="sub">{E(p["obs"])}</p>
+      <dl class="specs">{specs}</dl>
+      {f'<div class="alerta">{E(p["alerta"])}</div>' if p.get("alerta") else ""}
+      {f'<div class="caixa-info"><h3>Você sabia?</h3><p>{E(p["curiosidade"])}</p></div>' if p.get("curiosidade") else ""}
+    </section>
   </div>
 </div>
 {f'<section class="secao" style="padding-top:0"><div class="secao-tit"><h2>Veja também</h2></div><div class="grade grade-4">{rel}</div></section>' if rel else ""}
@@ -218,7 +230,7 @@ corpo = f'''<div class="wrap editor">
 <div class="ed-grid">
   <div class="ed-esq">
     <div class="ed-palco palco3d" id="palco3d"><canvas id="tela3d" aria-label="Caneca em 3D com a sua arte. Arraste para girar."></canvas><p id="aviso3d" class="aviso3d">Carregando 3D…</p><p class="dica3d" aria-hidden="true">Arraste para girar</p></div>
-    <div id="acoes3d" class="ed-3d-acoes"><button class="btn btn-sec" id="girar3d" aria-pressed="true">Girar sozinha</button><button class="btn btn-sec" id="foto3d">Baixar foto</button><button class="btn btn-sec" id="video3d">Gravar vídeo</button></div>
+    <div id="acoes3d" class="ed-3d-acoes"><button class="btn btn-sec" id="girar3d" aria-pressed="true">Girar sozinha</button><button class="btn btn-sec" id="foto3d">Baixar PNG</button><button class="btn btn-sec" id="video3d">Baixar vídeo</button></div>
     <div class="ed-faixa">
       <div class="ed-faixa-tit"><span class="rot">Área de impressão</span><small>volta toda a caneca · 20 x 8,5 cm</small></div>
       <canvas id="tela" aria-label="Área de impressão aberta: arraste a arte para posicionar"></canvas>
@@ -244,10 +256,11 @@ corpo = f'''<div class="wrap editor">
   <input type="file" id="arquivo" accept="image/*" class="sr">
   <button class="ed-plus" id="btn-mais" aria-label="Adicionar imagem ou texto">+</button>
   <button class="btn btn-sec" id="revisar">Revisar</button>
+  <button class="btn btn-pri" id="comprar">Comprar</button>
 </div>
 <div class="ed-barra" id="barra-revisar" hidden>
   <button class="btn btn-sec" id="voltar">Editar</button>
-  <button class="btn btn-pri" id="add-pedido">Adicionar ao pedido</button>
+  <button class="btn btn-pri" id="add-pedido">Comprar</button>
   <button class="btn btn-wpp" id="enviar-arte">{ICO['wpp']} Enviar</button>
 </div>
 </div>'''
@@ -257,7 +270,7 @@ pagina("editor/index.html", "Personalizar caneca ou copo | Johen Arte Gráfica",
 hero_fotos = ["cartoes-p1","canecas-p2","cartoes-p3","canecas-p9","camisetas-p5","cartoes-p7"]
 CARDS = [("cartoes/","Cartões de Visita","cartoes-p3"),("canecas/","Canecas e Térmicos","canecas-p2"),("adesivos/","Adesivos e Etiquetas","adesivos-p20"),
          ("camisetas/","Camisetas","camisetas-p5"),("panfletos/","Panfletos","panfletos-p5"),("banners/","Banners e Placas","banners-p2"),
-         ("gravacao-laser/","Gravação a Laser","canecas-p9"),("envelopamento/","Envelopamento e Vitrine","adesivos-p16"),("comercio/","Pra seu Comércio","adesivos-p12")]
+         ("gravacao-laser/","Gravação a Laser","canecas-p9"),("envelopamento/","Envelopamento e Vitrine","adesivos-p16"),("comercio/","Para seu Comércio","adesivos-p12")]
 masc = "".join(f'<a class="mascote" href="{sl}/">{masc_anim(m, "", i)}<span>{E(n.split(" e ")[0].replace(" de Visita",""))}</span></a>' for i,(sl,n,m,*_) in enumerate(CATS))
 cards = "".join(f'<a class="mcard" href="{h}"><div class="mcard-img"><img src="img/produtos/{f}.webp" alt="" loading="lazy"></div><span>Ver {E(n)}</span></a>' for h,n,f in CARDS)
 corpo = f'''

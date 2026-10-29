@@ -234,7 +234,8 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 /* rodapé */
 .rodape{background:var(--azul);color:#fff;border-radius:28px 28px 0 0;margin-top:56px}
 .rodape .wrap{padding-block:40px calc(32px + env(safe-area-inset-bottom,0px));display:grid;gap:28px}
-@media(min-width:760px){.rodape .wrap{grid-template-columns:1.4fr 1fr 1fr}}
+@media(min-width:760px){.rodape .wrap{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.rodape .wrap{grid-template-columns:1.2fr .9fr .9fr 1.4fr}}
 .rodape img.marca{height:28px;width:auto;filter:brightness(0) invert(1);opacity:.95}
 .rodape p{margin:8px 0 0;opacity:.75;font-size:14px}
 .rodape h3{font-family:var(--corpo);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin-bottom:10px}
@@ -314,3 +315,22 @@ body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 @keyframes piscar{0%{opacity:0}93%{opacity:1}96%{opacity:0}}
 .inicio .mascotes{margin:0 0 34px}
 @media (prefers-reduced-motion:reduce){.masc-anim,.masc-anim .palp{animation:none}}
+
+/* produto: título → preço → personalizar → compra → detalhes */
+.preco-topo{display:flex;flex-direction:column;gap:12px;margin-top:-6px}
+.preco-topo .total{border-top:0;padding-top:0}
+.caixinha-op{font-weight:400;font-size:15px;color:var(--tinta-2);cursor:pointer}
+.caixinha-op b{color:var(--tinta);font-weight:600}
+.caixinha-op img{width:44px;height:44px;object-fit:cover;border-radius:8px;border:1px solid var(--linha);flex:none}
+.cx-txt{display:flex;flex-direction:column;line-height:1.35;color:var(--tinta)}
+.caixinha-op small{color:var(--tinta-3);font-size:13px}
+.detalhes{border-top:1px solid var(--linha);padding-top:22px;display:flex;flex-direction:column;gap:16px}
+.detalhes h2{font-size:20px}
+.detalhes .sub{margin:0}
+
+/* rodapé: Sobre */
+.sobre-rod p{margin:0 0 10px;font-size:14px;line-height:1.5}
+.sobre-rod p b{font-weight:600;opacity:1}
+.sobre-rod .destaque{font-family:var(--display);font-size:18px;font-weight:500;opacity:1;color:var(--amarelo)}
+.sobre-rod a{text-decoration:underline;text-underline-offset:3px}
+.sobre-rod .rascunho{font-size:11px}

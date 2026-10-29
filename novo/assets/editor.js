@@ -157,11 +157,16 @@
     if (window.Caneca3D) { try { return await window.Caneca3D.foto(tam); } catch (e) { } }
     desenhar(true); return await new Promise(r => cv.toBlob(r, "image/png"));
   }
-  document.getElementById("add-pedido").addEventListener("click", async () => {
+  // Comprar: coloca no pedido com a prévia e abre a página do pedido
+  async function comprar() {
+    if (!img && !texto) { toast("Adicione uma imagem ou um texto antes de comprar."); return; }
+    if (!produto) return;
     const b = await previa(260); const u = await new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
     Pedido.add({ c: cId, id: pId, nome: produto.nome, img: produto.img, arte: u, desc: descricao(), qtd: 1, total: precoUn() });
-    toast(`${MOD.obj === "copo" ? "Copo adicionado" : "Caneca adicionada"}. <a href="${ROOT}pedido/">Ver pedido</a>`);
-  });
+    location.href = ROOT + "pedido/";
+  }
+  document.getElementById("add-pedido").addEventListener("click", comprar);
+  document.getElementById("comprar").addEventListener("click", comprar);
   document.getElementById("enviar-arte").addEventListener("click", async () => {
     const msg = `Olá! Montei ${MOD.obj === "copo" ? "meu copo" : "minha caneca"} no site:\n• ${produto.nome}\n• ${descricao()}\n• Valor: ${brl(precoUn())}\n\nSegue a prévia, a arte posicionada e a arte original.`;
     const prev = new File([await previa(1080)], `previa-${MOD.obj}.png`, { type: "image/png" });
@@ -181,7 +186,7 @@
     produto = (cat[cId] || []).find(p => p.id === pId) || cat.canecas[0];
     document.getElementById("nome-produto").textContent = produto.nome;
     document.title = "Personalizar: " + produto.nome + " | Johen Arte Gráfica";
-    if (!produto.caixinha) cx.closest("label").hidden = true;
+    if (!produto.caixinha) cx.closest("label").hidden = true; else if (q.get("cx") === "1") cx.checked = true;
     const coresBox = document.getElementById("cores");
     const lista = MOD.tipo === "copo" || /cor/i.test(produto.nome) ? CORES : null;
     if (MOD.tipo === "copo") coresBox.querySelector(".rot").textContent = "Cor do copo";

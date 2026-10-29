@@ -1148,24 +1148,6 @@
 "img": "img/produtos/adesivos-p18.webp"
 },
 {
-"id": "p22",
-"sub": "sem_recorte",
-"subNome": "Sem Recorte (Corte Reto)",
-"nome": "Adesivo de Vitrine — Fundo Branco",
-"material": "Vinil Brilho para Vitrine",
-"acab": "Corte reto (arte enviada espelhada)",
-"impressao": "",
-"prazo": "2 dias úteis",
-"obs": "Vinil brilhante com fundo branco, corte reto — a arte deve ser enviada espelhada (invertida).",
-"curiosidade": "Como ele é colado do lado de dentro do vidro, a imagem precisa vir espelhada pra aparecer certa por fora.",
-"alerta": "",
-"unidade": "por m²",
-"m2": 144.0,
-"minimo": 85.0,
-"opcoes": [],
-"img": "img/produtos/adesivos-p22.webp"
-},
-{
 "id": "p23",
 "sub": "sem_recorte",
 "subNome": "Sem Recorte (Corte Reto)",
@@ -1773,6 +1755,81 @@
 }
 ],
 "img": "img/produtos/canecas-p10.webp"
+},
+{
+"id": "p11",
+"sub": "gravacao_avulsa",
+"subNome": "Gravação Avulsa (sua peça)",
+"nome": "Gravação a Laser — Com Time",
+"material": "Sua peça (cliente traz o produto)",
+"acab": "Gravação a laser · Escudo ou nome do seu time",
+"impressao": "",
+"prazo": "3 a 5 dias úteis",
+"obs": "Gravação a laser do escudo, nome ou frase do seu time na sua garrafa, copo ou caneca de metal.",
+"curiosidade": "",
+"alerta": "⚠️ Não nos responsabilizamos por qualquer tipo de dano na peça que o cliente traz pra gravar.",
+"unidade": "",
+"opcoes": [
+{
+"label": "Gravação 1 lado",
+"preco": 15.0
+},
+{
+"label": "Frente e Verso",
+"preco": 25.0
+}
+],
+"img": "img/produtos/canecas-p7.webp"
+},
+{
+"id": "p12",
+"sub": "gravacao_avulsa",
+"subNome": "Gravação Avulsa (sua peça)",
+"nome": "Gravação a Laser — Com Nome",
+"material": "Sua peça (cliente traz o produto)",
+"acab": "Gravação a laser · Nome ou frase",
+"impressao": "",
+"prazo": "3 a 5 dias úteis",
+"obs": "Gravação a laser do seu nome, apelido ou de uma frase na sua garrafa, copo ou caneca de metal.",
+"curiosidade": "",
+"alerta": "⚠️ Não nos responsabilizamos por qualquer tipo de dano na peça que o cliente traz pra gravar.",
+"unidade": "",
+"opcoes": [
+{
+"label": "Gravação 1 lado",
+"preco": 15.0
+},
+{
+"label": "Frente e Verso",
+"preco": 25.0
+}
+],
+"img": "img/produtos/canecas-p9.webp"
+},
+{
+"id": "p13",
+"sub": "gravacao_avulsa",
+"subNome": "Gravação Avulsa (sua peça)",
+"nome": "Gravação a Laser — Com Logo",
+"material": "Sua peça (cliente traz o produto)",
+"acab": "Gravação a laser · Logo da empresa",
+"impressao": "",
+"prazo": "3 a 5 dias úteis",
+"obs": "Gravação a laser da logo da sua empresa na sua garrafa, copo ou caneca de metal. Ótimo pra brinde.",
+"curiosidade": "",
+"alerta": "⚠️ Não nos responsabilizamos por qualquer tipo de dano na peça que o cliente traz pra gravar.",
+"unidade": "",
+"opcoes": [
+{
+"label": "Gravação 1 lado",
+"preco": 15.0
+},
+{
+"label": "Frente e Verso",
+"preco": 25.0
+}
+],
+"img": "img/produtos/canecas-p6.webp"
 }
 ]
 }
