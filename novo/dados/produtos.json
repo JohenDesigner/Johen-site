@@ -1148,6 +1148,24 @@
 "img": "img/produtos/adesivos-p18.webp"
 },
 {
+"id": "p22",
+"sub": "sem_recorte",
+"subNome": "Sem Recorte (Corte Reto)",
+"nome": "Adesivo de Vitrine — Fundo Branco",
+"material": "Vinil Brilho para Vitrine",
+"acab": "Corte reto (arte enviada espelhada)",
+"impressao": "",
+"prazo": "2 dias úteis",
+"obs": "Vinil brilhante com fundo branco, corte reto — a arte deve ser enviada espelhada (invertida).",
+"curiosidade": "Como ele é colado do lado de dentro do vidro, a imagem precisa vir espelhada pra aparecer certa por fora.",
+"alerta": "",
+"unidade": "por m²",
+"m2": 144.0,
+"minimo": 85.0,
+"opcoes": [],
+"img": "img/produtos/adesivos-p22.webp"
+},
+{
 "id": "p23",
 "sub": "sem_recorte",
 "subNome": "Sem Recorte (Corte Reto)",

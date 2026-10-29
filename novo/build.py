@@ -100,8 +100,8 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
       <p class="destaque">Mais de 5 mil projetos aprovados.</p>
       <p><b>Também fazemos:</b> convites, crachás, blocos e talões, envelopes, pastas, calendários, ímãs de geladeira, tags, cardápios e carimbos.</p>
       <p><b>Grande quantidade?</b> Pedidos grandes têm desconto. <a href="{wpp('Olá! Quero um orçamento para grande quantidade.')}">Peça seu orçamento</a></p>
-      <p><b>Horário:</b> <span class="rascunho">Rascunho: horário de funcionamento</span></p>
-      <p><b>Pagamento:</b> <span class="rascunho">Rascunho: formas de pagamento</span></p>
+      <p><b>Horário:</b> segunda a sábado, das 11h às 20h. Antes de vir, confirme pelo WhatsApp.</p>
+      <p><b>Pagamento:</b> dinheiro, Pix e cartões de débito e crédito.</p>
       <p class="cnpj">CNPJ 65.480.613/0001-19</p>
     </div>
   </div>
