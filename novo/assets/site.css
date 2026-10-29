@@ -25,12 +25,12 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .sobre{display:block;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--turquesa-esc);margin-bottom:10px}
 
 /* faixa promo + cabeçalho */
-.promo{background:var(--azul);color:#fff;text-align:center;font-size:13px;padding:8px 16px;padding-top:calc(8px + env(safe-area-inset-top,0px));letter-spacing:.01em}
+.promo{background:var(--laranja);font-weight:600;color:#fff;text-align:center;font-size:13px;padding:8px 16px;padding-top:calc(8px + env(safe-area-inset-top,0px));letter-spacing:.01em}
 .promo a{color:#fff;text-underline-offset:3px}
 .topo{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--linha)}
-.topo-linha{display:flex;align-items:center;gap:6px;height:60px}
-.logo{display:flex;align-items:center;text-decoration:none;margin-right:auto}
-.logo img{height:26px;width:auto}
+.topo-linha{display:flex;align-items:center;justify-content:flex-end;gap:6px;height:64px;position:relative}
+.logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;text-decoration:none}
+.logo img{height:36px;width:auto}
 .icone-btn{width:44px;height:44px;border-radius:50%;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;position:relative;text-decoration:none;color:var(--tinta)}
 .icone-btn:hover{background:var(--fundo)}
 .icone-btn svg{width:23px;height:23px}
