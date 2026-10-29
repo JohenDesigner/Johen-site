@@ -53,6 +53,7 @@
   }
   let img = null, arquivo = null, ix = 0, iy = 0, esc = 1, texto = "", corTexto = "#1d2427";
   // camiseta frente e verso: cada lado guarda a própria arte; as variáveis acima são sempre as do lado aberto
+  // camiseta só de um lado: LADOS tem um lado só, e o cliente escolhe se é a frente ou as costas
   const LADOS = MOD.verso ? ["frente", "costas"] : ["frente"];
   const est = {}; let lado = "frente";
   const guardar = () => { est[lado] = { img, arquivo, ix, iy, esc, texto, corTexto, gravada, temAlfa, inverter }; };
@@ -169,7 +170,7 @@
   cx.addEventListener("change", atualizarPreco);
   const descricao = () => { guardar();
     const comArte = LADOS.filter(l => est[l].img || est[l].texto);
-    return `Cor: ${corNome}${cx.checked ? " · caixinha personalizada" : ""}${MOD.verso ? ` · estampa: ${comArte.join(" e ")}` : ""}${LADOS.map(l => est[l].texto ? ` · texto${MOD.verso ? " (" + l + ")" : ""}: "${est[l].texto}"` : "").join("")}`; };
+    return `Cor: ${corNome}${cx.checked ? " · caixinha personalizada" : ""}${MOD.verso ? ` · estampa: ${comArte.join(" e ")}` : MOD.tipo === "camiseta" ? ` · estampa ${lado === "costas" ? "nas costas" : "na frente"}` : ""}${LADOS.map(l => est[l].texto ? ` · texto${MOD.verso ? " (" + l + ")" : ""}: "${est[l].texto}"` : "").join("")}`; };
 
   // foto da caneca 3D (se o aparelho abriu o 3D); senão, a faixa da área de impressão
   async function previa(tam) {
@@ -193,7 +194,7 @@
     for (const l of LADOS) {
       if (!est[l].img && !est[l].texto) continue;
       const blob = await comLado(l, () => { desenhar(true); return new Promise(r => cv.toBlob(r, "image/png")); });
-      files.push(new File([blob], `arte-posicionada-${MOD.obj}${MOD.verso ? "-" + l : ""}.png`, { type: "image/png" }));
+      files.push(new File([blob], `arte-posicionada-${MOD.obj}${MOD.tipo === "camiseta" ? "-" + l : ""}.png`, { type: "image/png" }));
       if (est[l].arquivo) files.push(est[l].arquivo);
     }
     desenhar(true);
@@ -222,6 +223,19 @@
       desenhar();
     });
     document.querySelector(".ed-faixa-tit small").textContent = `frente · até ${MOD.w} x ${MOD.h} cm`;
+  } else if (abas && MOD.tipo === "camiseta") {
+    // camiseta de um lado só: o cliente escolhe onde vai a estampa; a mesma arte muda de lado
+    abas.hidden = false; abas.setAttribute("aria-label", "Onde vai a estampa");
+    abas.querySelector('[data-l="frente"]').textContent = "Estampa na frente";
+    abas.querySelector('[data-l="costas"]').textContent = "Estampa nas costas";
+    abas.addEventListener("click", e => {
+      const b = e.target.closest("[data-l]"); if (!b || b.dataset.l === lado) return;
+      guardar(); est[b.dataset.l] = est[lado]; delete est[lado]; LADOS.splice(0, 1, b.dataset.l); lado = b.dataset.l;
+      abas.querySelectorAll("[data-l]").forEach(x => x.setAttribute("aria-selected", x === b));
+      document.querySelector(".ed-faixa-tit small").textContent = `${lado === "costas" ? "costas" : "frente"} · até ${MOD.w} x ${MOD.h} cm`;
+      document.dispatchEvent(new CustomEvent("mockup-lado", { detail: lado }));
+      desenhar();
+    });
   }
 
   // carregar produto

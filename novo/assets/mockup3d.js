@@ -234,14 +234,14 @@ async function iniciar() {
       lados[l] = { c, x: c.getContext("2d"), t, yg };
     }
     // mangas: tubo que sai do ombro e cai para o lado (o começo fica escondido dentro do tronco)
-    const ANG = 0.6, R0 = 0.62, R1 = 0.55, TI = -0.3, TF = 2.0;
+    const ANG = 0.62, R0 = 0.76, R1 = 0.67, TI = -0.3, TF = 2.25;
     const [mc, mt] = novaTex(512, 512), mx = mc.getContext("2d");
     const matManga = new T.MeshPhysicalMaterial({ ...tecido, map: mt });
     const dentroManga = new T.MeshPhysicalMaterial({ ...tecido, side: T.BackSide, color: 0x9a9a9a }); dentros.push(dentroManga);
     const mangas = [];
     for (const k of [1, -1]) {
       const u = [k * Math.cos(ANG), Math.sin(ANG), 0], d = unit([k * Math.sin(ANG), -Math.cos(ANG), 0.06]);
-      const w = unit(cruz(u, d)), topo = [k * 2.12, 6.66, 0.02];
+      const w = unit(cruz(u, d)), topo = [k * 2.1, 6.7, 0.02];
       const S = [0, 1, 2].map(c => topo[c] - R0 * u[c]);     // eixo da manga no começo (giro da animação)
       const NA = 72, NT = 60, pos = [], uv = [], ind = [];
       for (let j = 0; j <= NT; j++) { const tt = TI + (TF - TI) * j / NT, f = Math.max(0, tt) / TF;
