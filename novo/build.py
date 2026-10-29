@@ -140,7 +140,7 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
         if p.get("caixinha"):
             opc += f'<div class="campo"><label class="check"><input type="checkbox" id="caixinha"> Caixinha personalizada (+ {brl(p["caixinha"])})</label></div>'
         opc += '<div class="campo campo-qtd"><span class="rot">Quantas peças?</span><div class="qtd"><button id="menos" aria-label="Menos">−</button><output id="qtd">1</output><button id="mais" aria-label="Mais">+</button></div></div>'
-        editavel = slug == "canecas" and p["sub"] == "canecas"
+        editavel = slug == "canecas" and (p["sub"] == "canecas" or p["id"] in ("p6", "p7nt99ze"))  # canecas e copos térmicos têm editor 3D
         botoes = (f'<a class="btn btn-pri btn-bloco" href="../../editor/?c={slug}&p={p["id"]}">Personalizar com sua arte</a><button class="btn btn-sec btn-bloco" id="add">Adicionar ao pedido</button>'
                   if editavel else '<button class="btn btn-pri btn-bloco" id="add">Adicionar ao pedido</button>')
         botoes += f'<a class="btn btn-wpp btn-bloco" id="pedir-agora" href="https://wa.me/{WPP}">{ICO["wpp"]} Pedir agora no WhatsApp</a>'
@@ -217,7 +217,7 @@ corpo = f'''<div class="wrap editor">
 <h1 class="ed-tit" id="nome-produto">Carregando caneca…</h1>
 <div class="ed-grid">
   <div class="ed-esq">
-    <div class="ed-palco palco3d" id="palco3d"><canvas id="tela3d" aria-label="Caneca em 3D com a sua arte. Arraste para girar."></canvas><p id="aviso3d" class="aviso3d">Carregando caneca em 3D…</p><p class="dica3d" aria-hidden="true">Arraste para girar</p></div>
+    <div class="ed-palco palco3d" id="palco3d"><canvas id="tela3d" aria-label="Caneca em 3D com a sua arte. Arraste para girar."></canvas><p id="aviso3d" class="aviso3d">Carregando 3D…</p><p class="dica3d" aria-hidden="true">Arraste para girar</p></div>
     <div id="acoes3d" class="ed-3d-acoes"><button class="btn btn-sec" id="girar3d" aria-pressed="true">Girar sozinha</button><button class="btn btn-sec" id="foto3d">Baixar foto</button><button class="btn btn-sec" id="video3d">Gravar vídeo</button></div>
     <div class="ed-faixa">
       <div class="ed-faixa-tit"><span class="rot">Área de impressão</span><small>volta toda a caneca · 20 x 8,5 cm</small></div>
@@ -228,7 +228,7 @@ corpo = f'''<div class="wrap editor">
   <div class="ed-lado">
     <div id="painel" class="ed-painel">
       <div id="ajustes" class="campo" hidden><label for="zoom">Tamanho da imagem</label><input id="zoom" type="range" min="40" max="300" value="100"><small>Arraste a imagem na área de impressão pra posicionar. No celular dá pra usar dois dedos.</small><button class="btn btn-sec" id="centralizar" style="min-height:42px;font-size:15px">Cobrir a caneca toda</button>
-        <p id="qualidade" class="aviso-min" hidden>Essa imagem tem resolução baixa e pode sair borrada. Se tiver uma maior, prefira ela.</p></div>
+        <label class="check" id="bloco-inverter" hidden><input type="checkbox" id="inverter"> Gravar as partes claras da imagem</label><p id="qualidade" class="aviso-min" hidden>Essa imagem tem resolução baixa e pode sair borrada. Se tiver uma maior, prefira ela.</p></div>
       <div id="bloco-texto" class="campo" hidden><label for="texto">Texto na caneca</label><input id="texto" type="text" maxlength="40" placeholder="Ex.: Melhor pai do mundo" style="height:50px;border:1.5px solid #c9d0d2;border-radius:10px;padding:0 14px"><label for="cor-texto" style="font-weight:600;font-size:14px">Cor do texto</label><input id="cor-texto" type="color" value="#1d2427" style="width:64px;height:40px;border:0;background:none"></div>
       <div id="cores" class="campo" hidden><span class="rot">Cor da alça e de dentro</span><div class="cores"></div></div>
       <label class="check campo"><input type="checkbox" id="caixinha"> Caixinha personalizada (+ R$ 5,00)</label>
@@ -251,7 +251,7 @@ corpo = f'''<div class="wrap editor">
   <button class="btn btn-wpp" id="enviar-arte">{ICO['wpp']} Enviar</button>
 </div>
 </div>'''
-pagina("editor/index.html", "Personalizar caneca | Johen Arte Gráfica", "Monte sua caneca com a sua arte e veja como fica antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script>')
+pagina("editor/index.html", "Personalizar caneca ou copo | Johen Arte Gráfica", "Monte sua caneca ou copo térmico com a sua arte e veja em 3D antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script>')
 
 # ---------- home ----------
 hero_fotos = ["cartoes-p1","canecas-p2","cartoes-p3","canecas-p9","camisetas-p5","cartoes-p7"]

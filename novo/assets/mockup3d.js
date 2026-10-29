@@ -26,49 +26,87 @@ async function iniciar() {
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   const luz = new T.DirectionalLight(0xffffff, 0.9); luz.position.set(-2, 3, 2.5); scene.add(luz);
   const camera = new T.PerspectiveCamera(28, 1, 0.1, 20);
-  const alvo = new T.Vector3(0, 0.47, 0);
-
-  // ---- medidas da caneca (1 unidade = 10 cm): 8,2 cm de diâmetro, 9,5 cm de altura
-  const R = 0.41, H = 0.95, BASE = 0.03, PAREDE = H - BASE;
-  const caneca = new T.Group(); scene.add(caneca);
-
-  // textura da parede externa = volta inteira da caneca; começa e termina na alça, centro = frente (lado oposto à alça)
-  const TW = Math.min(3072, renderer.capabilities.maxTextureSize), TH = Math.round(TW * PAREDE / (2 * Math.PI * R));
-  const tc = document.createElement("canvas"); tc.width = TW; tc.height = TH; const tx = tc.getContext("2d");
-  const tex = new T.CanvasTexture(tc); tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-  const pxU = TW / (2 * Math.PI * R), pxV = TH / PAREDE;
-  function pintarTextura() {
-    const E = window.CanecaArte; const cor = E ? E.cores() : { corpo: "#ffffff", detalhe: "#ffffff" };
-    tx.fillStyle = cor.corpo; tx.fillRect(0, 0, TW, TH);
-    if (E) {
-      const A = E.area, wW = 2.0, hW = 0.85;                      // área impressa: 20 x 8,5 cm
-      const w = wW * pxU, h = hW * pxV, x0 = TW / 2 - w / 2, y0 = TH / 2 - h / 2;
-      tx.save(); tx.translate(x0, y0); tx.scale(w / A.w, h / A.h); tx.translate(-A.x, -A.y); E.pintar(tx); tx.restore();
-    }
-    tex.needsUpdate = true;
-    matCorpo.color.set(cor.corpo); matDetalhe.color.set(cor.detalhe);
-  }
-  const ceramica = { roughness: 0.32, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.12, envMapIntensity: 0.85 };
-  const matParede = new T.MeshPhysicalMaterial({ ...ceramica, map: tex });
-  const matCorpo = new T.MeshPhysicalMaterial({ ...ceramica });
-  const matDetalhe = new T.MeshPhysicalMaterial({ ...ceramica, side: T.DoubleSide });
-
-  const parede = new T.Mesh(new T.CylinderGeometry(R, R, PAREDE, 160, 1, true, Math.PI / 2, Math.PI * 2), matParede);
-  parede.position.y = BASE + PAREDE / 2; caneca.add(parede);
+  const MOD = (window.CanecaArte && window.CanecaArte.modelo) || { tipo: "caneca", w: 20, h: 8.5 };
+  const caneca = new T.Group(); scene.add(caneca);           // grupo que gira (caneca ou copo)
+  const TW = Math.min(3072, renderer.capabilities.maxTextureSize);
   const V = (x, y) => new T.Vector2(x, y);
-  matCorpo.side = T.DoubleSide;
-  caneca.add(new T.Mesh(new T.LatheGeometry([V(0, 0), V(0.36, 0), V(0.395, 0.008), V(R, BASE)], 160), matCorpo));
-  caneca.add(new T.Mesh(new T.LatheGeometry([V(R, H), V(0.409, H + 0.006), V(0.403, H + 0.011), V(0.394, H + 0.011), V(0.388, H + 0.006),
-    V(0.385, H), V(0.385, 0.10), V(0.37, 0.085), V(0, 0.08)], 160), matDetalhe));
-  // alça em "D", mais fina e achatada nas laterais, como a de uma caneca de 325 ml
-  const curva = new T.CatmullRomCurve3([[0.38, 0.79], [0.50, 0.80], [0.61, 0.77], [0.68, 0.68], [0.70, 0.54], [0.67, 0.40], [0.59, 0.29], [0.49, 0.245], [0.38, 0.24]].map(([x, y]) => new T.Vector3(x, y, 0)));
-  const alcaGeo = new T.TubeGeometry(curva, 140, 0.036, 32, false); alcaGeo.scale(1, 1, 1.5);
-  // encontro da alça com a parede um pouco mais cheio (como na cerâmica de verdade)
-  for (const y of [0.795, 0.24]) {
-    const junta = new T.Mesh(new T.SphereGeometry(0.046, 32, 16), matDetalhe);
-    junta.scale.set(0.9, 1, 1.45); junta.position.set(0.395, y, 0); caneca.add(junta);
+  const M = MOD.tipo === "copo" ? montarCopo() : montarCaneca();
+  const alvo = M.alvo, pintarTextura = M.pintar;
+
+  // ---------- caneca de cerâmica (1 unidade = 10 cm): 8,2 cm de diâmetro, 9,5 cm de altura
+  function montarCaneca() {
+    const R = 0.41, H = 0.95, BASE = 0.03, PAREDE = H - BASE;
+    // textura da parede = volta inteira; começa e termina na alça, centro = frente (lado oposto à alça)
+    const TH = Math.round(TW * PAREDE / (2 * Math.PI * R));
+    const tc = document.createElement("canvas"); tc.width = TW; tc.height = TH; const tx = tc.getContext("2d");
+    const tex = new T.CanvasTexture(tc); tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    const pxU = TW / (2 * Math.PI * R), pxV = TH / PAREDE;
+    const ceramica = { roughness: 0.32, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.12, envMapIntensity: 0.85 };
+    const matParede = new T.MeshPhysicalMaterial({ ...ceramica, map: tex });
+    const matCorpo = new T.MeshPhysicalMaterial({ ...ceramica, side: T.DoubleSide });
+    const matDetalhe = new T.MeshPhysicalMaterial({ ...ceramica, side: T.DoubleSide });
+    const parede = new T.Mesh(new T.CylinderGeometry(R, R, PAREDE, 160, 1, true, Math.PI / 2, Math.PI * 2), matParede);
+    parede.position.y = BASE + PAREDE / 2; caneca.add(parede);
+    caneca.add(new T.Mesh(new T.LatheGeometry([V(0, 0), V(0.36, 0), V(0.395, 0.008), V(R, BASE)], 160), matCorpo));
+    caneca.add(new T.Mesh(new T.LatheGeometry([V(R, H), V(0.409, H + 0.006), V(0.403, H + 0.011), V(0.394, H + 0.011), V(0.388, H + 0.006),
+      V(0.385, H), V(0.385, 0.10), V(0.37, 0.085), V(0, 0.08)], 160), matDetalhe));
+    // alça em "D", mais fina e achatada nas laterais, como a de uma caneca de 325 ml
+    const curva = new T.CatmullRomCurve3([[0.38, 0.79], [0.50, 0.80], [0.61, 0.77], [0.68, 0.68], [0.70, 0.54], [0.67, 0.40], [0.59, 0.29], [0.49, 0.245], [0.38, 0.24]].map(([x, y]) => new T.Vector3(x, y, 0)));
+    const alcaGeo = new T.TubeGeometry(curva, 140, 0.036, 32, false); alcaGeo.scale(1, 1, 1.5);
+    for (const y of [0.795, 0.24]) {        // encontro da alça com a parede um pouco mais cheio
+      const junta = new T.Mesh(new T.SphereGeometry(0.046, 32, 16), matDetalhe);
+      junta.scale.set(0.9, 1, 1.45); junta.position.set(0.395, y, 0); caneca.add(junta);
+    }
+    caneca.add(new T.Mesh(alcaGeo, matDetalhe));
+    function pintar() {
+      const E = window.CanecaArte; const cor = E ? E.cores() : { corpo: "#ffffff", detalhe: "#ffffff" };
+      tx.fillStyle = cor.corpo; tx.fillRect(0, 0, TW, TH);
+      if (E) {
+        const A = E.area, w = MOD.w / 10 * pxU, h = MOD.h / 10 * pxV, x0 = TW / 2 - w / 2, y0 = TH / 2 - h / 2;
+        tx.save(); tx.translate(x0, y0); tx.scale(w / A.w, h / A.h); tx.translate(-A.x, -A.y); E.pintar(tx); tx.restore();
+      }
+      tex.needsUpdate = true; matCorpo.color.set(cor.corpo); matDetalhe.color.set(cor.detalhe);
+    }
+    return { alvo: new T.Vector3(0, 0.47, 0), dist: 3.3, rot: 0.45, pintar };
   }
-  caneca.add(new T.Mesh(alcaGeo, matDetalhe));
+
+  // ---------- copo térmico 473 ml: inox com pintura, base e borda de aço, tampa preta com trava
+  function montarCopo() {
+    const r = y => 0.36 + 0.06 * y;                         // copo mais largo em cima (7,2 → 9 cm)
+    const B = 0.22, TOPO = 1.42, PINT = TOPO - B, RM = r((B + TOPO) / 2);
+    const TH = Math.round(TW * PINT / (2 * Math.PI * RM));
+    const pxU = TW / (2 * Math.PI * RM), pxV = TH / PINT;
+    const mk = (w, h) => { const c = document.createElement("canvas"); c.width = w; c.height = h; return c; };
+    const tc = mk(TW, TH), tx = tc.getContext("2d");     // cor: pintura + aço onde grava
+    const pc = mk(TW, TH), px = pc.getContext("2d");     // verde = aspereza, azul = metal
+    const gc = mk(TW, TH), gx = gc.getContext("2d");     // máscara da gravação
+    const tex = new T.CanvasTexture(tc); tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    const props = new T.CanvasTexture(pc);
+    const aco = { color: 0xd9dcdf, metalness: 1, roughness: 0.26, envMapIntensity: 1 };
+    const matPint = new T.MeshPhysicalMaterial({ map: tex, metalnessMap: props, roughnessMap: props, metalness: 1, roughness: 1, clearcoat: 0.35, clearcoatRoughness: 0.4 });
+    const matAco = new T.MeshPhysicalMaterial({ ...aco, side: T.DoubleSide });
+    const matTampa = new T.MeshPhysicalMaterial({ color: 0x18191b, roughness: 0.55, metalness: 0, clearcoat: 0.2, side: T.DoubleSide });
+    const corpo = new T.Mesh(new T.CylinderGeometry(r(TOPO), r(B), PINT, 160, 1, true, Math.PI, Math.PI * 2), matPint);
+    corpo.position.y = B + PINT / 2; caneca.add(corpo);
+    caneca.add(new T.Mesh(new T.LatheGeometry([V(0, 0.004), V(0.335, 0), V(0.352, 0.005), V(r(0.014), 0.014), V(r(B - 0.006), B - 0.006), V(r(B) - 0.003, B - 0.002), V(r(B), B)], 160), matAco));
+    caneca.add(new T.Mesh(new T.LatheGeometry([V(r(TOPO), TOPO), V(r(TOPO) - 0.003, TOPO + 0.003), V(r(1.5), 1.5), V(r(1.5) - 0.004, 1.506)], 160), matAco));
+    caneca.add(new T.Mesh(new T.LatheGeometry([V(r(1.5) - 0.004, 1.503), V(0.448, 1.525), V(0.44, 1.545), V(0.40, 1.552), V(0, 1.552)], 160), matTampa));
+    const trava = new T.Mesh(new T.BoxGeometry(0.15, 0.03, 0.08), matAco); trava.position.set(0, 1.56, 0.35); caneca.add(trava);
+    function pintar() {
+      const E = window.CanecaArte; const cor = E ? E.cores() : { corpo: "#1e1f21" };
+      tx.fillStyle = cor.corpo; tx.fillRect(0, 0, TW, TH);
+      px.fillStyle = "rgb(0,135,0)"; px.fillRect(0, 0, TW, TH);
+      gx.clearRect(0, 0, TW, TH);
+      if (E) {
+        const A = E.area, w = MOD.w / 10 * pxU, h = MOD.h / 10 * pxV, x0 = TW / 2 - w / 2, y0 = TH / 2 - h / 2;
+        for (const c of [tx, gx]) { c.save(); c.translate(x0, y0); c.scale(w / A.w, h / A.h); c.translate(-A.x, -A.y); E.pintar(c); c.restore(); }
+        gx.save(); gx.globalCompositeOperation = "source-in"; gx.fillStyle = "rgb(0,70,255)"; gx.fillRect(0, 0, TW, TH); gx.restore();
+        px.drawImage(gc, 0, 0);
+      }
+      tex.needsUpdate = true; props.needsUpdate = true;
+    }
+    return { alvo: new T.Vector3(0, 0.78, 0), dist: 3.9, rot: -0.25, pintar };
+  }
 
   // sombra suave no chão (não gira junto)
   const sc = document.createElement("canvas"); sc.width = sc.height = 256; const sx = sc.getContext("2d");
@@ -79,8 +117,8 @@ async function iniciar() {
 
   // ---- câmera e giro
   const calmo = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let rotY = 0.45, elev = 0.3, vel = 0, auto = !calmo, arrastando = false, sujo = true, ligado = false;
-  const DIST = 3.3;
+  let rotY = M.rot, elev = 0.3, vel = 0, auto = !calmo, arrastando = false, sujo = true, ligado = false;
+  const DIST = M.dist;
   function posicionar() {
     camera.position.set(alvo.x, alvo.y + Math.sin(elev) * DIST, Math.cos(elev) * DIST);
     camera.lookAt(alvo); caneca.rotation.y = rotY;

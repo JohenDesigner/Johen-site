@@ -1,26 +1,60 @@
-// Editor de caneca: o cliente sobe a arte, posiciona na área de impressão aberta (volta toda a caneca)
-// e vê o resultado na caneca 3D (assets/mockup3d.js).
+// Editor de caneca e copo térmico: o cliente sobe a arte, posiciona na área de impressão/gravação aberta
+// e vê o resultado no produto em 3D (assets/mockup3d.js).
 (function () {
   const cv = document.getElementById("tela"); if (!cv) return;
   const ctx = cv.getContext("2d");
-  // área de impressão: 20 x 8,5 cm (proporção 2,35), com uma margem em volta na tela
-  const PAD = 16, AW = 1000 - PAD * 2, AH = Math.round(AW * 8.5 / 20);
-  cv.width = 1000; cv.height = AH + PAD * 2;
-  const A = { x: PAD, y: PAD, w: AW, h: AH };
-  const CORES = [["Branca", "#ffffff"], ["Vermelha", "#d6312b"], ["Preta", "#222222"], ["Azul", "#1f5fbf"], ["Verde", "#2f9e57"], ["Amarela", "#f2c230"], ["Rosa", "#ec7fb0"]];
   const q = new URLSearchParams(location.search);
   const cId = q.get("c") || "canecas", pId = q.get("p") || "p1";
-  let produto = null, detalhe = "#ffffff", fundoCaneca = "#ffffff", corNome = "Branca";
+  // modelos: medidas da área em cm (largura x altura) vindas da descrição do produto
+  const MODELOS = {
+    caneca:  { tipo: "caneca", w: 20, h: 8.5, laser: false, obj: "caneca", rot: "Área de impressão", sub: "volta toda a caneca · 20 x 8,5 cm", guia: ["‹ lado da alça", "frente", "lado da alça ›"] },
+    copo:    { tipo: "copo", w: 4.8, h: 12, laser: true, obj: "copo", rot: "Área de gravação a laser", sub: "frente do copo · 4,8 x 12 cm", guia: null },
+    copo360: { tipo: "copo", w: 25.7, h: 12, laser: true, volta: true, obj: "copo", rot: "Área de gravação a laser", sub: "volta toda o copo (360°) · 12 cm de altura", guia: ["‹ costas", "frente", "costas ›"] },
+  };
+  const MOD = MODELOS[{ p6: "copo", p7nt99ze: "copo360" }[pId] || "caneca"];
+  const ACO = "#cfd3d6";                                   // cor do aço que aparece onde o laser grava
+  // área na tela: lado maior com 1000 px, margem em volta
+  const PAD = 16, larga = MOD.w >= MOD.h;
+  const AW = larga ? 1000 - PAD * 2 : Math.round((1000 - PAD * 2) * MOD.w / MOD.h), AH = larga ? Math.round((1000 - PAD * 2) * MOD.h / MOD.w) : 1000 - PAD * 2;
+  cv.width = AW + PAD * 2; cv.height = AH + PAD * 2;
+  if (!larga) Object.assign(cv.style, { width: "auto", height: "min(440px, 62vh)", margin: "0 auto" });
+  const A = { x: PAD, y: PAD, w: AW, h: AH };
+  document.querySelector(".ed-faixa-tit .rot").textContent = MOD.rot;
+  document.querySelector(".ed-faixa-tit small").textContent = MOD.sub;
+  if (MOD.tipo === "copo") document.getElementById("centralizar").textContent = MOD.volta ? "Cobrir o copo todo" : "Preencher a área";
+  const guia = document.querySelector(".ed-faixa-guia");
+  if (MOD.guia) guia.querySelectorAll("span").forEach((el, i) => el.textContent = MOD.guia[i]); else guia.hidden = true;
+  const CORES = MOD.tipo === "copo" ? [["Preto", "#1e1f21"], ["Branco", "#f4f4f2"]]
+    : [["Branca", "#ffffff"], ["Vermelha", "#d6312b"], ["Preta", "#222222"], ["Azul", "#1f5fbf"], ["Verde", "#2f9e57"], ["Amarela", "#f2c230"], ["Rosa", "#ec7fb0"]];
+  let produto = null, detalhe = "#ffffff", fundoCaneca = MOD.tipo === "copo" ? CORES[0][1] : "#ffffff", corNome = MOD.tipo === "copo" ? "Preto" : "Branca";
+  // gravação a laser: a imagem vira uma "máscara" em cor de aço (só uma cor, como sai de verdade)
+  let gravada = null, temAlfa = false, inverter = false;
+  function prepararLaser() {
+    if (!img || !MOD.laser) { gravada = null; return; }
+    const k = Math.min(1, 1600 / Math.max(img.width, img.height));
+    const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+    const x = c.getContext("2d"); x.drawImage(img, 0, 0, c.width, c.height);
+    const d = x.getImageData(0, 0, c.width, c.height), px = d.data;
+    let transp = 0; for (let i = 3; i < px.length; i += 4) if (px[i] < 250) transp++;
+    temAlfa = transp > px.length / 4 * 0.05;
+    for (let i = 0; i < px.length; i += 4) {
+      const a = px[i + 3] / 255, lum = (0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2]) / 255;
+      const e = temAlfa ? a : a * Math.min(1, Math.max(0, inverter ? (lum - 0.4) / 0.2 : (0.6 - lum) / 0.2));
+      px[i] = 207; px[i + 1] = 211; px[i + 2] = 214; px[i + 3] = Math.round(e * 255);
+    }
+    x.putImageData(d, 0, 0); gravada = c;
+    document.getElementById("bloco-inverter").hidden = temAlfa;
+  }
   let img = null, arquivo = null, ix = 0, iy = 0, esc = 1, texto = "", corTexto = "#1d2427";
 
   // desenha só a arte (imagem + texto) dentro da área de impressão; usado também pela caneca 3D
   function pintarArte(c) {
     c.save(); c.beginPath(); c.rect(A.x, A.y, A.w, A.h); c.clip();
-    if (img) { const w = img.width * esc, h = img.height * esc; c.drawImage(img, A.x + A.w / 2 + ix - w / 2, A.y + A.h / 2 + iy - h / 2, w, h); }
+    if (img) { const w = img.width * esc, h = img.height * esc; c.drawImage(gravada || img, A.x + A.w / 2 + ix - w / 2, A.y + A.h / 2 + iy - h / 2, w, h); }
     if (texto) {
-      c.fillStyle = corTexto; c.textAlign = "center"; c.textBaseline = "middle";
+      c.fillStyle = MOD.laser ? ACO : corTexto; c.textAlign = "center"; c.textBaseline = "middle";
       let fs = 72; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`;
-      while (c.measureText(texto).width > A.w * .36 && fs > 24) { fs -= 2; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`; }
+      while (c.measureText(texto).width > A.w * (larga && MOD.w > 15 ? .36 : .92) && fs > 24) { fs -= 2; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`; }
       c.fillText(texto, A.x + A.w / 2, img ? A.y + A.h - fs * .8 : A.y + A.h / 2);
     }
     c.restore();
@@ -30,7 +64,8 @@
     temArte: () => !!(img || texto),
     pintar: pintarArte,
     cores: () => ({ corpo: fundoCaneca, detalhe }),
-    nome: () => produto ? produto.nome : "caneca",
+    nome: () => produto ? produto.nome : MOD.obj,
+    modelo: MOD,
   };
 
   function desenhar(final) {
@@ -52,9 +87,11 @@
     ctx.restore();
   }
   const zoom = document.getElementById("zoom");
-  // imagem larga (como a da caneca toda) cobre a área; imagem quadrada/alta fica na frente, na altura toda
+  // imagem larga (como a da caneca toda) cobre a área; imagem quadrada/alta fica na frente, na altura toda.
+  // Na área estreita do copo, a imagem cabe inteira na largura.
   const escCobrir = () => img ? Math.max(A.w / img.width, A.h / img.height) : 1;
-  const escPadrao = () => !img ? 1 : (img.width / img.height >= 1.8 ? escCobrir() : A.h / img.height);
+  const escPadrao = () => !img ? 1 : !larga ? Math.min(A.w / img.width, A.h / img.height)
+    : (img.width / img.height >= 1.8 ? escCobrir() : A.h / img.height);
   function encaixar(cobrir) { if (!img) return; esc = cobrir ? escCobrir() : escPadrao(); ix = iy = 0; zoom.value = Math.round(esc / escPadrao() * 100); }
 
   // arrastar e pinça na área de impressão
@@ -81,15 +118,17 @@
     const f = inp.files[0]; if (!f) return;
     if (!f.type.startsWith("image/")) { toast("Esse arquivo não é uma imagem. Use JPG ou PNG."); return; }
     arquivo = f; const im = new Image();
-    im.onload = () => { img = im; encaixar(false); desenhar(); document.getElementById("ajustes").hidden = false; fecharMais();
-      // ~150 dpi na impressão: pelo menos 1,25 pixel da imagem por pixel da área (48 px por cm)
-      document.getElementById("qualidade").hidden = 1 / esc >= 1.25; };
+    im.onload = () => { img = im; prepararLaser(); encaixar(false); desenhar(); document.getElementById("ajustes").hidden = false; fecharMais();
+      // ~150 dpi: pelo menos 60 pixels da imagem por cm da área
+      document.getElementById("qualidade").hidden = (1 / esc) * (A.w / MOD.w) >= 60; };
     im.onerror = () => toast("Não deu pra abrir essa imagem. Tente outra em JPG ou PNG.");
     im.src = URL.createObjectURL(f);
   });
   const campoTxt = document.getElementById("texto");
   campoTxt.addEventListener("input", () => { texto = campoTxt.value.trim(); desenhar(); });
   document.getElementById("cor-texto").addEventListener("input", e => { corTexto = e.target.value; desenhar(); });
+  if (MOD.laser) document.getElementById("cor-texto").closest("div").querySelectorAll('[for="cor-texto"],#cor-texto').forEach(el => el.hidden = true);
+  document.getElementById("inverter").addEventListener("change", e => { inverter = e.target.checked; prepararLaser(); desenhar(); });
   document.getElementById("centralizar").addEventListener("click", () => { encaixar(true); desenhar(); });
   const mais = document.getElementById("mais-opcoes");
   document.getElementById("btn-mais").addEventListener("click", () => { mais.hidden = !mais.hidden; });
@@ -121,13 +160,13 @@
   document.getElementById("add-pedido").addEventListener("click", async () => {
     const b = await previa(260); const u = await new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
     Pedido.add({ c: cId, id: pId, nome: produto.nome, img: produto.img, arte: u, desc: descricao(), qtd: 1, total: precoUn() });
-    toast(`Caneca adicionada. <a href="${ROOT}pedido/">Ver pedido</a>`);
+    toast(`${MOD.obj === "copo" ? "Copo adicionado" : "Caneca adicionada"}. <a href="${ROOT}pedido/">Ver pedido</a>`);
   });
   document.getElementById("enviar-arte").addEventListener("click", async () => {
-    const msg = `Olá! Montei minha caneca no site:\n• ${produto.nome}\n• ${descricao()}\n• Valor: ${brl(precoUn())}\n\nSegue a prévia, a arte posicionada e a arte original.`;
-    const prev = new File([await previa(1080)], "previa-caneca.png", { type: "image/png" });
+    const msg = `Olá! Montei ${MOD.obj === "copo" ? "meu copo" : "minha caneca"} no site:\n• ${produto.nome}\n• ${descricao()}\n• Valor: ${brl(precoUn())}\n\nSegue a prévia, a arte posicionada e a arte original.`;
+    const prev = new File([await previa(1080)], `previa-${MOD.obj}.png`, { type: "image/png" });
     desenhar(true);
-    const faixa = new File([await new Promise(r => cv.toBlob(r, "image/png"))], "arte-posicionada-caneca.png", { type: "image/png" });
+    const faixa = new File([await new Promise(r => cv.toBlob(r, "image/png"))], `arte-posicionada-${MOD.obj}.png`, { type: "image/png" });
     const files = arquivo ? [prev, faixa, arquivo] : [prev, faixa];
     if (navigator.canShare && navigator.canShare({ files })) {
       try { await navigator.share({ files, text: msg }); return; } catch (e) { if (e.name === "AbortError") return; }
@@ -144,13 +183,14 @@
     document.title = "Personalizar: " + produto.nome + " | Johen Arte Gráfica";
     if (!produto.caixinha) cx.closest("label").hidden = true;
     const coresBox = document.getElementById("cores");
-    const lista = /cor/i.test(produto.nome) ? CORES : null;
+    const lista = MOD.tipo === "copo" || /cor/i.test(produto.nome) ? CORES : null;
+    if (MOD.tipo === "copo") coresBox.querySelector(".rot").textContent = "Cor do copo";
     if (/mágica/i.test(produto.nome)) { fundoCaneca = "#2a2a2a"; detalhe = "#2a2a2a"; corNome = "Preta (mágica)"; }
     if (lista) {
       coresBox.hidden = false;
       coresBox.querySelector("div").innerHTML = lista.map(([n, c], i) => `<button class="cor" style="--c:${c}" aria-label="${n}" aria-pressed="${i === 0}" data-c="${c}" data-n="${n}"></button>`).join("");
       coresBox.addEventListener("click", e => { const b = e.target.closest(".cor"); if (!b) return;
-        coresBox.querySelectorAll(".cor").forEach(x => x.setAttribute("aria-pressed", x === b)); detalhe = b.dataset.c; corNome = b.dataset.n; desenhar(); });
+        coresBox.querySelectorAll(".cor").forEach(x => x.setAttribute("aria-pressed", x === b)); if (MOD.tipo === "copo") fundoCaneca = b.dataset.c; else detalhe = b.dataset.c; corNome = b.dataset.n; desenhar(); });
     }
     atualizarPreco(); desenhar();
   }).catch(() => { document.getElementById("nome-produto").textContent = "Não deu pra carregar o produto. Atualize a página."; });
