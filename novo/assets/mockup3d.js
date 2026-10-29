@@ -31,7 +31,7 @@ iniciar().then(v => {
   new IntersectionObserver(([e]) => e.isIntersecting ? v.ligar() : v.parar()).observe(palco);
 }).catch(err => {
   console.warn(err); acoes.hidden = true;
-  aviso3d.textContent = "Seu aparelho não conseguiu abrir a caneca em 3D. A área de impressão abaixo continua funcionando.";
+  aviso3d.textContent = "Seu aparelho não conseguiu abrir o 3D. A área de impressão abaixo continua funcionando.";
 });
 
 async function iniciar() {
@@ -50,8 +50,9 @@ async function iniciar() {
   const caneca = new T.Group(); scene.add(caneca);           // grupo que gira (caneca ou copo)
   const TW = Math.min(3072, renderer.capabilities.maxTextureSize);
   const V = (x, y) => new T.Vector2(x, y);
-  const M = MOD.tipo === "copo" ? montarCopo() : montarCaneca();
+  const M = MOD.tipo === "camiseta" ? montarCamiseta() : MOD.tipo === "copo" ? montarCopo() : montarCaneca();
   const alvo = M.alvo, pintarTextura = M.pintar;
+  camera.far = Math.max(20, M.dist * 2.5); camera.updateProjectionMatrix();
 
   // ---------- caneca de cerâmica (1 unidade = 10 cm): 8,2 cm de diâmetro, 9,5 cm de altura
   function montarCaneca() {
@@ -128,16 +129,140 @@ async function iniciar() {
     return { alvo: new T.Vector3(0, 0.78, 0), dist: 3.9, rot: -0.25, pintar };
   }
 
+  // ---------- camiseta (1 unidade = 10 cm, tamanho M): frente e costas "infladas" a partir do molde,
+  // como numa foto de manequim invisível; gola canelada, barras com costura e textura de malha
+  function montarCamiseta() {
+    // molde (metade direita, sentido horário a partir da gola) — espelhado para a esquerda
+    const meio = [[0.95, 7.25], [2.35, 6.95], [3.0, 6.62], [3.6, 6.25], [4.22, 5.7], [3.66, 4.98], [3.1, 5.2], [2.66, 5.42], [2.6, 5.0], [2.58, 3.0], [2.6, 1.0], [2.64, 0.0], [1.4, -0.06], [0, -0.08]];
+    const molde = [...meio, ...meio.slice(0, -1).reverse().map(([x, y]) => [-x, y])];
+    const seg = molde.map((a, i) => [a, molde[(i + 1) % molde.length]]);
+    const dentro = (x, y) => { let c = false; for (const [[x1, y1], [x2, y2]] of seg) if ((y1 > y) !== (y2 > y) && x < (x2 - x1) * (y - y1) / (y2 - y1) + x1) c = !c; return c; };
+    // bordas abertas (barra e boca das mangas) não "fecham" o volume: a camiseta fica oca ali, como de verdade
+    const aberta = ([[x1, y1], [x2, y2]]) => (y1 < 0.05 && y2 < 0.05) || (Math.abs(x1) > 3.6 && Math.abs(x2) > 3.6 && Math.abs(x1) < 4.3 && Math.abs(x2) < 4.3 && Math.min(y1, y2) < 5.0);
+    const segFechado = seg.filter(sg => !aberta(sg));
+    function maisPerto(x, y, lista = seg) {      // ponto mais perto na borda do molde e a distância até ele
+      let m = 1e9, px = x, py = y;
+      for (const [[x1, y1], [x2, y2]] of lista) {
+        const dx = x2 - x1, dy = y2 - y1, t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / (dx * dx + dy * dy)));
+        const qx = x1 + t * dx, qy = y1 + t * dy, d = Math.hypot(x - qx, y - qy);
+        if (d < m) { m = d; px = qx; py = qy; }
+      }
+      return [px, py, m];
+    }
+    const GOLA = { frente: [0.95, 0.88], costas: [0.95, 0.24] };       // decote (raio x, profundidade)
+    const noDecote = (x, y, l) => { const [rx, ry] = GOLA[l]; return (x / rx) ** 2 + ((y - 7.25) / ry) ** 2 < 1; };
+    const X0 = -4.35, X1 = 4.35, Y0 = -0.2, Y1 = 7.35;
+    // volume: alto no peito, baixo nas bordas; dobrinhas leves de tecido
+    const Z = (x, y) => {
+      const d = maisPerto(x, y, segFechado)[2];
+      const base = 0.5 * Math.sqrt(Math.min(1, d / 1.3));
+      // caimento: dobras verticais suaves que crescem perto da barra, e um leve vinco embaixo das mangas
+      const baixo = Math.max(0, 1 - y / 4.2) ** 2;
+      const dobra = baixo * (0.03 * Math.sin(x * 2.4 + 0.7) + 0.015 * Math.sin(x * 5.3 + y * 0.8))
+        + 0.02 * Math.exp(-((Math.abs(x) - 2.3) ** 2) / 0.08 - ((y - 4.9) ** 2) / 0.3);
+      return base + dobra * Math.min(1, d * 3);
+    };
+    const PASSO = 0.055;
+    function painel(l) {                    // malha de um lado (frente: z > 0, costas: z < 0)
+      const nx = Math.ceil((X1 - X0) / PASSO) + 1, ny = Math.ceil((Y1 - Y0) / PASSO) + 1, s = l === "frente" ? 1 : -1;
+      const ok = (x, y) => dentro(x, y) && !noDecote(x, y, l);
+      const dentroV = new Uint8Array(nx * ny);
+      for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) dentroV[j * nx + i] = ok(X0 + i * PASSO, Y0 + j * PASSO) ? 1 : 0;
+      const idx = new Int32Array(nx * ny).fill(-1), pos = [], uv = [], ind = [];
+      const usar = k => {
+        if (idx[k] >= 0) return idx[k];
+        let x = X0 + (k % nx) * PASSO, y = Y0 + Math.floor(k / nx) * PASSO, z;
+        if (!dentroV[k]) {                       // vértice de fora: encosta na borda (molde ou decote)
+          const [rx, ry] = GOLA[l];
+          if (dentro(x, y) && noDecote(x, y, l)) { const n = Math.hypot(x / rx, (y - 7.25) / ry); x /= n; y = 7.25 + (y - 7.25) / n; }
+          else { const [px, py] = maisPerto(x, y); x = px; y = py; }
+        }
+        z = s * Z(x, y);
+        idx[k] = pos.length / 3; pos.push(x, y, z);
+        uv.push(l === "frente" ? (x - X0) / (X1 - X0) : (X1 - x) / (X1 - X0), (y - Y0) / (Y1 - Y0));
+        return idx[k];
+      };
+      for (let j = 0; j < ny - 1; j++) for (let i = 0; i < nx - 1; i++) {
+        const a = j * nx + i, b = a + 1, c = a + nx, d = c + 1;
+        for (const t of [[a, b, d], [a, d, c]]) {
+          if (t.some(k => dentroV[k])) { const v = t.map(usar); if (s > 0) ind.push(v[0], v[1], v[2]); else ind.push(v[0], v[2], v[1]); }
+        }
+      }
+      const g = new T.BufferGeometry();
+      g.setAttribute("position", new T.Float32BufferAttribute(pos, 3)); g.setAttribute("uv", new T.Float32BufferAttribute(uv, 2));
+      g.setIndex(ind); g.computeVertexNormals(); return g;
+    }
+    // texturas (uma por lado): cor da malha, costuras e a estampa
+    const TWc = Math.min(2048, TW), THc = Math.round(TWc * (Y1 - Y0) / (X1 - X0));
+    const ppu = TWc / (X1 - X0);
+    const P = (x, y) => [(x - X0) * ppu, (Y1 - y) * ppu];
+    const malha = document.createElement("canvas"); malha.width = malha.height = 256;       // trama do tecido
+    { const m = malha.getContext("2d"), d = m.createImageData(256, 256);
+      for (let i = 0; i < 256 * 256; i++) { const x = i % 256, y = (i / 256) | 0, v = 128 + 22 * Math.sin(x * 2.1) * Math.sin(y * 2.1) + (Math.random() - 0.5) * 30;
+        d.data[i * 4] = d.data[i * 4 + 1] = d.data[i * 4 + 2] = v; d.data[i * 4 + 3] = 255; }
+      m.putImageData(d, 0, 0); }
+    const lados = {};
+    for (const l of ["frente", "costas"]) {
+      const c = document.createElement("canvas"); c.width = TWc; c.height = THc;
+      const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      const tecido = { roughness: 0.92, metalness: 0, sheen: 1, sheenRoughness: 0.55, envMapIntensity: 0.7 };
+      const mat = new T.MeshPhysicalMaterial({ ...tecido, map: t });
+      const dentroMat = new T.MeshPhysicalMaterial({ ...tecido, side: T.BackSide, color: 0x9a9a9a });   // lado de dentro (aparece pelo decote)
+      const g = painel(l);
+      caneca.add(new T.Mesh(g, mat)); caneca.add(new T.Mesh(g, dentroMat));
+      lados[l] = { c, x: c.getContext("2d"), t, mat, dentroMat };
+    }
+    // gola canelada: frente (decote fundo) + costas (decote raso)
+    const golaPts = [];
+    for (let i = 0; i <= 40; i++) { const a = Math.PI + Math.PI * i / 40, x = 0.95 * Math.cos(a), y = 7.25 + 0.88 * Math.sin(a); golaPts.push(new T.Vector3(x * 1.02, y - 0.02, Z(x, y) + 0.01)); }
+    for (let i = 1; i < 40; i++) { const a = -Math.PI * i / 40, x = 0.95 * Math.cos(a), y = 7.25 + 0.24 * Math.sin(a); golaPts.push(new T.Vector3(x * 1.02, y - 0.02, -Z(x, y) - 0.01)); }
+    const matGola = new T.MeshPhysicalMaterial({ roughness: 0.95, sheen: 1, sheenRoughness: 0.5 });
+    const golaGeo = new T.TubeGeometry(new T.CatmullRomCurve3(golaPts, true), 200, 0.075, 12, true);
+    caneca.add(new T.Mesh(golaGeo, matGola));
+    caneca.position.y = 0.02;
+    function costura(x, escuro) {     // barra da cintura e das mangas (linha dupla clarinha/escura)
+      x.save(); x.lineWidth = 0.035 * ppu; x.setLineDash([0.06 * ppu, 0.035 * ppu]); x.strokeStyle = escuro ? "rgba(255,255,255,.12)" : "rgba(0,0,0,.18)";
+      const linha = (pts) => { x.beginPath(); pts.forEach(([a, b], i) => { const [u, v] = P(a, b); i ? x.lineTo(u, v) : x.moveTo(u, v); }); x.stroke(); };
+      linha([[-2.6, 0.22], [-1.4, 0.16], [0, 0.14], [1.4, 0.16], [2.6, 0.22]]);
+      for (const k of [1, -1]) linha([[k * 4.02, 5.9], [k * 3.48, 5.2]]);
+      x.restore();
+    }
+    function pintar() {
+      const E = window.CanecaArte; const cor = E ? E.cores() : { corpo: "#f3f3f1" };
+      const escuro = new T.Color(cor.corpo).getHSL({}).l < 0.3;
+      for (const l of ["frente", "costas"]) {
+        const { x, c, t, dentroMat } = lados[l];
+        x.globalCompositeOperation = "source-over"; x.fillStyle = cor.corpo; x.fillRect(0, 0, c.width, c.height);
+        costura(x, escuro);
+        if (E && E.lados && E.lados.includes(l)) {
+          const A = E.area, w = MOD.w / 10 * ppu, h = MOD.h / 10 * ppu;
+          const topo = l === "frente" ? 7.25 - 0.88 - 0.75 : 7.25 - 0.24 - 0.9;      // 7,5 cm abaixo da gola
+          const [cx, ty] = P(0, topo);
+          x.save(); x.translate(cx - w / 2, ty); x.scale(w / A.w, h / A.h); x.translate(-A.x, -A.y);
+          x.beginPath(); x.rect(A.x, A.y, A.w, A.h); x.clip(); E.pintar(x, l); x.restore();
+        }
+        // trama da malha por cima de tudo (a estampa fica "no tecido")
+        x.globalCompositeOperation = escuro ? "screen" : "multiply"; x.globalAlpha = escuro ? 0.05 : 0.09;
+        x.fillStyle = x.createPattern(malha, "repeat"); x.fillRect(0, 0, c.width, c.height);
+        x.globalAlpha = 1; x.globalCompositeOperation = "source-over";
+        t.needsUpdate = true; dentroMat.color.set(cor.corpo).multiplyScalar(0.62);
+      }
+      matGola.color.set(cor.corpo).multiplyScalar(escuro ? 1.15 : 0.96);
+    }
+    return { alvo: new T.Vector3(0, 3.55, 0), dist: 21.5, rot: 0.3, elev: 0.1, sombra: [7.5, 2.4], pintar };
+  }
+
   // sombra suave no chão (não gira junto)
   const sc = document.createElement("canvas"); sc.width = sc.height = 256; const sx = sc.getContext("2d");
   const g = sx.createRadialGradient(128, 128, 0, 128, 128, 128); g.addColorStop(0, "rgba(0,0,0,.30)"); g.addColorStop(.45, "rgba(0,0,0,.12)"); g.addColorStop(1, "rgba(0,0,0,0)");
   sx.fillStyle = g; sx.fillRect(0, 0, 256, 256);
   const sombra = new T.Mesh(new T.PlaneGeometry(1.5, 1.5), new T.MeshBasicMaterial({ map: new T.CanvasTexture(sc), transparent: true, depthWrite: false }));
   sombra.rotation.x = -Math.PI / 2; sombra.position.set(0.05, 0.001, 0); scene.add(sombra);
+  if (M.sombra) sombra.scale.set(M.sombra[0] / 1.5, M.sombra[1] / 1.5, 1);
 
   // ---- câmera e giro
   const calmo = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let rotY = M.rot, elev = 0.3, vel = 0, auto = !calmo, arrastando = false, sujo = true, ligado = false;
+  let rotY = M.rot, elev = M.elev ?? 0.3, vel = 0, rotAlvo = null, auto = !calmo, arrastando = false, sujo = true, ligado = false;
   const DIST = M.dist;
   function posicionar() {
     camera.position.set(alvo.x, alvo.y + Math.sin(elev) * DIST, Math.cos(elev) * DIST);
@@ -148,9 +273,15 @@ async function iniciar() {
   }
   new ResizeObserver(() => { if (!gravando) tamanho(); }).observe(cv);
   document.addEventListener("caneca-mudou", () => { sujo = true; });
+  // aba Frente / Costas: vira o produto para o lado escolhido pelo caminho mais curto
+  document.addEventListener("mockup-lado", e => {
+    const alvoL = (e.detail === "costas" ? Math.PI : 0) + M.rot * (e.detail === "costas" ? -1 : 1) * 0.6;
+    const d = Math.atan2(Math.sin(alvoL - rotY), Math.cos(alvoL - rotY));
+    rotAlvo = rotY + d; vel = 0; marcarAuto(false);
+  });
 
   let ult = null;
-  cv.addEventListener("pointerdown", e => { if (gravando) return; cv.setPointerCapture(e.pointerId); arrastando = true; ult = e; vel = 0; marcarAuto(false); });
+  cv.addEventListener("pointerdown", e => { if (gravando) return; cv.setPointerCapture(e.pointerId); arrastando = true; ult = e; vel = 0; rotAlvo = null; marcarAuto(false); });
   cv.addEventListener("pointermove", e => {
     if (!arrastando) return; const r = cv.getBoundingClientRect();
     const dx = (e.clientX - ult.clientX) / r.width, dy = (e.clientY - ult.clientY) / r.height;
@@ -165,7 +296,8 @@ async function iniciar() {
   function quadro() {
     if (!ligado) return;
     if (!gravando) {
-      if (!arrastando) { if (Math.abs(vel) > 0.0005) { rotY += vel; vel *= 0.92; } else if (auto) rotY += 0.006; }
+      if (rotAlvo !== null && !arrastando) { rotY += (rotAlvo - rotY) * 0.12; if (Math.abs(rotAlvo - rotY) < 0.002) { rotY = rotAlvo; rotAlvo = null; } }
+      else if (!arrastando) { if (Math.abs(vel) > 0.0005) { rotY += vel; vel *= 0.92; } else if (auto) rotY += 0.006; }
       if (sujo) { pintarTextura(); sujo = false; }
       posicionar(); renderer.render(scene, camera);
     }

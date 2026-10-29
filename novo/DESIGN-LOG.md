@@ -31,6 +31,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-29 — A pedido do Johen (editor): botão "Cobrir a caneca toda" saiu do painel de ajustes e foi para o canto de baixo à direita do quadro 3D (no copo: "Preencher a área" / "Cobrir o copo todo"). "Arraste para girar" foi para a esquerda. Sem imagem, o botão avisa e abre o menu Adicionar arte. (build.py, editor.js, site.css)
 
+- 2026-10-29 — A pedido do Johen: mockup 3D de camiseta no editor, nas 6 camisetas DTF (botão "Personalize sem sair do site"). Camiseta montada no código a partir do molde (tam. M), com volume de manequim invisível, barra e mangas abertas, gola canelada, costuras e trama de malha; cores Branca e Preta. Área de estampa até 28 x 35 cm, 7,5 cm abaixo da gola. Nas "Frente e Verso" (Algodão, Dry Fit, Poliéster) há abas Frente / Costas: cada lado tem a própria arte e a camiseta vira sozinha para o lado escolhido. Foto PNG, vídeo girando (mostra frente e costas), Comprar e envio pelo WhatsApp (manda a arte de cada lado). Migalha e menu do editor apontam para Camisetas. (mockup3d.js: `montarCamiseta`; editor.js: modelos camiseta/camiseta2 e estado por lado; build.py; site.css `.ed-lados`)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.

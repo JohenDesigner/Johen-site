@@ -1,4 +1,4 @@
-// Editor de caneca e copo térmico: o cliente sobe a arte, posiciona na área de impressão/gravação aberta
+// Editor de caneca, copo térmico e camiseta: o cliente sobe a arte, posiciona na área de impressão/gravação aberta
 // e vê o resultado no produto em 3D (assets/mockup3d.js).
 (function () {
   const cv = document.getElementById("tela"); if (!cv) return;
@@ -10,8 +10,13 @@
     caneca:  { tipo: "caneca", w: 20, h: 8.5, laser: false, obj: "caneca", rot: "Área de impressão", sub: "volta toda a caneca · 20 x 8,5 cm", guia: ["‹ lado da alça", "frente", "lado da alça ›"] },
     copo:    { tipo: "copo", w: 4.8, h: 12, laser: true, obj: "copo", rot: "Área de gravação a laser", sub: "frente do copo · 4,8 x 12 cm", guia: null },
     copo360: { tipo: "copo", w: 25.7, h: 12, laser: true, volta: true, obj: "copo", rot: "Área de gravação a laser", sub: "volta toda o copo (360°) · 12 cm de altura", guia: ["‹ costas", "frente", "costas ›"] },
+    // camiseta DTF: estampa até 28 x 35 cm (aprox. A3) na frente; nas "Frente e Verso", também nas costas
+    camiseta:  { tipo: "camiseta", w: 28, h: 35, laser: false, obj: "camiseta", rot: "Área de estampa", sub: "frente · até 28 x 35 cm", guia: null },
+    camiseta2: { tipo: "camiseta", w: 28, h: 35, laser: false, verso: true, obj: "camiseta", rot: "Área de estampa", sub: "até 28 x 35 cm em cada lado", guia: null },
   };
-  const MOD = MODELOS[{ p6: "copo", p7nt99ze: "copo360" }[pId] || "caneca"];
+  const MOD = MODELOS[cId === "camisetas" ? (["p8", "p9", "p10"].includes(pId) ? "camiseta2" : "camiseta") : ({ p6: "copo", p7nt99ze: "copo360" }[pId] || "caneca")];
+  const corDoCorpo = MOD.tipo !== "caneca";               // copo e camiseta: a cor escolhida é a do produto todo
+  const SEU = { caneca: "sua caneca", copo: "seu copo", camiseta: "sua camiseta" }[MOD.obj];
   const ACO = "#cfd3d6";                                   // cor do aço que aparece onde o laser grava
   // área na tela: lado maior com 1000 px, margem em volta
   const PAD = 16, larga = MOD.w >= MOD.h;
@@ -21,12 +26,13 @@
   const A = { x: PAD, y: PAD, w: AW, h: AH };
   document.querySelector(".ed-faixa-tit .rot").textContent = MOD.rot;
   document.querySelector(".ed-faixa-tit small").textContent = MOD.sub;
-  if (MOD.tipo === "copo") document.getElementById("centralizar").textContent = MOD.volta ? "Cobrir o copo todo" : "Preencher a área";
+  if (MOD.tipo !== "caneca") document.getElementById("centralizar").textContent = MOD.volta ? "Cobrir o copo todo" : "Preencher a área";
   const guia = document.querySelector(".ed-faixa-guia");
   if (MOD.guia) guia.querySelectorAll("span").forEach((el, i) => el.textContent = MOD.guia[i]); else guia.hidden = true;
-  const CORES = MOD.tipo === "copo" ? [["Preto", "#1e1f21"], ["Branco", "#f4f4f2"]]
+  const CORES = MOD.tipo === "camiseta" ? [["Branca", "#f3f3f1"], ["Preta", "#1d1e20"]]
+    : MOD.tipo === "copo" ? [["Preto", "#1e1f21"], ["Branco", "#f4f4f2"]]
     : [["Branca", "#ffffff"], ["Vermelha", "#d6312b"], ["Preta", "#222222"], ["Azul", "#1f5fbf"], ["Verde", "#2f9e57"], ["Amarela", "#f2c230"], ["Rosa", "#ec7fb0"]];
-  let produto = null, detalhe = "#ffffff", fundoCaneca = MOD.tipo === "copo" ? CORES[0][1] : "#ffffff", corNome = MOD.tipo === "copo" ? "Preto" : "Branca";
+  let produto = null, detalhe = "#ffffff", fundoCaneca = corDoCorpo ? CORES[0][1] : "#ffffff", corNome = corDoCorpo ? CORES[0][0] : "Branca";
   // gravação a laser: a imagem vira uma "máscara" em cor de aço (só uma cor, como sai de verdade)
   let gravada = null, temAlfa = false, inverter = false;
   function prepararLaser() {
@@ -46,6 +52,13 @@
     document.getElementById("bloco-inverter").hidden = temAlfa;
   }
   let img = null, arquivo = null, ix = 0, iy = 0, esc = 1, texto = "", corTexto = "#1d2427";
+  // camiseta frente e verso: cada lado guarda a própria arte; as variáveis acima são sempre as do lado aberto
+  const LADOS = MOD.verso ? ["frente", "costas"] : ["frente"];
+  const est = {}; let lado = "frente";
+  const guardar = () => { est[lado] = { img, arquivo, ix, iy, esc, texto, corTexto, gravada, temAlfa, inverter }; };
+  const carregar = l => { ({ img, arquivo, ix, iy, esc, texto, corTexto, gravada, temAlfa, inverter } = est[l]); lado = l; };
+  LADOS.forEach(l => { est[l] = { img: null, arquivo: null, ix: 0, iy: 0, esc: 1, texto: "", corTexto: "#1d2427", gravada: null, temAlfa: false, inverter: false }; });
+  function comLado(l, fn) { if (!l || l === lado) return fn(); const atual = lado; guardar(); carregar(l); try { return fn(); } finally { carregar(atual); } }
 
   // desenha só a arte (imagem + texto) dentro da área de impressão; usado também pela caneca 3D
   function pintarArte(c) {
@@ -53,7 +66,7 @@
     if (img) { const w = img.width * esc, h = img.height * esc; c.drawImage(gravada || img, A.x + A.w / 2 + ix - w / 2, A.y + A.h / 2 + iy - h / 2, w, h); }
     if (texto) {
       c.fillStyle = MOD.laser ? ACO : corTexto; c.textAlign = "center"; c.textBaseline = "middle";
-      let fs = 72; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`;
+      let fs = MOD.tipo === "camiseta" ? 160 : 72; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`;
       while (c.measureText(texto).width > A.w * (larga && MOD.w > 15 ? .36 : .92) && fs > 24) { fs -= 2; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`; }
       c.fillText(texto, A.x + A.w / 2, img ? A.y + A.h - fs * .8 : A.y + A.h / 2);
     }
@@ -61,8 +74,9 @@
   }
   window.CanecaArte = {
     area: A,
-    temArte: () => !!(img || texto),
-    pintar: pintarArte,
+    temArte: () => { guardar(); return LADOS.some(l => est[l].img || est[l].texto); },
+    pintar: (c, l) => comLado(l, () => pintarArte(c)),
+    lados: LADOS,
     cores: () => ({ corpo: fundoCaneca, detalhe }),
     nome: () => produto ? produto.nome : MOD.obj,
     modelo: MOD,
@@ -142,7 +156,7 @@
   const barraEd = document.getElementById("barra-editar"), barraRev = document.getElementById("barra-revisar");
   const painel = document.getElementById("painel");
   document.getElementById("revisar").addEventListener("click", () => {
-    if (!img && !texto) { toast("Adicione uma imagem ou um texto antes de revisar."); return; }
+    if (!window.CanecaArte.temArte()) { toast("Adicione uma imagem ou um texto antes de revisar."); return; }
     desenhar(true); barraEd.hidden = true; barraRev.hidden = false; painel.hidden = true;
     document.getElementById("palco3d").scrollIntoView({ behavior: "smooth", block: "start" });
   });
@@ -153,7 +167,9 @@
   const totalEl = document.getElementById("total");
   const atualizarPreco = () => { totalEl.textContent = brl(precoUn()); };
   cx.addEventListener("change", atualizarPreco);
-  const descricao = () => `Cor: ${corNome}${cx.checked ? " · caixinha personalizada" : ""}${texto ? ` · texto: "${texto}"` : ""}`;
+  const descricao = () => { guardar();
+    const comArte = LADOS.filter(l => est[l].img || est[l].texto);
+    return `Cor: ${corNome}${cx.checked ? " · caixinha personalizada" : ""}${MOD.verso ? ` · estampa: ${comArte.join(" e ")}` : ""}${LADOS.map(l => est[l].texto ? ` · texto${MOD.verso ? " (" + l + ")" : ""}: "${est[l].texto}"` : "").join("")}`; };
 
   // foto da caneca 3D (se o aparelho abriu o 3D); senão, a faixa da área de impressão
   async function previa(tam) {
@@ -162,7 +178,7 @@
   }
   // Comprar: coloca no pedido com a prévia e abre a página do pedido
   async function comprar() {
-    if (!img && !texto) { toast("Adicione uma imagem ou um texto antes de comprar."); return; }
+    if (!window.CanecaArte.temArte()) { toast("Adicione uma imagem ou um texto antes de comprar."); return; }
     if (!produto) return;
     const b = await previa(260); const u = await new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
     Pedido.add({ c: cId, id: pId, nome: produto.nome, img: produto.img, arte: u, desc: descricao(), qtd: 1, total: precoUn() });
@@ -171,11 +187,16 @@
   document.getElementById("add-pedido").addEventListener("click", comprar);
   document.getElementById("comprar").addEventListener("click", comprar);
   document.getElementById("enviar-arte").addEventListener("click", async () => {
-    const msg = `Olá! Montei ${MOD.obj === "copo" ? "meu copo" : "minha caneca"} no site:\n• ${produto.nome}\n• ${descricao()}\n• Valor: ${brl(precoUn())}\n\nSegue a prévia, a arte posicionada e a arte original.`;
+    const msg = `Olá! Montei ${SEU.replace("sua", "minha").replace("seu", "meu")} no site:\n• ${produto.nome}\n• ${descricao()}\n• Valor: ${brl(precoUn())}\n\nSegue a prévia, a arte posicionada e a arte original.`;
     const prev = new File([await previa(1080)], `previa-${MOD.obj}.png`, { type: "image/png" });
+    guardar(); const files = [prev];
+    for (const l of LADOS) {
+      if (!est[l].img && !est[l].texto) continue;
+      const blob = await comLado(l, () => { desenhar(true); return new Promise(r => cv.toBlob(r, "image/png")); });
+      files.push(new File([blob], `arte-posicionada-${MOD.obj}${MOD.verso ? "-" + l : ""}.png`, { type: "image/png" }));
+      if (est[l].arquivo) files.push(est[l].arquivo);
+    }
     desenhar(true);
-    const faixa = new File([await new Promise(r => cv.toBlob(r, "image/png"))], `arte-posicionada-${MOD.obj}.png`, { type: "image/png" });
-    const files = arquivo ? [prev, faixa, arquivo] : [prev, faixa];
     if (navigator.canShare && navigator.canShare({ files })) {
       try { await navigator.share({ files, text: msg }); return; } catch (e) { if (e.name === "AbortError") return; }
     }
@@ -184,21 +205,44 @@
     setTimeout(() => location.href = wppLink(msg), 1200);
   });
 
+  // camiseta frente e verso: abas Frente / Costas trocam o lado que está sendo editado e viram a camiseta 3D
+  const abas = document.getElementById("lados");
+  if (abas && MOD.verso) {
+    abas.hidden = false;
+    abas.addEventListener("click", e => {
+      const b = e.target.closest("[data-l]"); if (!b || b.dataset.l === lado) return;
+      guardar(); carregar(b.dataset.l);
+      abas.querySelectorAll("[data-l]").forEach(x => x.setAttribute("aria-selected", x === b));
+      campoTxt.value = texto; document.getElementById("cor-texto").value = corTexto;
+      document.getElementById("bloco-texto").hidden = !texto;
+      document.getElementById("ajustes").hidden = !img; document.getElementById("qualidade").hidden = true;
+      if (img) zoom.value = Math.round(esc / escPadrao() * 100);
+      document.querySelector(".ed-faixa-tit small").textContent = `${lado} · até ${MOD.w} x ${MOD.h} cm`;
+      document.dispatchEvent(new CustomEvent("mockup-lado", { detail: lado }));
+      desenhar();
+    });
+    document.querySelector(".ed-faixa-tit small").textContent = `frente · até ${MOD.w} x ${MOD.h} cm`;
+  }
+
   // carregar produto
   carregarCatalogo().then(cat => {
     produto = (cat[cId] || []).find(p => p.id === pId) || cat.canecas[0];
+    if (cId === "camisetas") {             // migalha e menu apontam para Camisetas
+      const m = document.getElementById("migalha-cat"); if (m) { m.textContent = "Camisetas"; m.href = ROOT + "camisetas/"; }
+      document.querySelectorAll(".nav-cat a").forEach(a => { const s = new URL(a.href).pathname.replace(/\/$/, "").split("/").pop(); a.toggleAttribute("aria-current", s === "camisetas"); if (s === "camisetas") a.setAttribute("aria-current", "page"); });
+    }
     document.getElementById("nome-produto").textContent = produto.nome;
     document.title = "Personalizar: " + produto.nome + " | Johen Arte Gráfica";
     if (!produto.caixinha) cx.closest("label").hidden = true; else if (q.get("cx") === "1") cx.checked = true;
     const coresBox = document.getElementById("cores");
-    const lista = MOD.tipo === "copo" || /cor/i.test(produto.nome) ? CORES : null;
-    if (MOD.tipo === "copo") coresBox.querySelector(".rot").textContent = "Cor do copo";
+    const lista = corDoCorpo || /cor/i.test(produto.nome) ? CORES : null;
+    if (corDoCorpo) coresBox.querySelector(".rot").textContent = MOD.tipo === "camiseta" ? "Cor da camiseta" : "Cor do copo";
     if (/mágica/i.test(produto.nome)) { fundoCaneca = "#2a2a2a"; detalhe = "#2a2a2a"; corNome = "Preta (mágica)"; }
     if (lista) {
       coresBox.hidden = false;
       coresBox.querySelector("div").innerHTML = lista.map(([n, c], i) => `<button class="cor" style="--c:${c}" aria-label="${n}" aria-pressed="${i === 0}" data-c="${c}" data-n="${n}"></button>`).join("");
       coresBox.addEventListener("click", e => { const b = e.target.closest(".cor"); if (!b) return;
-        coresBox.querySelectorAll(".cor").forEach(x => x.setAttribute("aria-pressed", x === b)); if (MOD.tipo === "copo") fundoCaneca = b.dataset.c; else detalhe = b.dataset.c; corNome = b.dataset.n; desenhar(); });
+        coresBox.querySelectorAll(".cor").forEach(x => x.setAttribute("aria-pressed", x === b)); if (corDoCorpo) fundoCaneca = b.dataset.c; else detalhe = b.dataset.c; corNome = b.dataset.n; desenhar(); });
     }
     atualizarPreco(); desenhar();
   }).catch(() => { document.getElementById("nome-produto").textContent = "Não deu pra carregar o produto. Atualize a página."; });

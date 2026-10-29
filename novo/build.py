@@ -146,7 +146,7 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
         else:
             opc = ""  # preço único já aparece logo abaixo do título
         opc += '<div class="campo campo-qtd"><span class="rot">Quantas peças?</span><div class="qtd"><button id="menos" aria-label="Menos">−</button><output id="qtd">1</output><button id="mais" aria-label="Mais">+</button></div></div>'
-        editavel = slug == "canecas" and (p["sub"] == "canecas" or p["id"] in ("p6", "p7nt99ze"))  # canecas e copos térmicos têm editor 3D
+        editavel = (slug == "canecas" and (p["sub"] == "canecas" or p["id"] in ("p6", "p7nt99ze"))) or (slug == "camisetas" and p["sub"] == "dtf")  # canecas, copos térmicos e camisetas DTF têm editor 3D
         caixinha = (f'<label class="check caixinha-op"><input type="checkbox" id="caixinha"><img src="../../img/produtos/canecas-caixinha.webp" alt="" width="44" height="44" loading="lazy"><span class="cx-txt">Caixinha personalizada<small><b>+ {brl(p["caixinha"])}</b> · opcional</small></span></label>' if p.get("caixinha") else "")
         personalizar = (f'<a class="btn btn-pri btn-bloco" id="personalizar" href="../../editor/?c={slug}&p={p["id"]}">Personalize sem sair do site</a>' if editavel else "")
         botoes = ('<button class="btn btn-sec btn-bloco" id="add">Adicionar ao pedido</button>' if editavel else '<button class="btn btn-pri btn-bloco" id="add">Adicionar ao pedido</button>')
@@ -225,12 +225,13 @@ pagina("pedido/index.html", "Meu pedido | Johen Arte Gráfica", "Revise seu pedi
 
 # ---------- editor de caneca ----------
 corpo = f'''<div class="wrap editor">
-<div class="migalha" style="padding-top:14px"><a href="../">Início</a> › <a href="../canecas/">Canecas</a> › Personalizar</div>
+<div class="migalha" style="padding-top:14px"><a href="../">Início</a> › <a id="migalha-cat" href="../canecas/">Canecas</a> › Personalizar</div>
 <h1 class="ed-tit" id="nome-produto">Carregando caneca…</h1>
 <div class="ed-grid">
   <div class="ed-esq">
     <div class="ed-palco palco3d" id="palco3d"><canvas id="tela3d" aria-label="Caneca em 3D com a sua arte. Arraste para girar."></canvas><p id="aviso3d" class="aviso3d">Carregando 3D…</p><p class="dica3d" aria-hidden="true">Arraste para girar</p><button class="btn btn-sec cobrir3d" id="centralizar">Cobrir a caneca toda</button><div id="acoes3d" class="ed-3d-acoes"><button class="btn btn-sec" id="girar3d" aria-pressed="true">Girar sozinha</button><button class="btn btn-sec" id="foto3d">Baixar PNG</button><button class="btn btn-sec" id="video3d">Baixar vídeo</button></div></div>
     <div class="ed-faixa">
+      <div class="ed-lados" id="lados" role="tablist" aria-label="Lado da camiseta" hidden><button role="tab" data-l="frente" aria-selected="true">Frente</button><button role="tab" data-l="costas" aria-selected="false">Costas</button></div>
       <div class="ed-faixa-tit"><span class="rot">Área de impressão</span><small>volta toda a caneca · 20 x 8,5 cm</small></div>
       <canvas id="tela" aria-label="Área de impressão aberta: arraste a arte para posicionar"></canvas>
       <div class="ed-faixa-guia" aria-hidden="true"><span>‹ lado da alça</span><span>frente</span><span>lado da alça ›</span></div>
@@ -263,7 +264,7 @@ corpo = f'''<div class="wrap editor">
   <button class="btn btn-wpp" id="enviar-arte">{ICO['wpp']} Enviar</button>
 </div>
 </div>'''
-pagina("editor/index.html", "Personalizar caneca ou copo | Johen Arte Gráfica", "Monte sua caneca ou copo térmico com a sua arte e veja em 3D antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script>')
+pagina("editor/index.html", "Personalizar | Johen Arte Gráfica", "Monte sua caneca, copo térmico ou camiseta com a sua arte e veja em 3D antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script>')
 
 # ---------- home ----------
 hero_fotos = ["cartoes-p1","canecas-p2","cartoes-p3","canecas-p9","camisetas-p5","cartoes-p7"]

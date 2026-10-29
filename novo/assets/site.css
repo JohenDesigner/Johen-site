@@ -337,3 +337,8 @@ body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 .sobre-rod .destaque{font-family:var(--display);font-size:18px;font-weight:500;opacity:1;color:var(--amarelo)}
 .sobre-rod a{text-decoration:underline;text-underline-offset:3px}
 .sobre-rod .rascunho{font-size:11px}
+
+/* editor: abas Frente / Costas da camiseta */
+.ed-lados{display:inline-flex;gap:4px;padding:4px;background:var(--branco);border:1px solid var(--linha);border-radius:999px;margin-bottom:12px}
+.ed-lados button{border:0;background:transparent;border-radius:999px;padding:8px 18px;font-size:14px;font-weight:600;color:var(--tinta-2);cursor:pointer;min-height:38px}
+.ed-lados button[aria-selected="true"]{background:var(--azul);color:#fff}
