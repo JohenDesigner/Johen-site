@@ -41,7 +41,7 @@ async function iniciar() {
   const caneca = new T.Group(); scene.add(caneca);
 
   // textura da parede externa = volta inteira da caneca, com a arte do editor na frente
-  const TW = 2048, TH = Math.round(TW * PAREDE / (2 * Math.PI * R));
+  const TW = Math.min(3072, renderer.capabilities.maxTextureSize), TH = Math.round(TW * PAREDE / (2 * Math.PI * R));
   const tc = document.createElement("canvas"); tc.width = TW; tc.height = TH; const tx = tc.getContext("2d");
   const tex = new T.CanvasTexture(tc); tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
   const pxU = TW / (2 * Math.PI * R), pxV = TH / PAREDE;
@@ -68,8 +68,14 @@ async function iniciar() {
   caneca.add(new T.Mesh(new T.LatheGeometry([V(0, 0), V(0.36, 0), V(0.395, 0.008), V(R, BASE)], 160), matCorpo));
   caneca.add(new T.Mesh(new T.LatheGeometry([V(R, H), V(0.409, H + 0.006), V(0.403, H + 0.011), V(0.394, H + 0.011), V(0.388, H + 0.006),
     V(0.385, H), V(0.385, 0.10), V(0.37, 0.085), V(0, 0.08)], 160), matDetalhe));
-  const curva = new T.CatmullRomCurve3([[0.38, 0.80], [0.55, 0.81], [0.67, 0.70], [0.69, 0.52], [0.63, 0.34], [0.50, 0.24], [0.38, 0.23]].map(([x, y]) => new T.Vector3(x, y, 0)));
-  const alcaGeo = new T.TubeGeometry(curva, 120, 0.042, 28, false); alcaGeo.scale(1, 1, 1.35);
+  // alça em "D", mais fina e achatada nas laterais, como a de uma caneca de 325 ml
+  const curva = new T.CatmullRomCurve3([[0.38, 0.79], [0.50, 0.80], [0.61, 0.77], [0.68, 0.68], [0.70, 0.54], [0.67, 0.40], [0.59, 0.29], [0.49, 0.245], [0.38, 0.24]].map(([x, y]) => new T.Vector3(x, y, 0)));
+  const alcaGeo = new T.TubeGeometry(curva, 140, 0.036, 32, false); alcaGeo.scale(1, 1, 1.5);
+  // encontro da alça com a parede um pouco mais cheio (como na cerâmica de verdade)
+  for (const y of [0.795, 0.24]) {
+    const junta = new T.Mesh(new T.SphereGeometry(0.046, 32, 16), matDetalhe);
+    junta.scale.set(0.9, 1, 1.45); junta.position.set(0.395, y, 0); caneca.add(junta);
+  }
   caneca.add(new T.Mesh(alcaGeo, matDetalhe));
 
   // sombra suave no chão (não gira junto)
