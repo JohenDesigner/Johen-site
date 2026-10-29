@@ -94,7 +94,8 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
     <div>
       <img class="marca" src="{R}img/marca/logo-wordmark.webp" alt="Johen Artes Gráficas">
       <p>R. Pedro Fernandes Aragão, 269 · Jardim Selma · São Paulo, SP</p>
-      <p>WhatsApp (11) 98287-7142 · @johen_artgrafica</p>
+      <p><a href="{wpp('Olá! Vim pelo site.')}">WhatsApp (11) 98287-7142</a></p>
+      <p><a href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener">Instagram @johen_artgrafica</a></p>
     </div>
     <div><h3>Também fazemos</h3><ul class="lista-texto">{"".join(f"<li>{x}</li>" for x in TAMBEM)}</ul></div>
     <div class="sobre-rod"><h3>Sobre</h3>
@@ -285,6 +286,11 @@ corpo = f'''
   <h1 class="inicio-tit">Sua ideia, impressa com capricho.</h1>
   <div class="mascotes" id="produtos">{masc}</div>
   <div class="mcards">{cards}</div>
+  <section class="avaliar" aria-labelledby="avaliar-tit">
+    <img src="img/marca/ic-google.webp" alt="" width="44" height="57" loading="lazy">
+    <div class="avaliar-txt"><span class="estrelas" aria-hidden="true">★★★★★</span><h2 id="avaliar-tit">Gostou do nosso trabalho?</h2><p>Sua avaliação no Google ajuda mais gente do bairro a encontrar a Johen.</p></div>
+    <a class="btn btn-pri" href="https://g.page/r/CWKTHinBP02gEAI/review" target="_blank" rel="noopener">Nos avalie no Google</a>
+  </section>
 </div></section>'''
 pagina("index.html", "Johen Arte Gráfica | Gráfica e personalizados no Jardim Selma, SP", "Cartões de visita, panfletos, banners, adesivos, camisetas e canecas personalizadas em São Paulo. Peça pelo site e acompanhe pelo WhatsApp.", corpo)
 print("ok")

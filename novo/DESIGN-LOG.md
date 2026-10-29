@@ -38,6 +38,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-29 — A pedido do Johen: rodapé sem as listas de links "Produtos" e "Serviços"; no lugar, "Também fazemos" em tópicos, um embaixo do outro, só texto (Convites, Crachás, Blocos e talões, Envelopes, Pastas, Calendários, Ímãs de geladeira, Tags, Cardápios, Carimbos — lista confirmada). Sobre ficou com 5 mil projetos, grande quantidade, horário, pagamento e CNPJ. (build.py `TAMBEM`, site.css)
 
+- 2026-10-29 — A pedido do Johen: rodapé com "WhatsApp (11) 98287-7142" numa linha e "Instagram @johen_artgrafica" na de baixo, os dois clicáveis. Página inicial ganhou, depois dos cards, um cartão "Gostou do nosso trabalho?" com 5 estrelas amarelas, ícone de localização e botão laranja "Nos avalie no Google" (abre a página de avaliação). (build.py, site.css `.avaliar`)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.

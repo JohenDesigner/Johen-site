@@ -348,3 +348,13 @@ body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 .ed-lados button{border:0;background:transparent;border-radius:999px;padding:8px 18px;font-size:14px;font-weight:600;color:var(--tinta-2);cursor:pointer;min-height:38px}
 .ed-lados button[aria-selected="true"]{background:var(--azul);color:#fff}
 .rodape .lista-texto li{opacity:.88}
+
+/* página inicial: convite para avaliar no Google */
+.avaliar{margin:44px 0 10px;background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:28px 22px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.avaliar img{width:44px;height:auto}
+.avaliar-txt h2{font-size:clamp(22px,5.4vw,28px);margin:6px 0 6px}
+.avaliar-txt p{margin:0;color:var(--tinta-2);font-size:15px;max-width:36ch}
+.estrelas{color:var(--amarelo);font-size:20px;letter-spacing:3px}
+.avaliar .btn{margin-top:4px}
+@media(min-width:760px){.avaliar{flex-direction:row;text-align:left;padding:28px 34px;gap:22px}.avaliar-txt{flex:1}.avaliar .btn{margin-top:0}}
+.rodape p a{opacity:1}
