@@ -40,6 +40,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-29 — A pedido do Johen: rodapé com "WhatsApp (11) 98287-7142" numa linha e "Instagram @johen_artgrafica" na de baixo, os dois clicáveis. Página inicial ganhou, depois dos cards, um cartão "Gostou do nosso trabalho?" com 5 estrelas amarelas, ícone de localização e botão laranja "Nos avalie no Google" (abre a página de avaliação). (build.py, site.css `.avaliar`)
 
+- 2026-10-29 — Rodapé (todas as páginas): a lista "Também fazemos" (10 itens, um embaixo do outro) ocupava quase meia tela no celular. Agora fica em duas colunas alinhadas (5 linhas), mesmo texto e mesma ordem; o rodapé ficou ~85px mais curto em 390px e mais organizado. No computador também fica em duas colunas dentro da coluna dele. (site.css: `.rodape ul.lista-texto` em grid)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.
