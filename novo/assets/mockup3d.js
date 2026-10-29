@@ -4,6 +4,26 @@ const palco = document.getElementById("palco3d"), cv = document.getElementById("
 const acoes = document.getElementById("acoes3d"), aviso3d = document.getElementById("aviso3d");
 const bGirar = document.getElementById("girar3d"), bFoto = document.getElementById("foto3d"), bVideo = document.getElementById("video3d");
 const FUNDO = "#eef1f1";
+// marca d'água: logo da Johen bem clarinha, repetida na diagonal, no fundo da tela e nas fotos/vídeos baixados
+const MARCA = new Image();
+MARCA.src = new URL("../img/marca/logo-wordmark.webp", import.meta.url).href;
+function fundoComMarca(tam) {
+  const c = document.createElement("canvas"); c.width = c.height = tam; const x = c.getContext("2d");
+  x.fillStyle = FUNDO; x.fillRect(0, 0, tam, tam);
+  if (MARCA.complete && MARCA.naturalWidth) {
+    x.save(); x.globalAlpha = 0.06; x.translate(tam / 2, tam / 2); x.rotate(-Math.PI / 9);
+    const w = tam * 0.24, h = w * MARCA.naturalHeight / MARCA.naturalWidth, sx = w * 1.7, sy = h * 3.4;
+    for (let yy = -tam, i = 0; yy < tam; yy += sy, i++) for (let xx = -tam - (i % 2) * sx / 2; xx < tam; xx += sx) x.drawImage(MARCA, xx, yy, w, h);
+    x.restore();
+  }
+  return c;
+}
+function marcaNaTela() {
+  const palco = document.getElementById("palco3d"); if (!palco) return;
+  palco.style.backgroundImage = `url(${fundoComMarca(900).toDataURL("image/png")})`;
+  palco.style.backgroundSize = "cover"; palco.style.backgroundPosition = "center";
+}
+if (MARCA.complete) marcaNaTela(); else MARCA.addEventListener("load", marcaNaTela);
 let gravando = false;
 
 iniciar().then(v => {
@@ -165,16 +185,22 @@ async function iniciar() {
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     toast(tipo.startsWith("video") ? "Vídeo salvo." : "Foto salva.");
   }
-  function emAlta(fn, tam = 1080) {           // renderiza em tam x tam com fundo, depois volta ao normal
+  function emAlta(fn, tam = 1080) {           // renderiza em tam x tam (fundo transparente), depois volta ao normal
     renderer.setPixelRatio(1); renderer.setSize(tam, tam, false); renderer.setClearColor(FUNDO, 1);
+    const tx = new T.CanvasTexture(fundoComMarca(tam)); tx.colorSpace = T.SRGBColorSpace; scene.background = tx;   // marca d'água no fundo
     const r = fn();
-    const volta = () => { renderer.setClearColor(0x000000, 0); renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); tamanho(); };
+    const volta = () => { scene.background = null; tx.dispose(); renderer.setClearColor(0x000000, 0); renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); tamanho(); };
     return r && r.then ? r.finally(volta) : (volta(), r);
+  }
+  // foto: produto 3D com a marca d'água no fundo (scene.background em emAlta)
+  function fotoComMarca() {
+    renderer.render(scene, camera);
+    return new Promise(ok => cv.toBlob(ok, "image/png"));
   }
   bFoto.addEventListener("click", () => {
     if (gravando) return;
     pintarTextura(); posicionar();
-    const blob = emAlta(() => { renderer.render(scene, camera); return new Promise(ok => cv.toBlob(ok, "image/png")); });
+    const blob = emAlta(() => fotoComMarca(1080));
     blob.then(b => entregar(b, nomeArq("png"), "image/png"));
   });
   const TIPOS = ["video/mp4;codecs=avc1.42E01E", "video/mp4", "video/webm;codecs=vp9", "video/webm"];
@@ -206,7 +232,7 @@ async function iniciar() {
 
   // foto da caneca para o pedido e para o WhatsApp (editor.js)
   window.Caneca3D = { foto: tam => { if (gravando) return Promise.reject(); pintarTextura(); posicionar();
-    return emAlta(() => { renderer.render(scene, camera); return new Promise(ok => cv.toBlob(ok, "image/png")); }, tam); } };
+    return emAlta(() => fotoComMarca(tam), tam); } };
   aviso3d.hidden = true;
   return { ligar, parar };
 }

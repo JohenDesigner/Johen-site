@@ -27,6 +27,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-29 — Editor: quadro do 3D ganhou 50px de respiro no topo para os botões Girar/Baixar PNG/Baixar vídeo não cobrirem a tampa do copo térmico (vale para as 4 canecas e os 2 copos). (site.css: `.palco3d`)
 
+- 2026-10-29 — A pedido do Johen: marca d'água da Johen no fundo do editor 3D. Logo bem clarinha (6%), repetida na diagonal, atrás da caneca/copo na tela e também na foto PNG, no vídeo baixado e na prévia que vai para o pedido/WhatsApp. (assets/mockup3d.js: `fundoComMarca`, `scene.background` no `emAlta`)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.
