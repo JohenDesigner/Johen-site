@@ -241,7 +241,9 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .rodape img.marca{height:28px;width:auto;filter:brightness(0) invert(1);opacity:.95}
 .rodape p{margin:8px 0 0;opacity:.75;font-size:14px}
 .rodape h3{font-family:var(--corpo);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin-bottom:10px}
-.rodape ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;font-size:14px}
+.rodape ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;font-size:14px}
+.rodape ul a{display:inline-block;padding-block:7px}
+.rodape h3+ul{margin-top:-4px}
 .rodape a{text-decoration:none;opacity:.88}
 .rodape a:hover{opacity:1;text-decoration:underline}
 .cnpj{font-size:12px!important;opacity:.5!important}
