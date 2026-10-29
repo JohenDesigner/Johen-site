@@ -42,6 +42,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-29 — Rodapé (todas as páginas): a lista "Também fazemos" (10 itens, um embaixo do outro) ocupava quase meia tela no celular. Agora fica em duas colunas alinhadas (5 linhas), mesmo texto e mesma ordem; o rodapé ficou ~85px mais curto em 390px e mais organizado. No computador também fica em duas colunas dentro da coluna dele. (site.css: `.rodape ul.lista-texto` em grid)
 
+- 2026-10-29 — A pedido do Johen (camiseta 3D no editor): a camiseta era um molde chato "inflado" e parecia quadrada. Agora segue a referência do Rapid Mockup ("camiseta caminhando"): vestida num manequim invisível, com tronco de corpo de verdade (peito marcado, cintura um pouco mais fina, costas e ombros arredondados), mangas em tubo caindo para os lados a partir do ombro, gola acompanhando o decote, dobrinhas na barra e luz de estúdio própria para dar volume (frente e costas mais definidas, branca sem estourar). Com "Girar sozinha" ligado ela "caminha" de leve (mangas balançam em oposição e o tronco acompanha); o vídeo baixado também sai com o movimento. Estampa continua 28 x 35 cm, 7,5 cm abaixo da gola, frente e costas. (mockup3d.js: `montarCamiseta` refeita, `animar`)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.
