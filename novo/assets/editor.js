@@ -18,6 +18,7 @@
     c.quadraticCurveTo(M.x, M.y + M.h, M.x, M.y + M.h - M.r); c.closePath();
   }
   function desenhar(final) {
+    document.dispatchEvent(new Event("caneca-mudou"));
     ctx.clearRect(0, 0, S, S);
     ctx.fillStyle = "#eef1f1"; ctx.fillRect(0, 0, S, S);
     // sombra no chão
@@ -32,15 +33,7 @@
     // corpo
     ctx.save(); corpoPath(ctx); ctx.fillStyle = fundoCaneca; ctx.fill(); ctx.clip();
     // arte
-    ctx.save(); ctx.beginPath(); ctx.rect(A.x, A.y, A.w, A.h); ctx.clip();
-    if (img) { const w = img.width * esc, h = img.height * esc; ctx.drawImage(img, A.x + A.w / 2 + ix - w / 2, A.y + A.h / 2 + iy - h / 2, w, h); }
-    if (texto) {
-      ctx.fillStyle = corTexto; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      let fs = 64; ctx.font = `600 ${fs}px Outfit, Figtree, sans-serif`;
-      while (ctx.measureText(texto).width > A.w - 30 && fs > 22) { fs -= 2; ctx.font = `600 ${fs}px Outfit, Figtree, sans-serif`; }
-      ctx.fillText(texto, A.x + A.w / 2, img ? A.y + A.h - fs * .8 : A.y + A.h / 2);
-    }
-    ctx.restore();
+    pintarArte(ctx);
     // sombreamento cilíndrico
     const g = ctx.createLinearGradient(M.x, 0, M.x + M.w, 0);
     g.addColorStop(0, "rgba(0,0,0,.30)"); g.addColorStop(.12, "rgba(0,0,0,.08)"); g.addColorStop(.32, "rgba(255,255,255,.22)");
@@ -61,6 +54,25 @@
       ctx.restore();
     }
   }
+  // desenha só a arte (imagem + texto) dentro da área de impressão; usado também pela vista 3D
+  function pintarArte(c) {
+    c.save(); c.beginPath(); c.rect(A.x, A.y, A.w, A.h); c.clip();
+    if (img) { const w = img.width * esc, h = img.height * esc; c.drawImage(img, A.x + A.w / 2 + ix - w / 2, A.y + A.h / 2 + iy - h / 2, w, h); }
+    if (texto) {
+      c.fillStyle = corTexto; c.textAlign = "center"; c.textBaseline = "middle";
+      let fs = 64; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`;
+      while (c.measureText(texto).width > A.w - 30 && fs > 22) { fs -= 2; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`; }
+      c.fillText(texto, A.x + A.w / 2, img ? A.y + A.h - fs * .8 : A.y + A.h / 2);
+    }
+    c.restore();
+  }
+  window.CanecaArte = {
+    area: A,
+    temArte: () => !!(img || texto),
+    pintar: pintarArte,
+    cores: () => ({ corpo: fundoCaneca, detalhe }),
+    nome: () => produto ? produto.nome : "caneca",
+  };
   function encaixar() { if (!img) return; esc = Math.max(A.w / img.width, A.h / img.height); ix = iy = 0; zoom.value = 100; }
   // arrastar e pinça
   const pts = new Map(); let base = null;

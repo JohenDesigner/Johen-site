@@ -1,7 +1,7 @@
 # Gera as páginas do site novo a partir de dados/produtos.json
 # Rodar: python3 build.py   (dentro da pasta novo/)
 import json, os, html, shutil, hashlib
-VER = hashlib.md5((open("assets/site.css","rb").read()+open("assets/site.js","rb").read()+open("assets/editor.js","rb").read())).hexdigest()[:8]
+VER = hashlib.md5((open("assets/site.css","rb").read()+open("assets/site.js","rb").read()+open("assets/editor.js","rb").read()+open("assets/mockup3d.js","rb").read())).hexdigest()[:8]
 
 D = json.load(open("dados/produtos.json"))
 WPP = "5511982877142"
@@ -216,7 +216,12 @@ corpo = f'''<div class="wrap editor">
 <div class="migalha" style="padding-top:14px"><a href="../">Início</a> › <a href="../canecas/">Canecas</a> › Personalizar</div>
 <h1 class="ed-tit" id="nome-produto">Carregando caneca…</h1>
 <div class="ed-grid">
-  <div class="ed-palco"><canvas id="tela" aria-label="Prévia da caneca com a sua arte"></canvas></div>
+  <div class="ed-esq">
+    <div class="ed-vistas" role="group" aria-label="Tipo de prévia"><button id="vista-editar" aria-pressed="true">Editar arte</button><button id="vista-3d" aria-pressed="false">Ver em 3D</button></div>
+    <div class="ed-palco"><canvas id="tela" aria-label="Prévia da caneca com a sua arte"></canvas>
+      <div id="palco3d" class="palco3d" hidden><canvas id="tela3d" aria-label="Caneca em 3D com a sua arte. Arraste para girar."></canvas><p id="aviso3d" class="aviso3d">Carregando 3D…</p><p class="dica3d" aria-hidden="true">Arraste para girar</p></div></div>
+    <div id="acoes3d" class="ed-3d-acoes" hidden><button class="btn btn-sec" id="girar3d" aria-pressed="true">Girar sozinha</button><button class="btn btn-sec" id="foto3d">Baixar foto</button><button class="btn btn-sec" id="video3d">Gravar vídeo</button></div>
+  </div>
   <div class="ed-lado">
     <div id="painel" class="ed-painel">
       <div id="ajustes" class="campo" hidden><label for="zoom">Tamanho da imagem</label><input id="zoom" type="range" min="40" max="300" value="100"><small>Arraste a imagem na caneca pra posicionar. No celular dá pra usar dois dedos.</small><button class="btn btn-sec" id="centralizar" style="min-height:42px;font-size:15px">Encaixar na área</button>
@@ -243,7 +248,7 @@ corpo = f'''<div class="wrap editor">
   <button class="btn btn-wpp" id="enviar-arte">{ICO['wpp']} Enviar</button>
 </div>
 </div>'''
-pagina("editor/index.html", "Personalizar caneca | Johen Arte Gráfica", "Monte sua caneca com a sua arte e veja como fica antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script>')
+pagina("editor/index.html", "Personalizar caneca | Johen Arte Gráfica", "Monte sua caneca com a sua arte e veja como fica antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script>')
 
 # ---------- home ----------
 hero_fotos = ["cartoes-p1","canecas-p2","cartoes-p3","canecas-p9","camisetas-p5","cartoes-p7"]
