@@ -238,7 +238,7 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .rodape{background:var(--azul);color:#fff;border-radius:28px 28px 0 0;margin-top:56px}
 .rodape .wrap{padding-block:40px calc(32px + env(safe-area-inset-bottom,0px));display:grid;gap:28px}
 @media(min-width:760px){.rodape .wrap{grid-template-columns:1fr 1fr}}
-@media(min-width:1000px){.rodape .wrap{grid-template-columns:1.2fr .9fr .9fr 1.4fr}}
+@media(min-width:1000px){.rodape .wrap{grid-template-columns:1.3fr .9fr 1.4fr}}
 .rodape img.marca{height:28px;width:auto;filter:brightness(0) invert(1);opacity:.95}
 .rodape p{margin:8px 0 0;opacity:.75;font-size:14px}
 .rodape h3{font-family:var(--corpo);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin-bottom:10px}
@@ -347,3 +347,4 @@ body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 .ed-lados{display:inline-flex;gap:4px;padding:4px;background:var(--branco);border:1px solid var(--linha);border-radius:999px;margin-bottom:12px}
 .ed-lados button{border:0;background:transparent;border-radius:999px;padding:8px 18px;font-size:14px;font-weight:600;color:var(--tinta-2);cursor:pointer;min-height:38px}
 .ed-lados button[aria-selected="true"]{background:var(--azul);color:#fff}
+.rodape .lista-texto li{opacity:.88}

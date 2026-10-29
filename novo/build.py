@@ -24,6 +24,8 @@ SERVS = [  # slug, nome, foto, fundo, resumo
   ("comercio",       "Para seu Comércio", "img/produtos/adesivos-p12.webp", "bg-amarelo", "Cardápio em 3D na mesa, site com mensalidade e comunicação visual completa."),
 ]
 
+TAMBEM = ["Convites", "Crachás", "Blocos e talões", "Envelopes", "Pastas", "Calendários", "Ímãs de geladeira", "Tags", "Cardápios", "Carimbos"]  # rodapé "Também fazemos" (só texto)
+
 ICO = {
  "menu": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
  "sacola": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>',
@@ -94,11 +96,9 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
       <p>R. Pedro Fernandes Aragão, 269 · Jardim Selma · São Paulo, SP</p>
       <p>WhatsApp (11) 98287-7142 · @johen_artgrafica</p>
     </div>
-    <div><h3>Produtos</h3><ul>{"".join(f'<li><a href="{R}{s}/">{E(n)}</a></li>' for s,n,*_ in CATS)}</ul></div>
-    <div><h3>Serviços</h3><ul>{"".join(f'<li><a href="{R}{s}/">{E(n)}</a></li>' for s,n,*_ in SERVS)}<li><a href="https://instagram.com/johen_artgrafica">Instagram</a></li><li><a href="https://g.page/r/CWKTHinBP02gEAI/review">Nos avalie no Google</a></li></ul></div>
+    <div><h3>Também fazemos</h3><ul class="lista-texto">{"".join(f"<li>{x}</li>" for x in TAMBEM)}</ul></div>
     <div class="sobre-rod"><h3>Sobre</h3>
       <p class="destaque">Mais de 5 mil projetos aprovados.</p>
-      <p><b>Também fazemos:</b> convites, crachás, blocos e talões, envelopes, pastas, calendários, ímãs de geladeira, tags, cardápios e carimbos.</p>
       <p><b>Grande quantidade?</b> Pedidos grandes têm desconto. <a href="{wpp('Olá! Quero um orçamento para grande quantidade.')}">Peça seu orçamento</a></p>
       <p><b>Horário:</b> segunda a sábado, das 11h às 20h. Antes de vir, confirme pelo WhatsApp.</p>
       <p><b>Pagamento:</b> dinheiro, Pix e cartões de débito e crédito.</p>

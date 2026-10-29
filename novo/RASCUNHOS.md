@@ -5,6 +5,5 @@
 3. Chave Pix e link do Mercado Pago na página do pedido (`build.py`, procurar SUA-CHAVE-PIX-AQUI).
 4. Textos e preços das páginas de Gravação a Laser, Envelopamento e Criação de Arte.
 5. Cores do copo térmico no editor 3D: hoje mostra Preto e Branco (as da foto). Confirmar quais cores existem.
-6. Rodapé > Sobre: conferir a lista "Também fazemos" (`build.py`).
 
 Para atualizar produtos e preços: editar `dados/produtos.json` e rodar `python3 build.py` dentro de `novo/`.

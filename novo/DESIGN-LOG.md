@@ -36,6 +36,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 - 2026-10-29 — Rodapé (todas as páginas): os links de Produtos e Serviços eram alvos de toque de ~21px, apertados para o dedo no celular. Agora cada link tem ~36px de altura (mesmo texto, só mais respiro entre as linhas), mais fácil de tocar e mais calmo de ler; no computador fica igual em colunas. (site.css: `.rodape ul a`)
 - 2026-10-29 — Menu (≡) e busca, todas as páginas: no menu, os itens sem mascote (Gravação a Laser, Envelopamento, Criação de Arte, Para seu Comércio, Cardápio 3D, Meu pedido) começavam mais à esquerda que os de mascote, parecendo desalinhados; agora todos os nomes começam na mesma linha vertical. Na busca, a miniatura de nomes longos ("Garrafa Térmica com Visor Digital") encolhia e empurrava o texto; agora todas as miniaturas têm o mesmo tamanho e os nomes ficam alinhados. (site.css: `.menu nav a:not(:has(img))`, `flex-shrink:0` nas imagens)
 
+- 2026-10-29 — A pedido do Johen: rodapé sem as listas de links "Produtos" e "Serviços"; no lugar, "Também fazemos" em tópicos, um embaixo do outro, só texto (Convites, Crachás, Blocos e talões, Envelopes, Pastas, Calendários, Ímãs de geladeira, Tags, Cardápios, Carimbos — lista confirmada). Sobre ficou com 5 mil projetos, grande quantidade, horário, pagamento e CNPJ. (build.py `TAMBEM`, site.css)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.
