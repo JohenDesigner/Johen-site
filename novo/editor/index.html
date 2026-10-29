@@ -12,7 +12,7 @@
 <link rel="icon" href="../img/marca/logo-icone.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Outfit:wght@500;600&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=6020c281">
+<link rel="stylesheet" href="../assets/site.css?v=60c43d98">
 </head>
 <body>
 <div class="promo">5% OFF na primeira compra · <a href="https://wa.me/5511982877142?text=Ol%C3%A1%21%20Quero%20meu%20desconto%20de%205%25%20na%20primeira%20compra.">peça pelo WhatsApp</a></div>
@@ -34,14 +34,17 @@
 <h1 class="ed-tit" id="nome-produto">Carregando caneca…</h1>
 <div class="ed-grid">
   <div class="ed-esq">
-    <div class="ed-vistas" role="group" aria-label="Tipo de prévia"><button id="vista-editar" aria-pressed="true">Editar arte</button><button id="vista-3d" aria-pressed="false">Ver em 3D</button></div>
-    <div class="ed-palco"><canvas id="tela" aria-label="Prévia da caneca com a sua arte"></canvas>
-      <div id="palco3d" class="palco3d" hidden><canvas id="tela3d" aria-label="Caneca em 3D com a sua arte. Arraste para girar."></canvas><p id="aviso3d" class="aviso3d">Carregando 3D…</p><p class="dica3d" aria-hidden="true">Arraste para girar</p></div></div>
-    <div id="acoes3d" class="ed-3d-acoes" hidden><button class="btn btn-sec" id="girar3d" aria-pressed="true">Girar sozinha</button><button class="btn btn-sec" id="foto3d">Baixar foto</button><button class="btn btn-sec" id="video3d">Gravar vídeo</button></div>
+    <div class="ed-palco palco3d" id="palco3d"><canvas id="tela3d" aria-label="Caneca em 3D com a sua arte. Arraste para girar."></canvas><p id="aviso3d" class="aviso3d">Carregando caneca em 3D…</p><p class="dica3d" aria-hidden="true">Arraste para girar</p></div>
+    <div id="acoes3d" class="ed-3d-acoes"><button class="btn btn-sec" id="girar3d" aria-pressed="true">Girar sozinha</button><button class="btn btn-sec" id="foto3d">Baixar foto</button><button class="btn btn-sec" id="video3d">Gravar vídeo</button></div>
+    <div class="ed-faixa">
+      <div class="ed-faixa-tit"><span class="rot">Área de impressão</span><small>volta toda a caneca · 20 x 8,5 cm</small></div>
+      <canvas id="tela" aria-label="Área de impressão aberta: arraste a arte para posicionar"></canvas>
+      <div class="ed-faixa-guia" aria-hidden="true"><span>‹ lado da alça</span><span>frente</span><span>lado da alça ›</span></div>
+    </div>
   </div>
   <div class="ed-lado">
     <div id="painel" class="ed-painel">
-      <div id="ajustes" class="campo" hidden><label for="zoom">Tamanho da imagem</label><input id="zoom" type="range" min="40" max="300" value="100"><small>Arraste a imagem na caneca pra posicionar. No celular dá pra usar dois dedos.</small><button class="btn btn-sec" id="centralizar" style="min-height:42px;font-size:15px">Encaixar na área</button>
+      <div id="ajustes" class="campo" hidden><label for="zoom">Tamanho da imagem</label><input id="zoom" type="range" min="40" max="300" value="100"><small>Arraste a imagem na área de impressão pra posicionar. No celular dá pra usar dois dedos.</small><button class="btn btn-sec" id="centralizar" style="min-height:42px;font-size:15px">Cobrir a caneca toda</button>
         <p id="qualidade" class="aviso-min" hidden>Essa imagem tem resolução baixa e pode sair borrada. Se tiver uma maior, prefira ela.</p></div>
       <div id="bloco-texto" class="campo" hidden><label for="texto">Texto na caneca</label><input id="texto" type="text" maxlength="40" placeholder="Ex.: Melhor pai do mundo" style="height:50px;border:1.5px solid #c9d0d2;border-radius:10px;padding:0 14px"><label for="cor-texto" style="font-weight:600;font-size:14px">Cor do texto</label><input id="cor-texto" type="color" value="#1d2427" style="width:64px;height:40px;border:0;background:none"></div>
       <div id="cores" class="campo" hidden><span class="rot">Cor da alça e de dentro</span><div class="cores"></div></div>
@@ -80,7 +83,7 @@
 </footer>
 <a class="insta-flut" href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener" aria-label="Instagram @johen_artgrafica"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a>
 <a class="wpp-flut" href="https://wa.me/5511982877142?text=Ol%C3%A1%21%20Vim%20pelo%20site%20e%20quero%20um%20or%C3%A7amento." aria-label="Falar no WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.1 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg></a>
-<script src="../assets/site.js?v=6020c281" defer></script>
-<script src="../assets/editor.js?v=6020c281" defer></script><script type="module" src="../assets/mockup3d.js?v=6020c281"></script>
+<script src="../assets/site.js?v=60c43d98" defer></script>
+<script src="../assets/editor.js?v=60c43d98" defer></script><script type="module" src="../assets/mockup3d.js?v=60c43d98"></script>
 </body>
 </html>

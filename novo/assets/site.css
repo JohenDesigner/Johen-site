@@ -259,13 +259,17 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 @media(min-width:860px){.ed-grid{grid-template-columns:1.3fr 1fr;align-items:start}}
 .ed-palco{background:#eef1f1;border-radius:22px;overflow:hidden}
 .ed-palco canvas{width:100%;height:auto;aspect-ratio:1;display:block;touch-action:none}
-.ed-vistas{display:flex;gap:8px;margin-bottom:12px}
-.ed-vistas button{flex:1;height:40px;border-radius:999px;border:1px solid var(--linha);background:var(--branco);font:500 15px var(--corpo);color:var(--tinta-2);cursor:pointer}
-.ed-vistas button[aria-pressed="true"]{background:var(--azul);border-color:var(--azul);color:#fff}
-.ed-palco{position:relative}
 .palco3d{position:relative}
-.aviso3d{position:absolute;inset:0;display:grid;place-items:center;margin:0;color:var(--tinta-2);font-size:15px}
-.dica3d{position:absolute;left:0;right:0;bottom:14px;margin:0;text-align:center;font-size:13px;color:var(--tinta-3);pointer-events:none}
+.palco3d canvas{width:100%;aspect-ratio:1;display:block;touch-action:none;cursor:grab}
+.palco3d canvas:active{cursor:grabbing}
+.aviso3d{position:absolute;inset:0;display:grid;place-items:center;margin:0;color:var(--tinta-2);font-size:15px;text-align:center;padding:24px}
+.dica3d{position:absolute;left:0;right:0;bottom:14px;margin:0;text-align:center;font-size:13px;color:var(--tinta-2);pointer-events:none}
+.ed-faixa{margin-top:22px}
+.ed-faixa-tit{display:flex;flex-direction:column;gap:1px;margin-bottom:10px}
+.ed-faixa-tit .rot{font-weight:600;font-size:15px}
+.ed-faixa-tit small{color:var(--tinta-2);font-size:13px}
+.ed-faixa canvas{width:100%;height:auto;display:block;border-radius:var(--raio-p);background:#eef1f1;touch-action:none}
+.ed-faixa-guia{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--tinta-2)}
 .ed-3d-acoes{display:flex;gap:8px;margin-top:12px}
 .ed-3d-acoes .btn{flex:1;min-height:42px;padding:0 10px;font-size:14px;white-space:nowrap}
 .ed-3d-acoes #girar3d[aria-pressed="true"]{border-color:var(--azul);color:var(--azul)}

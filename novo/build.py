@@ -217,14 +217,17 @@ corpo = f'''<div class="wrap editor">
 <h1 class="ed-tit" id="nome-produto">Carregando caneca…</h1>
 <div class="ed-grid">
   <div class="ed-esq">
-    <div class="ed-vistas" role="group" aria-label="Tipo de prévia"><button id="vista-editar" aria-pressed="true">Editar arte</button><button id="vista-3d" aria-pressed="false">Ver em 3D</button></div>
-    <div class="ed-palco"><canvas id="tela" aria-label="Prévia da caneca com a sua arte"></canvas>
-      <div id="palco3d" class="palco3d" hidden><canvas id="tela3d" aria-label="Caneca em 3D com a sua arte. Arraste para girar."></canvas><p id="aviso3d" class="aviso3d">Carregando 3D…</p><p class="dica3d" aria-hidden="true">Arraste para girar</p></div></div>
-    <div id="acoes3d" class="ed-3d-acoes" hidden><button class="btn btn-sec" id="girar3d" aria-pressed="true">Girar sozinha</button><button class="btn btn-sec" id="foto3d">Baixar foto</button><button class="btn btn-sec" id="video3d">Gravar vídeo</button></div>
+    <div class="ed-palco palco3d" id="palco3d"><canvas id="tela3d" aria-label="Caneca em 3D com a sua arte. Arraste para girar."></canvas><p id="aviso3d" class="aviso3d">Carregando caneca em 3D…</p><p class="dica3d" aria-hidden="true">Arraste para girar</p></div>
+    <div id="acoes3d" class="ed-3d-acoes"><button class="btn btn-sec" id="girar3d" aria-pressed="true">Girar sozinha</button><button class="btn btn-sec" id="foto3d">Baixar foto</button><button class="btn btn-sec" id="video3d">Gravar vídeo</button></div>
+    <div class="ed-faixa">
+      <div class="ed-faixa-tit"><span class="rot">Área de impressão</span><small>volta toda a caneca · 20 x 8,5 cm</small></div>
+      <canvas id="tela" aria-label="Área de impressão aberta: arraste a arte para posicionar"></canvas>
+      <div class="ed-faixa-guia" aria-hidden="true"><span>‹ lado da alça</span><span>frente</span><span>lado da alça ›</span></div>
+    </div>
   </div>
   <div class="ed-lado">
     <div id="painel" class="ed-painel">
-      <div id="ajustes" class="campo" hidden><label for="zoom">Tamanho da imagem</label><input id="zoom" type="range" min="40" max="300" value="100"><small>Arraste a imagem na caneca pra posicionar. No celular dá pra usar dois dedos.</small><button class="btn btn-sec" id="centralizar" style="min-height:42px;font-size:15px">Encaixar na área</button>
+      <div id="ajustes" class="campo" hidden><label for="zoom">Tamanho da imagem</label><input id="zoom" type="range" min="40" max="300" value="100"><small>Arraste a imagem na área de impressão pra posicionar. No celular dá pra usar dois dedos.</small><button class="btn btn-sec" id="centralizar" style="min-height:42px;font-size:15px">Cobrir a caneca toda</button>
         <p id="qualidade" class="aviso-min" hidden>Essa imagem tem resolução baixa e pode sair borrada. Se tiver uma maior, prefira ela.</p></div>
       <div id="bloco-texto" class="campo" hidden><label for="texto">Texto na caneca</label><input id="texto" type="text" maxlength="40" placeholder="Ex.: Melhor pai do mundo" style="height:50px;border:1.5px solid #c9d0d2;border-radius:10px;padding:0 14px"><label for="cor-texto" style="font-weight:600;font-size:14px">Cor do texto</label><input id="cor-texto" type="color" value="#1d2427" style="width:64px;height:40px;border:0;background:none"></div>
       <div id="cores" class="campo" hidden><span class="rot">Cor da alça e de dentro</span><div class="cores"></div></div>

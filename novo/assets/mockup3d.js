@@ -1,26 +1,18 @@
-// Vista 3D da caneca (mockup): gira com o dedo/mouse, troca cor, baixa foto PNG e grava vídeo girando.
-// O three.js só é baixado quando a pessoa toca em "Ver em 3D".
-const bEditar = document.getElementById("vista-editar"), b3d = document.getElementById("vista-3d");
-const tela2d = document.getElementById("tela"), palco = document.getElementById("palco3d"), cv = document.getElementById("tela3d");
+// Caneca 3D (mockup): mostra a arte da área de impressão dando a volta na caneca, gira com o dedo/mouse,
+// troca cor, baixa foto PNG e grava vídeo girando. Usa three.js (assets/vendor/).
+const palco = document.getElementById("palco3d"), cv = document.getElementById("tela3d");
 const acoes = document.getElementById("acoes3d"), aviso3d = document.getElementById("aviso3d");
 const bGirar = document.getElementById("girar3d"), bFoto = document.getElementById("foto3d"), bVideo = document.getElementById("video3d");
 const FUNDO = "#eef1f1";
-let ativo = false, pronto = null, gravando = false;
+let gravando = false;
 
-function mostrar(em3d) {
-  ativo = em3d;
-  bEditar.setAttribute("aria-pressed", !em3d); b3d.setAttribute("aria-pressed", em3d);
-  tela2d.hidden = em3d; palco.hidden = !em3d; acoes.hidden = !em3d;
-  if (em3d) {
-    if (!pronto) pronto = iniciar().catch(err => {
-      console.warn(err); pronto = null; mostrar(false);
-      toast("Seu aparelho não conseguiu abrir a vista 3D. A prévia normal continua funcionando.");
-    });
-    pronto && pronto.then(v => v && v.ligar());
-  }
-}
-bEditar.addEventListener("click", () => mostrar(false));
-b3d.addEventListener("click", () => mostrar(true));
+iniciar().then(v => {
+  // só anima enquanto a caneca está na tela (economiza bateria)
+  new IntersectionObserver(([e]) => e.isIntersecting ? v.ligar() : v.parar()).observe(palco);
+}).catch(err => {
+  console.warn(err); acoes.hidden = true;
+  aviso3d.textContent = "Seu aparelho não conseguiu abrir a caneca em 3D. A área de impressão abaixo continua funcionando.";
+});
 
 async function iniciar() {
   const T = await import("./vendor/three.module.min.js");
@@ -40,7 +32,7 @@ async function iniciar() {
   const R = 0.41, H = 0.95, BASE = 0.03, PAREDE = H - BASE;
   const caneca = new T.Group(); scene.add(caneca);
 
-  // textura da parede externa = volta inteira da caneca, com a arte do editor na frente
+  // textura da parede externa = volta inteira da caneca; começa e termina na alça, centro = frente (lado oposto à alça)
   const TW = Math.min(3072, renderer.capabilities.maxTextureSize), TH = Math.round(TW * PAREDE / (2 * Math.PI * R));
   const tc = document.createElement("canvas"); tc.width = TW; tc.height = TH; const tx = tc.getContext("2d");
   const tex = new T.CanvasTexture(tc); tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -49,7 +41,7 @@ async function iniciar() {
     const E = window.CanecaArte; const cor = E ? E.cores() : { corpo: "#ffffff", detalhe: "#ffffff" };
     tx.fillStyle = cor.corpo; tx.fillRect(0, 0, TW, TH);
     if (E) {
-      const A = E.area, hW = 0.80, wW = hW * A.w / A.h;           // área impressa: 8 cm de altura
+      const A = E.area, wW = 2.0, hW = 0.85;                      // área impressa: 20 x 8,5 cm
       const w = wW * pxU, h = hW * pxV, x0 = TW / 2 - w / 2, y0 = TH / 2 - h / 2;
       tx.save(); tx.translate(x0, y0); tx.scale(w / A.w, h / A.h); tx.translate(-A.x, -A.y); E.pintar(tx); tx.restore();
     }
@@ -61,7 +53,7 @@ async function iniciar() {
   const matCorpo = new T.MeshPhysicalMaterial({ ...ceramica });
   const matDetalhe = new T.MeshPhysicalMaterial({ ...ceramica, side: T.DoubleSide });
 
-  const parede = new T.Mesh(new T.CylinderGeometry(R, R, PAREDE, 160, 1, true, -Math.PI, Math.PI * 2), matParede);
+  const parede = new T.Mesh(new T.CylinderGeometry(R, R, PAREDE, 160, 1, true, Math.PI / 2, Math.PI * 2), matParede);
   parede.position.y = BASE + PAREDE / 2; caneca.add(parede);
   const V = (x, y) => new T.Vector2(x, y);
   matCorpo.side = T.DoubleSide;
@@ -87,7 +79,7 @@ async function iniciar() {
 
   // ---- câmera e giro
   const calmo = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let rotY = -0.35, elev = 0.3, vel = 0, auto = !calmo, arrastando = false, sujo = true, ligado = false;
+  let rotY = 0.45, elev = 0.3, vel = 0, auto = !calmo, arrastando = false, sujo = true, ligado = false;
   const DIST = 3.3;
   function posicionar() {
     camera.position.set(alvo.x, alvo.y + Math.sin(elev) * DIST, Math.cos(elev) * DIST);
@@ -121,9 +113,8 @@ async function iniciar() {
     }
     requestAnimationFrame(quadro);
   }
-  function ligar() { if (!ativo || ligado) return; ligado = true; tamanho(); requestAnimationFrame(quadro); }
+  function ligar() { if (ligado) return; ligado = true; tamanho(); requestAnimationFrame(quadro); }
   const parar = () => { ligado = false; };
-  bEditar.addEventListener("click", parar);
 
   // ---- baixar foto e gravar vídeo
   const nomeArq = ext => "mockup-" + (window.CanecaArte ? window.CanecaArte.nome() : "caneca").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "." + ext;
@@ -136,8 +127,8 @@ async function iniciar() {
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     toast(tipo.startsWith("video") ? "Vídeo salvo." : "Foto salva.");
   }
-  function emAlta(fn) {           // renderiza em 1080x1080 com fundo, depois volta ao normal
-    renderer.setPixelRatio(1); renderer.setSize(1080, 1080, false); renderer.setClearColor(FUNDO, 1);
+  function emAlta(fn, tam = 1080) {           // renderiza em tam x tam com fundo, depois volta ao normal
+    renderer.setPixelRatio(1); renderer.setSize(tam, tam, false); renderer.setClearColor(FUNDO, 1);
     const r = fn();
     const volta = () => { renderer.setClearColor(0x000000, 0); renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); tamanho(); };
     return r && r.then ? r.finally(volta) : (volta(), r);
@@ -175,6 +166,9 @@ async function iniciar() {
     });
   });
 
+  // foto da caneca para o pedido e para o WhatsApp (editor.js)
+  window.Caneca3D = { foto: tam => { if (gravando) return Promise.reject(); pintarTextura(); posicionar();
+    return emAlta(() => { renderer.render(scene, camera); return new Promise(ok => cv.toBlob(ok, "image/png")); }, tam); } };
   aviso3d.hidden = true;
-  return { ligar };
+  return { ligar, parar };
 }
