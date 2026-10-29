@@ -204,7 +204,7 @@ for slug, nome, foto, fundo, resumo in SERVS:
 # ---------- pedido ----------
 corpo = f'''<div class="wrap" style="max-width:720px">
 <section class="cabeca-cat"><div class="migalha"><a href="../">Início</a> › Meu pedido</div><h1>Meu pedido</h1></section>
-<div id="pedido-vazio" class="vazio" hidden><b>Seu pedido está vazio.</b><span>Escolha um produto e toque em "Adicionar ao pedido".</span><a class="btn btn-pri" href="../">Ver produtos</a></div>
+<div id="pedido-vazio" class="vazio" hidden><span class="vazio-ico" aria-hidden="true">{ICO['sacola']}</span><b>Seu pedido está vazio.</b><span>Escolha um produto e toque em "Adicionar ao pedido".</span><a class="btn btn-pri" href="../">Ver produtos</a></div>
 <div id="pedido-cheio" hidden>
   <div class="itens" id="itens"></div>
   <div class="total" style="margin-top:18px"><small>Total do pedido</small><strong id="pedido-total">R$ 0,00</strong></div>
