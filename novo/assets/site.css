@@ -3,7 +3,7 @@
    (botão, links, fundos bem suaves atrás das fotos). */
 :root{
   --laranja:#E8650A; --laranja-esc:#c9560a; --amarelo:#F5A623; --turquesa:#00C2C7; --turquesa-esc:#00878b;
-  --azul:#0d5568; --tinta:#22292c; --tinta-2:#626d71; --tinta-3:#8b9497; --linha:#ebe8e3; --fundo:#fbfaf8; --branco:#ffffff;
+  --azul:#0d5568; --tinta:#22292c; --tinta-2:#626d71; --tinta-3:#6c7579; --linha:#ebe8e3; --fundo:#fbfaf8; --branco:#ffffff;
   --t-laranja:#fbefe6; --t-amarelo:#fbf4e3; --t-turquesa:#e7f5f5; --t-azul:#e9f0f2;
   --display:"Outfit","Trebuchet MS",system-ui,sans-serif;
   --corpo:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
