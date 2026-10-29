@@ -29,6 +29,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-29 — A pedido do Johen: marca d'água da Johen no fundo do editor 3D. Logo bem clarinha (6%), repetida na diagonal, atrás da caneca/copo na tela e também na foto PNG, no vídeo baixado e na prévia que vai para o pedido/WhatsApp. (assets/mockup3d.js: `fundoComMarca`, `scene.background` no `emAlta`)
 
+- 2026-10-29 — A pedido do Johen (editor): botão "Cobrir a caneca toda" saiu do painel de ajustes e foi para o canto de baixo à direita do quadro 3D (no copo: "Preencher a área" / "Cobrir o copo todo"). "Arraste para girar" foi para a esquerda. Sem imagem, o botão avisa e abre o menu Adicionar arte. (build.py, editor.js, site.css)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.

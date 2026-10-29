@@ -129,7 +129,10 @@
   document.getElementById("cor-texto").addEventListener("input", e => { corTexto = e.target.value; desenhar(); });
   if (MOD.laser) document.getElementById("cor-texto").closest("div").querySelectorAll('[for="cor-texto"],#cor-texto').forEach(el => el.hidden = true);
   document.getElementById("inverter").addEventListener("change", e => { inverter = e.target.checked; prepararLaser(); desenhar(); });
-  document.getElementById("centralizar").addEventListener("click", () => { encaixar(true); desenhar(); });
+  document.getElementById("centralizar").addEventListener("click", () => {
+    if (!img) { toast("Primeiro toque em Adicionar arte e envie sua imagem."); mais.hidden = false; return; }
+    encaixar(true); desenhar();
+  });
   const mais = document.getElementById("mais-opcoes");
   document.getElementById("btn-mais").addEventListener("click", () => { mais.hidden = !mais.hidden; });
   function fecharMais() { mais.hidden = true; }
