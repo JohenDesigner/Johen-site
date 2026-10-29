@@ -129,16 +129,17 @@ async function iniciar() {
     return { alvo: new T.Vector3(0, 0.78, 0), dist: 3.9, rot: -0.25, pintar };
   }
 
-  // ---------- camiseta (1 unidade = 10 cm, tamanho M) vestida num manequim invisível: tronco com volume de corpo
-  // (peito, costas e ombros arredondados), mangas em tubo caindo para os lados, gola canelada, barra e mangas abertas,
+  // ---------- camiseta (1 unidade = 10 cm, tamanho M) caída como numa foto de catálogo: tronco reto com leve abertura
+  // na barra, ombros inclinados, mangas caídas coladas na cava, gola canelada, barra e mangas abertas,
   // dobrinhas de tecido e trama de malha. Frente e costas têm textura própria (estampa); com "Girar sozinha" ligado,
   // a camiseta "caminha" de leve (mangas balançam e o tronco acompanha).
   function montarCamiseta() {
     const lerp = (a, b, t) => a + (b - a) * t, G = (v, s) => Math.exp(-(v * v) / s);
     // seções do tronco, de baixo para cima: altura, meia largura, meia profundidade, centro (z) e "quadradez" da seção
-    const SEC = [[0, 2.02, 1.12, 0, 2.25], [1.3, 1.98, 1.08, 0, 2.25], [2.6, 1.95, 1.07, 0.02, 2.3], [3.8, 2.06, 1.16, 0.05, 2.4],
-      [4.8, 2.2, 1.24, 0.07, 2.5], [5.6, 2.25, 1.2, 0.05, 2.5], [6.2, 2.24, 1.06, 0.02, 2.4]];
-    const S0 = 0.8;                               // até aqui é tronco reto; depois sobe pelos ombros até a gola
+    // camiseta caída (não justa): reta com leve abertura na barra, seção achatada como tecido pendurado
+    const SEC = [[0, 2.08, 0.98, 0, 2.7], [1.3, 2.04, 1.0, 0, 2.7], [2.6, 2.02, 1.02, 0.02, 2.7], [3.7, 1.99, 1.05, 0.03, 2.7],
+      [4.6, 1.98, 1.05, 0.03, 2.6]];
+    const S0 = 0.66;                               // até aqui é tronco reto; depois sobe pelos ombros até a gola
     const cr = (p0, p1, p2, p3, t) => 0.5 * (2 * p1 + (p2 - p0) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (3 * p1 - p0 - 3 * p2 + p3) * t * t * t);
     function secao(u) {                            // seção interpolada (Catmull-Rom) no índice u
       const i = Math.min(SEC.length - 2, Math.floor(u)), t = u - i, k = j => SEC[Math.max(0, Math.min(SEC.length - 1, j))];
@@ -151,7 +152,7 @@ async function iniciar() {
     function anel([y, a, b, zc, n], th) { const e = 2 / n; return [a * pw(Math.sin(th), e), y, zc + b * pw(Math.cos(th), e)]; }
     function gola(th) {                            // decote: fundo na frente, raso nas costas
       const c = Math.cos(th), f = c > 0;
-      return [0.98 * Math.sin(th), 7.25 - (f ? 0.58 : 0.1) * Math.abs(c) ** 1.6, (f ? 0.84 : 0.6) * c - 0.04];
+      return [0.95 * Math.sin(th), 7.25 - (f ? 0.58 : 0.1) * Math.abs(c) ** 1.6, (f ? 0.84 : 0.6) * c - 0.04];
     }
     const TOPO = secao(SEC.length - 1);
     function P(s, th) {                            // ponto da superfície do tronco (s: barra 0 → gola 1; th: 0 = meio da frente)
@@ -160,20 +161,22 @@ async function iniciar() {
         // volume: peitoral, escápulas, cava funda embaixo da manga e dobras verticais que crescem perto da barra
         const t = Math.atan2(Math.sin(th), Math.cos(th)), at = Math.abs(t);
         const baixo = Math.max(0, 1 - y / 3.2) ** 2;
-        const d = 0.06 * G(y - 5.0, 0.4) * (G(t - 0.45, 0.07) + G(t + 0.45, 0.07))
-          + 0.035 * G(y - 5.4, 0.5) * G(at - 2.45, 0.12)
-          - 0.06 * G(y - 5.25, 0.25) * G(at - Math.PI / 2, 0.05)
-          + baixo * (0.03 * Math.sin(t * 7 + 0.6) + 0.014 * Math.sin(t * 13 + y * 1.3))
-          + 0.012 * G(y - 2.7, 0.6) * Math.sin(t * 9 - 1);
-        const some = Math.min(1, Math.max(0, (6.2 - y) / 0.7)), dd = d * some * some * (3 - 2 * some);   // some perto do ombro (sem vinco)
+        // caimento: dobras diagonais saindo da cava, ondas suaves perto da barra
+        const lado = G(at - Math.PI / 2, 0.5), diag = Math.sin((Math.abs(p[0]) * 1.1 + y) * 3.1 + (t > 0 ? 0 : 1.3));
+        const d = 0.028 * diag * G(y - 3.6, 1.6) * lado
+          + baixo * (0.035 * Math.sin(t * 6 + 0.6) + 0.015 * Math.sin(t * 11 + y * 1.3))
+          + 0.012 * G(y - 2.4, 0.8) * Math.sin(t * 8 - 1);
+        const some = Math.min(1, Math.max(0, (4.6 - y) / 0.7)), dd = d * some * some * (3 - 2 * some);   // some perto do ombro (sem vinco)
         const rx = p[0], rz = p[2] - sc[3], l = Math.hypot(rx, rz) || 1;
         return [p[0] + rx / l * dd, y, p[2] + rz / l * dd];
       }
       const t = (s - S0) / (1 - S0), L = anel(TOPO, th), U = gola(th);
-      // controle na continuação da parede de baixo (sem vinco): ombro arredondado
-      const dir = unit(sub(L, anel(secao(SEC.length - 1.06), th))), k = (lerp(L[1], U[1], 0.72) - L[1]) / Math.max(dir[1], 0.3);
-      const C = [0, 1, 2].map(c => L[c] + dir[c] * k);
-      return [0, 1, 2].map(k => (1 - t) * (1 - t) * L[k] + 2 * (1 - t) * t * C[k] + t * t * U[k]);
+      // da cava sobe reto e vira no ombro, que desce inclinado da gola (ombro caído, não de boneco)
+      const dir = unit(sub(L, anel(secao(SEC.length - 1.06), th)));
+      const C1 = [0, 1, 2].map(c => L[c] + dir[c] * 1.45);
+      const K = [L[0] * 0.97, 6.5, L[2] * 0.85], C2 = [0, 1, 2].map(c => U[c] + (K[c] - U[c]) * 0.8);
+      const a = (1 - t) ** 3, b = 3 * (1 - t) ** 2 * t, c = 3 * (1 - t) * t * t, e = t ** 3;
+      return [0, 1, 2].map(k => a * L[k] + b * C1[k] + c * C2[k] + e * U[k]);
     }
     // textura de cada lado: tecido "aberto" (largura = caminho em volta do tronco, altura = caminho desde a barra)
     const X0 = -3.1, X1 = 3.1, Y0 = -0.2, Y1 = 8.0;
@@ -233,34 +236,39 @@ async function iniciar() {
       veste.add(new T.Mesh(g, mat)); veste.add(new T.Mesh(g, dentroMat));
       lados[l] = { c, x: c.getContext("2d"), t, yg };
     }
-    // mangas: tubo que sai do ombro e cai para o lado (o começo fica escondido dentro do tronco)
-    const ANG = 0.62, R0 = 0.76, R1 = 0.67, TI = -0.3, TF = 2.25;
+    // mangas: "caídas", ligando a cava (de pé, rente ao corpo) à boca da manga (cortada quase reta). O lado de fora
+    // desce inclinado do ombro; o lado de dentro é curto e encosta no corpo, como numa camiseta pendurada
     const [mc, mt] = novaTex(512, 512), mx = mc.getContext("2d");
     const matManga = new T.MeshPhysicalMaterial({ ...tecido, map: mt });
     const dentroManga = new T.MeshPhysicalMaterial({ ...tecido, side: T.BackSide, color: 0x9a9a9a }); dentros.push(dentroManga);
-    const mangas = [];
+    const mangas = [], BARRA = 0.07;
+    // ponto do tronco na altura y, na coluna th (a cava fica "colada" no corpo: sem fresta entre manga e tronco)
+    function noCorpo(y, th) { let a = 0, b = 1; for (let i = 0; i < 30; i++) { const m = (a + b) / 2; P(m, th)[1] < y ? a = m : b = m; } return P((a + b) / 2, th); }
     for (const k of [1, -1]) {
-      const u = [k * Math.cos(ANG), Math.sin(ANG), 0], d = unit([k * Math.sin(ANG), -Math.cos(ANG), 0.06]);
-      const w = unit(cruz(u, d)), topo = [k * 2.1, 6.7, 0.02];
-      const S = [0, 1, 2].map(c => topo[c] - R0 * u[c]);     // eixo da manga no começo (giro da animação)
-      const NA = 72, NT = 60, pos = [], uv = [], ind = [];
-      for (let j = 0; j <= NT; j++) { const tt = TI + (TF - TI) * j / NT, f = Math.max(0, tt) / TF;
-        let r = lerp(R0, R1, f * f * (3 - 2 * f)); if (tt > TF - 0.12) r += 0.012;          // barra dobrada
-        const cap = Math.min(1, Math.max(0, (tt - TI) / (0.55 - TI))), capR = 0.45 + 0.55 * cap * cap * (3 - 2 * cap);   // copa: o alto da manga nasce rente ao ombro
-        for (let i = 0; i <= NA; i++) { const a = 2 * Math.PI * i / NA, ca = Math.cos(a) * (Math.cos(a) > 0 ? capR : 1), sa = Math.sin(a) * 0.9;
-          const dob = 0.012 * Math.sin(a * 5 + tt * 3) * f;                                   // leve amassado
-          for (let c = 0; c < 3; c++) pos.push(d[c] * tt + (r + dob) * (ca * u[c] + sa * w[c]));
-          uv.push(i / NA, 1 - j / NT);
+      const CAVA = [k * 1.9, 5.5, 0.02], RC = [0.95, 0.6];   // RC: meia altura da cava, ângulo que ela abraça o corpo   // cava tomba para dentro no alto (segue o ombro)              // centro e raios (altura, profundidade) da cava
+      const BOCA = [k * 2.5, 4.3, 0.06], RB = [0.55, 0.5], INC = 0.16;    // boca: meia largura, profundidade, inclinação
+      const NA = 72, NT = 40, pos = [], uv = [], ind = [];
+      for (let j = 0; j <= NT; j++) { const f = j / NT, fs = f * f * (3 - 2 * f);
+        for (let i = 0; i <= NA; i++) { const a = 2 * Math.PI * i / NA, ca = Math.cos(a), sa = Math.sin(a);
+          const p0 = noCorpo(CAVA[1] + RC[0] * ca, k * (Math.PI / 2 - RC[1] * sa));
+          const p1 = [BOCA[0] + k * RB[0] * ca, BOCA[1] + INC * ca, BOCA[2] + RB[1] * sa];
+          const bojo = 0.06 * Math.sin(Math.PI * f) * (0.6 + 0.4 * ca);       // a manga enche um pouco no meio
+          const dob = 0.012 * Math.sin(a * 5 + f * 6) * f;                   // leve amassado
+          const q = [0, 1, 2].map(c => lerp(p0[c], p1[c], c === 1 ? fs * 0.3 + f * 0.7 : f));
+          const ax = [lerp(CAVA[0], BOCA[0], f), lerp(CAVA[1], BOCA[1], f), lerp(CAVA[2], BOCA[2], f)];
+          const r = unit(sub(q, ax)), ex = (f > 1 - BARRA ? 0.012 : 0) + bojo + dob;
+          pos.push(...[0, 1, 2].map(c => q[c] + r[c] * ex - CAVA[c]));
+          uv.push(i / NA, 1 - f);
         }
       }
       for (let j = 0; j < NT; j++) for (let i = 0; i < NA; i++) {
         const a = j * (NA + 1) + i, b = a + 1, c = a + NA + 1, e = c + 1;
-        k > 0 ? ind.push(a, c, e, a, e, b) : ind.push(a, e, c, a, b, e);
+        k > 0 ? ind.push(a, b, e, a, e, c) : ind.push(a, e, b, a, c, e);
       }
       const g = new T.BufferGeometry();
       g.setAttribute("position", new T.Float32BufferAttribute(pos, 3)); g.setAttribute("uv", new T.Float32BufferAttribute(uv, 2));
       g.setIndex(ind); g.computeVertexNormals();
-      const piv = new T.Group(); piv.position.set(...S); piv.add(new T.Mesh(g, matManga), new T.Mesh(g, dentroManga));
+      const piv = new T.Group(); piv.position.set(...CAVA); piv.add(new T.Mesh(g, matManga), new T.Mesh(g, dentroManga));
       veste.add(piv); mangas.push(piv);
     }
     // gola canelada em volta do decote
@@ -291,7 +299,7 @@ async function iniciar() {
         t.needsUpdate = true;
       }
       mx.fillStyle = cor.corpo; mx.fillRect(0, 0, 512, 512);
-      mx.save(); pesponto(mx, escuro, 6); const yb = 512 * (1 - (TF - 0.18 - TI) / (TF - TI));
+      mx.save(); pesponto(mx, escuro, 6); const yb = 512 * (1 - BARRA * 0.8);
       mx.beginPath(); mx.moveTo(0, yb); mx.lineTo(512, yb); mx.stroke(); mx.restore();
       trama(mx, 512, 512, escuro); mt.needsUpdate = true;
       for (const m of dentros) m.color.set(cor.corpo).multiplyScalar(0.62);
@@ -300,7 +308,7 @@ async function iniciar() {
     // caminhada leve: mangas balançam em oposição, tronco gira e sobe/desce um pouquinho
     function animar(seg, amp) {
       const f = seg * Math.PI * 2 * 0.9;
-      mangas[0].rotation.x = amp * 0.13 * Math.sin(f); mangas[1].rotation.x = -amp * 0.13 * Math.sin(f);
+      mangas[0].rotation.x = amp * 0.05 * Math.sin(f); mangas[1].rotation.x = -amp * 0.05 * Math.sin(f);
       veste.rotation.y = amp * 0.05 * Math.sin(f); veste.rotation.z = amp * 0.012 * Math.sin(f);
       veste.position.y = amp * 0.035 * Math.abs(Math.cos(f));
     }

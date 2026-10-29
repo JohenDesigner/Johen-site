@@ -46,6 +46,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-29 — A pedido do Johen (camiseta 3D): mangas estavam finas e curtas para o tronco. Agora mais largas (boca da manga ~30% da largura do peito, como na referência) e um pouco mais compridas. Nas camisetas de um lado só, novo seletor "Estampa na frente / Estampa nas costas": a mesma arte muda de lado, a camiseta 3D vira sozinha para mostrar, e o pedido/WhatsApp diz onde vai a estampa. (mockup3d.js: mangas; editor.js: seletor de lado para camiseta de um lado)
 
+- 2026-10-29 — A pedido do Johen (camiseta 3D): estava "parecendo boneco" (peito marcado, ombro alto e quadrado, manga espetada). Refeita no caimento de camiseta pendurada, como a referência de catálogo que ele mandou: tronco reto com leve abertura na barra e seção mais achatada, ombros descendo inclinados da gola, mangas caídas (lado de fora inclinado desde o ombro, lado de dentro curto encostando no corpo, boca da manga quase reta) e cava "colada" no tronco, sem fresta. Dobras diagonais leves saindo da cava. Balanço das mangas na caminhada ficou menor. (mockup3d.js: `montarCamiseta`)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.
