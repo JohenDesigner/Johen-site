@@ -229,8 +229,7 @@ corpo = f'''<div class="wrap editor">
 <h1 class="ed-tit" id="nome-produto">Carregando caneca…</h1>
 <div class="ed-grid">
   <div class="ed-esq">
-    <div class="ed-palco palco3d" id="palco3d"><canvas id="tela3d" aria-label="Caneca em 3D com a sua arte. Arraste para girar."></canvas><p id="aviso3d" class="aviso3d">Carregando 3D…</p><p class="dica3d" aria-hidden="true">Arraste para girar</p></div>
-    <div id="acoes3d" class="ed-3d-acoes"><button class="btn btn-sec" id="girar3d" aria-pressed="true">Girar sozinha</button><button class="btn btn-sec" id="foto3d">Baixar PNG</button><button class="btn btn-sec" id="video3d">Baixar vídeo</button></div>
+    <div class="ed-palco palco3d" id="palco3d"><canvas id="tela3d" aria-label="Caneca em 3D com a sua arte. Arraste para girar."></canvas><p id="aviso3d" class="aviso3d">Carregando 3D…</p><p class="dica3d" aria-hidden="true">Arraste para girar</p><div id="acoes3d" class="ed-3d-acoes"><button class="btn btn-sec" id="girar3d" aria-pressed="true">Girar sozinha</button><button class="btn btn-sec" id="foto3d">Baixar PNG</button><button class="btn btn-sec" id="video3d">Baixar vídeo</button></div></div>
     <div class="ed-faixa">
       <div class="ed-faixa-tit"><span class="rot">Área de impressão</span><small>volta toda a caneca · 20 x 8,5 cm</small></div>
       <canvas id="tela" aria-label="Área de impressão aberta: arraste a arte para posicionar"></canvas>
@@ -254,7 +253,7 @@ corpo = f'''<div class="wrap editor">
     <button class="btn btn-sec" id="add-txt">Escrever texto</button>
   </div>
   <input type="file" id="arquivo" accept="image/*" class="sr">
-  <button class="ed-plus" id="btn-mais" aria-label="Adicionar imagem ou texto">+</button>
+  <button class="btn ed-plus" id="btn-mais" aria-haspopup="true">Adicionar arte</button>
   <button class="btn btn-sec" id="revisar">Revisar</button>
   <button class="btn btn-pri" id="comprar">Comprar</button>
 </div>

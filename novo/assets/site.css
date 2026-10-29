@@ -271,8 +271,8 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .ed-faixa-tit small{color:var(--tinta-2);font-size:13px}
 .ed-faixa canvas{width:100%;height:auto;display:block;border-radius:var(--raio-p);background:#eef1f1;touch-action:none}
 .ed-faixa-guia{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--tinta-2)}
-.ed-3d-acoes{display:flex;gap:8px;margin-top:12px}
-.ed-3d-acoes .btn{flex:1;min-height:42px;padding:0 10px;font-size:14px;white-space:nowrap}
+.ed-3d-acoes{position:absolute;top:12px;left:12px;right:12px;z-index:2;display:flex;gap:8px}
+.ed-3d-acoes .btn{flex:1;min-height:38px;padding:0 8px;font-size:13px;white-space:nowrap;background:rgba(255,255,255,.88);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .ed-3d-acoes #girar3d[aria-pressed="true"]{border-color:var(--azul);color:var(--azul)}
 .ed-painel{display:flex;flex-direction:column;gap:16px}
 .ed-painel input[type=range]{width:100%;accent-color:var(--laranja)}
@@ -283,7 +283,8 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .ed-barra{position:fixed;left:0;right:0;bottom:0;z-index:45;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1px solid var(--linha);display:flex;justify-content:center;align-items:center;gap:10px;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .ed-barra .btn{min-height:46px;font-size:15px;padding:0 18px}
 .ed-barra>.btn{flex:1 1 0;max-width:200px}
-.ed-plus{width:58px;height:58px;border-radius:50%;background:var(--azul);color:#fff;border:0;font-size:30px;font-weight:300;line-height:1;cursor:pointer;margin-top:-26px;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.ed-barra .ed-plus{flex:1.25 1 0;max-width:220px;background:var(--azul);color:#fff;border:0;white-space:nowrap;padding:0 12px}
+.ed-barra .ed-plus:hover{background:#0a4656}
 .ed-mais{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);display:flex;gap:10px;padding:12px;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -6px 18px rgba(0,0,0,.06)}
 .ed-mais .btn{white-space:nowrap}
 body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
