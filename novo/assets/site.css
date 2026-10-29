@@ -149,7 +149,7 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 /* página de categoria */
 .cabeca-cat{padding-block:28px 6px}
 .migalha{font-size:13px;color:var(--tinta-3);margin-bottom:12px}
-.migalha a{text-decoration:none;color:var(--tinta-2)}
+.migalha a{text-decoration:none;color:var(--tinta-2);padding:10px 4px;margin:0 -4px;text-underline-offset:3px}
 .migalha a:hover{text-decoration:underline}
 .cabeca-cat h1{font-size:clamp(30px,7vw,44px)}
 .cabeca-cat p{color:var(--tinta-2);max-width:58ch;margin:10px 0 0}
