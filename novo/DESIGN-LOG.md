@@ -25,6 +25,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-29 — A pedido do Johen (editor): "Girar sozinha", "Baixar PNG" e "Baixar vídeo" saíram de baixo da caneca 3D e agora ficam por cima, no topo do quadro da caneca, em botões claros translúcidos. O botão redondo "+" virou o botão azul "Adicionar arte" (abre Enviar imagem / Escrever texto). (build.py, site.css)
 
+- 2026-10-29 — Editor: quadro do 3D ganhou 50px de respiro no topo para os botões Girar/Baixar PNG/Baixar vídeo não cobrirem a tampa do copo térmico (vale para as 4 canecas e os 2 copos). (site.css: `.palco3d`)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.
