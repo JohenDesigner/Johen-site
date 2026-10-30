@@ -1,8 +1,7 @@
 // Tutorial do editor: caixinhas passo a passo que destacam cada parte da tela.
-// Abre sozinho na primeira visita ao editor; o botão "Como usar" abre de novo.
+// A pedido do Johen: abre sozinho toda vez que o editor abre (qualquer produto) ou a página recarrega; o botão "Como usar" abre de novo.
 (function () {
   if (!document.getElementById("tela")) return;
-  const CHAVE = "johen-tour-editor-v1";
   const $ = s => document.querySelector(s);
   const visivel = el => el && !el.hidden && el.offsetParent !== null && el.getBoundingClientRect().width > 0;
   const obj = () => (window.CanecaArte && window.CanecaArte.modelo.obj) || "caneca";
@@ -97,7 +96,6 @@
     document.documentElement.classList.remove("tour-aberto");
     removeEventListener("resize", posicionar); removeEventListener("scroll", posicionar);
     document.removeEventListener("keydown", tecla);
-    try { localStorage.setItem(CHAVE, "1"); } catch (e) {}
     scrollTo({ top: 0, behavior: "auto" });
   }
   function tecla(e) {
@@ -107,9 +105,8 @@
   }
 
   $("#ver-tour")?.addEventListener("click", abrir);
-  // primeira visita: espera o editor terminar de carregar (nome do produto e 3D) antes de abrir
-  let visto = false; try { visto = localStorage.getItem(CHAVE) === "1"; } catch (e) {}
-  if (!visto && !/[?&]sem-tour/.test(location.search)) {
+  // toda abertura do editor: espera terminar de carregar (nome do produto e 3D) antes de abrir
+  if (!/[?&]sem-tour/.test(location.search)) {
     let n = 0; const t = setInterval(() => {
       n++; const pronto = window.CanecaArte && !/^Carregando/.test($("#nome-produto")?.textContent || "");
       if (pronto || n > 20) { clearInterval(t); setTimeout(abrir, 600); }

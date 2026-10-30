@@ -64,6 +64,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-30 — A pedido do Johen: Meu pedido com "Pague com Pix" igual app de delivery: o site monta o Pix copia e cola (padrão do Banco Central, chave CNPJ 65.480.613/0001-19, nome JOHEN ARTE GRAFICA, SAO PAULO) já com o total do carrinho, e o botão "Copiar código Pix" copia pra colar no app do banco. Se o cliente remove um item, o código muda junto. Embaixo: cartão e dinheiro continuam valendo, pedindo no WhatsApp. Texto do envio: "Depois de pagar, envie o pedido e mande o comprovante e as artes na mesma conversa." Aviso abaixo do botão: "Primeira compra? Diga “PRIMEIRA” no WhatsApp antes de pagar para ganhar 5%." (build.py `PIX`/`PAGAMENTO`, site.js `pixCopiaECola`)
 
+- 2026-10-30 — A pedido do Johen: o tutorial "Como usar" do editor agora abre sozinho toda vez que o editor abre (qualquer produto) e toda vez que a página recarrega, não só na primeira visita. Pular/Começar fecha só naquela vez; o botão "Como usar" continua abrindo de novo. (tour.js: saiu a memória de "já visto")
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.
