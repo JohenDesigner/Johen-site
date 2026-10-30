@@ -251,6 +251,7 @@ if PIX:
         '<p class="pag-txt">Copie o código, abra o app do seu banco em <b>Pix › Copia e cola</b> e cole. O valor de <b id="pix-valor"></b> já vem preenchido.</p>'
         '<code id="pix-codigo"></code>'
         '<button class="btn btn-turq" id="copiar-pix" type="button">Copiar código Pix</button>'
+        '<p class="pag-txt"><b>Primeira compra?</b> Diga “PRIMEIRA” no WhatsApp antes de pagar para ganhar 5%.</p>'
         f'<p class="pag-txt">Prefere outra forma? Também aceitamos cartão de débito ou crédito e dinheiro, é só pedir no WhatsApp. Chave Pix (CNPJ): {E(PIX)}.</p>'
         + (f'<a class="btn btn-sec" href="{E(MERCADO_PAGO)}" target="_blank" rel="noopener">Pagar com cartão (Mercado Pago)</a>' if MERCADO_PAGO else '')
         + '</div>')
