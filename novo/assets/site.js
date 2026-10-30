@@ -19,6 +19,10 @@ function toast(html) {
   document.body.appendChild(t); setTimeout(() => t.remove(), 4200);
 }
 function wppLink(msg) { return `https://wa.me/${WPP}?text=${encodeURIComponent(msg)}`; }
+// "3 un.", ou "3 cartelas" / "1 estampa" quando o produto é vendido por cartela ou estampa
+const qtdTxt = (n, qn) => qn ? `${n} ${n > 1 ? qn[1] : qn[0]}` : `${n} un.`;
+// descrição + quantidade do item no pedido (por cartela/estampa a quantidade sempre aparece)
+const linhaItem = x => [x.desc, x.qtd > 1 || !x.desc ? qtdTxt(x.qtd, x.qn) : ""].filter(Boolean).join(" · ");
 
 /* ---------- menu ---------- */
 function iniciarMenu() {
@@ -106,14 +110,16 @@ function iniciarProduto() {
     }
     const o = p.opcoes[sel ? sel.selectedIndex : 0];
     un = o.preco + (cx?.checked ? p.caixinha : 0);
-    desc = o.label + (cx?.checked ? " + caixinha personalizada" : "");
+    // opção única ("cada", "por cartela") não entra na descrição: vira "2 un." / "3 cartelas"
+    const rotulo = p.opcoes.length === 1 ? "" : o.label;
+    desc = cx?.checked ? (rotulo ? rotulo + " + caixinha personalizada" : "com caixinha personalizada") : rotulo;
     return { total: un * (multiplica ? qtd : 1), un, desc };
   }
   // mensagem pronta do "Pedir agora": já sai com produto, opção, quantidade e valor
   function msgPedir() {
     const r = calc();
-    const qt = (multiplica || p.m2) && qtd > 1 ? `, ${qtd} ${p.m2 ? "peças" : "un."}` : "";
-    return `Olá! Quero ${p.nome}, ${r.desc}${qt} – ${brl(r.total)}.`;
+    const qt = p.qn || !r.desc ? qtdTxt(qtd, p.qn) : (multiplica || p.m2) && qtd > 1 ? `${qtd} ${p.m2 ? "peças" : "un."}` : "";
+    return `Olá! Quero ${[p.nome, r.desc, qt].filter(Boolean).join(", ")} – ${brl(r.total)}.`;
   }
   function render() {
     const r = calc();
@@ -131,7 +137,7 @@ function iniciarProduto() {
   $("#add")?.addEventListener("click", () => {
     const r = calc();
     if (p.m2 && !(r.un > 0)) { toast("Coloque a largura e a altura em cm"); larg.focus(); return; }
-    Pedido.add({ c: p.c, id: p.id, nome: p.nome, img: p.img, desc: r.desc, qtd: multiplica || p.m2 ? qtd : 1, total: r.total });
+    Pedido.add({ c: p.c, id: p.id, nome: p.nome, img: p.img, desc: r.desc, qtd: multiplica || p.m2 ? qtd : 1, qn: p.qn || undefined, total: r.total });
     toast(`Adicionado ao pedido. <a href="${ROOT}pedido/">Ver pedido</a>`);
   });
   $("#pedir-agora")?.addEventListener("click", e => { e.currentTarget.href = wppLink(msgPedir()); });
@@ -148,11 +154,11 @@ function iniciarPedido() {
     lista.innerHTML = itens.map(x => `
       <div class="item">
         ${x.artes ? `<div class="item-fotos">${x.artes.map(a => `<img src="${a}" alt="">`).join("")}</div>` : `<img src="${x.arte || ROOT + x.img}" alt="">`}
-        <div><b>${x.nome}</b><small>${x.desc}${x.qtd > 1 ? ` · ${x.qtd} un.` : ""}</small>${x.artes ? "<small>Com sua arte (prévia da frente e das costas)</small>" : x.arte ? "<small>Com sua arte (prévia)</small>" : ""}<button data-tirar="${x.uid}">Remover</button></div>
+        <div><b>${x.nome}</b><small>${linhaItem(x)}</small>${x.artes ? "<small>Com sua arte (prévia da frente e das costas)</small>" : x.arte ? "<small>Com sua arte (prévia)</small>" : ""}<button data-tirar="${x.uid}">Remover</button></div>
         <div class="valor">${brl(x.total)}</div>
       </div>`).join("");
     $("#pedido-total").textContent = brl(tot);
-    const msg = "Olá! Quero fazer este pedido pelo site:\n\n" + itens.map((x, n) => `${n + 1}. ${x.nome}\n   ${x.desc}${x.qtd > 1 ? ` · ${x.qtd} un.` : ""} — ${brl(x.total)}`).join("\n") + `\n\nTotal: ${brl(tot)}\n\nVou mandar as artes aqui na conversa.`;
+    const msg = "Olá! Quero fazer este pedido pelo site:\n\n" + itens.map((x, n) => `${n + 1}. ${x.nome}\n   ${linhaItem(x)} — ${brl(x.total)}`).join("\n") + `\n\nTotal: ${brl(tot)}\n\nVou mandar as artes aqui na conversa.`;
     $("#enviar-pedido").href = wppLink(msg);
   }
   lista.addEventListener("click", e => { const b = e.target.closest("[data-tirar]"); if (b) { Pedido.tirar(b.dataset.tirar); render(); } });

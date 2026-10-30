@@ -1,6 +1,6 @@
 # Gera as páginas do site novo a partir de dados/produtos.json
 # Rodar: python3 build.py   (dentro da pasta novo/)
-import json, os, html, shutil, hashlib
+import json, os, re, html, shutil, hashlib
 VER = hashlib.md5((open("assets/site.css","rb").read()+open("assets/site.js","rb").read()+open("assets/editor.js","rb").read()+open("assets/mockup3d.js","rb").read()+open("assets/tour.js","rb").read())).hexdigest()[:8]
 
 D = json.load(open("dados/produtos.json"))
@@ -171,9 +171,9 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
     for p in ps:
         dados = {"c": slug, "id": p["id"], "nome": p["nome"], "img": p["img"], "opcoes": p["opcoes"], "m2": p.get("m2"), "minimo": p.get("minimo"), "caixinha": p.get("caixinha")}
         if p.get("m2"):
-            opc = f'''<div class="campo"><span class="rot">Tamanho do adesivo</span><div class="dupla"><div><label for="largura">Largura (cm)</label><input id="largura" type="number" inputmode="decimal" min="1" value="50"></div><div><label for="altura">Altura (cm)</label><input id="altura" type="number" inputmode="decimal" min="1" value="50"></div></div><small>{brl(p['m2'])} o m². Pedido mínimo {brl(p['minimo'])}.</small><p class="aviso-min" id="aviso-min" hidden>Esse tamanho ficou abaixo do pedido mínimo, então o valor sobe pra {brl(p['minimo'])}.</p></div>'''
+            opc = f'''<div class="campo"><span class="rot">{"Tamanho da placa" if slug == "banners" else "Tamanho do adesivo"}</span><div class="dupla"><div><label for="largura">Largura (cm)</label><input id="largura" type="number" inputmode="decimal" min="1" value="50"></div><div><label for="altura">Altura (cm)</label><input id="altura" type="number" inputmode="decimal" min="1" value="50"></div></div><small>{brl(p['m2'])} o m². Pedido mínimo {brl(p['minimo'])}.</small><p class="aviso-min" id="aviso-min" hidden>Esse tamanho ficou abaixo do pedido mínimo, então o valor sobe pra {brl(p['minimo'])}.</p></div>'''
         elif len(p["opcoes"]) > 1:
-            rot = "Quantidade" if " un." in p["opcoes"][0]["label"] else "Escolha a opção"
+            rot = "Quantidade" if " un." in p["opcoes"][0]["label"] else "Tamanho" if all(re.fullmatch(r"\d+×\d+cm", o["label"]) for o in p["opcoes"]) else "Escolha a opção"
             opc = f'<div class="campo"><label for="opcao">{rot}</label><select id="opcao">' + "".join(f'<option>{E(o["label"])} — {brl(o["preco"])}</option>' for o in p["opcoes"]) + '</select></div>'
         else:
             opc = ""  # preço único já aparece logo abaixo do título
@@ -182,6 +182,8 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
         un_topo = un if len(p["opcoes"]) == 1 and not p.get("m2") and un not in ("", "cada") else ""  # ex.: "por cartela" ao lado do preço
         if un_topo and not un_topo.startswith(("por ", "cada")): un_topo = "por " + un_topo  # "cartela A3" → "por cartela A3"
         dados["un"] = un_topo
+        # quantidade com o nome certo no pedido e no WhatsApp: "3 cartelas", "2 estampas" (não "por cartela, 3 un.")
+        dados["qn"] = ["cartela", "cartelas"] if "cartela" in un else ["estampa", "estampas"] if "estampa" in un else None
         opc += f'<div class="campo campo-qtd"><span class="rot">{rot_qtd}</span><div class="qtd"><button id="menos" aria-label="Menos">−</button><output id="qtd">1</output><button id="mais" aria-label="Mais">+</button></div></div>'
         editavel = (slug == "canecas" and (p["sub"] == "canecas" or p["id"] in ("p6", "p7nt99ze"))) or (slug == "camisetas" and p["sub"] in ("dtf", "sublimacao_comum"))  # canecas, copos térmicos e camisetas DTF/sublimação comum têm editor 3D
         caixinha = (f'<label class="check caixinha-op"><input type="checkbox" id="caixinha"><img src="../../img/produtos/canecas-caixinha.webp" alt="" width="44" height="44" loading="lazy"><span class="cx-txt">Caixinha personalizada<small><b>+ {brl(p["caixinha"])}</b> · opcional</small></span></label>' if p.get("caixinha") else "")
