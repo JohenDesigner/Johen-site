@@ -324,8 +324,12 @@ async function iniciar() {
   });
 
   // foto da caneca para o pedido e para o WhatsApp (editor.js)
-  window.Caneca3D = { foto: tam => { if (gravando) return Promise.reject(); pintarTextura(); posicionar();
-    return emAlta(() => fotoComMarca(tam), tam); } };
+  // com "lado" (camiseta frente e verso), vira o produto pra esse lado só durante a foto
+  window.Caneca3D = { foto: (tam, lado) => { if (gravando) return Promise.reject(); pintarTextura();
+    const r0 = rotY, a0 = rotAlvo;
+    if (lado) { rotY = (lado === "costas" ? Math.PI : 0) + M.rot * (lado === "costas" ? -1 : 1) * 0.6; rotAlvo = null; }
+    posicionar();
+    return emAlta(() => fotoComMarca(tam), tam).finally(() => { if (lado) { rotY = r0; rotAlvo = a0; posicionar(); } }); } };
   aviso3d.hidden = true;
   return { ligar, parar };
 }

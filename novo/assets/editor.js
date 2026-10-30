@@ -52,30 +52,36 @@
     document.getElementById("bloco-inverter").hidden = temAlfa;
   }
   let img = null, arquivo = null, ix = 0, iy = 0, esc = 1, texto = "", corTexto = "#1d2427";
+  // várias fotos por lado: "fotos" guarda todas; img/arquivo/ix/iy/esc/gravada/temAlfa/inverter são as da foto selecionada
+  let fotos = [], sel = -1;
+  const VAZIA = { img: null, arquivo: null, ix: 0, iy: 0, esc: 1, gravada: null, temAlfa: false, inverter: false };
+  function sincronizar() { if (sel >= 0 && fotos[sel]) fotos[sel] = { img, arquivo, ix, iy, esc, gravada, temAlfa, inverter }; }
+  function selecionar(i) { sincronizar(); sel = fotos[i] ? i : -1; ({ img, arquivo, ix, iy, esc, gravada, temAlfa, inverter } = fotos[i] || VAZIA); }
   // camiseta frente e verso: cada lado guarda a própria arte; as variáveis acima são sempre as do lado aberto
   // camiseta só de um lado: LADOS tem um lado só, e o cliente escolhe se é a frente ou as costas
   const LADOS = MOD.verso ? ["frente", "costas"] : ["frente"];
   const est = {}; let lado = "frente";
-  const guardar = () => { est[lado] = { img, arquivo, ix, iy, esc, texto, corTexto, gravada, temAlfa, inverter }; };
-  const carregar = l => { ({ img, arquivo, ix, iy, esc, texto, corTexto, gravada, temAlfa, inverter } = est[l]); lado = l; };
-  LADOS.forEach(l => { est[l] = { img: null, arquivo: null, ix: 0, iy: 0, esc: 1, texto: "", corTexto: "#1d2427", gravada: null, temAlfa: false, inverter: false }; });
+  const guardar = () => { sincronizar(); est[lado] = { fotos, sel, texto, corTexto }; };
+  const carregar = l => { const e = est[l]; sel = -1; fotos = e.fotos; texto = e.texto; corTexto = e.corTexto; lado = l; selecionar(e.sel); };
+  LADOS.forEach(l => { est[l] = { fotos: [], sel: -1, texto: "", corTexto: "#1d2427" }; });
   function comLado(l, fn) { if (!l || l === lado) return fn(); const atual = lado; guardar(); carregar(l); try { return fn(); } finally { carregar(atual); } }
 
   // desenha só a arte (imagem + texto) dentro da área de impressão; usado também pela caneca 3D
   function pintarArte(c) {
     c.save(); c.beginPath(); c.rect(A.x, A.y, A.w, A.h); c.clip();
-    if (img) { const w = img.width * esc, h = img.height * esc; c.drawImage(gravada || img, A.x + A.w / 2 + ix - w / 2, A.y + A.h / 2 + iy - h / 2, w, h); }
+    sincronizar();
+    for (const f of fotos) { const w = f.img.width * f.esc, h = f.img.height * f.esc; c.drawImage(f.gravada || f.img, A.x + A.w / 2 + f.ix - w / 2, A.y + A.h / 2 + f.iy - h / 2, w, h); }
     if (texto) {
       c.fillStyle = MOD.laser ? ACO : corTexto; c.textAlign = "center"; c.textBaseline = "middle";
       let fs = MOD.tipo === "camiseta" ? 160 : 72; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`;
       while (c.measureText(texto).width > A.w * (larga && MOD.w > 15 ? .36 : .92) && fs > 24) { fs -= 2; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`; }
-      c.fillText(texto, A.x + A.w / 2, img ? A.y + A.h - fs * .8 : A.y + A.h / 2);
+      c.fillText(texto, A.x + A.w / 2, fotos.length ? A.y + A.h - fs * .8 : A.y + A.h / 2);
     }
     c.restore();
   }
   window.CanecaArte = {
     area: A,
-    temArte: () => { guardar(); return LADOS.some(l => est[l].img || est[l].texto); },
+    temArte: () => { guardar(); return LADOS.some(l => est[l].fotos.length || est[l].texto); },
     pintar: (c, l) => comLado(l, () => pintarArte(c)),
     lados: LADOS,
     cores: () => ({ corpo: fundoCaneca, detalhe }),
@@ -94,12 +100,19 @@
     ctx.strokeStyle = "rgba(29,36,39,.22)"; ctx.lineWidth = 2; ctx.setLineDash([6, 8]);
     ctx.beginPath(); ctx.moveTo(A.x + A.w / 2, A.y + 8); ctx.lineTo(A.x + A.w / 2, A.y + A.h - 8); ctx.stroke();
     ctx.setLineDash([12, 9]); ctx.lineWidth = 3; ctx.strokeStyle = "#1d2427"; ctx.strokeRect(A.x, A.y, A.w, A.h);
-    if (!img && !texto) {
+    // com mais de uma foto, a selecionada ganha contorno laranja (é ela que mexe ao arrastar)
+    if (img && fotos.length > 1) {
+      const w = img.width * esc, h = img.height * esc;
+      ctx.setLineDash([10, 7]); ctx.lineWidth = 4; ctx.strokeStyle = "#E8650A";
+      ctx.strokeRect(A.x + A.w / 2 + ix - w / 2, A.y + A.h / 2 + iy - h / 2, w, h);
+    }
+    if (!fotos.length && !texto) {
       ctx.fillStyle = "#4f5b60"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.font = "600 34px Figtree, sans-serif"; ctx.fillText("Sua arte aqui", A.x + A.w / 2, A.y + A.h / 2 - 22);
       ctx.font = "26px Figtree, sans-serif"; ctx.fillText("toque em + para adicionar", A.x + A.w / 2, A.y + A.h / 2 + 22);
     }
     ctx.restore();
+    salvarDepois();
   }
   const zoom = document.getElementById("zoom");
   // imagem larga (como a da caneca toda) cobre a área; imagem quadrada/alta fica na frente, na altura toda.
@@ -112,7 +125,19 @@
   // arrastar e pinça na área de impressão
   const pts = new Map(); let base = null;
   const ponto = e => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * cv.width / r.width, y: (e.clientY - r.top) * cv.height / r.height }; };
-  cv.addEventListener("pointerdown", e => { if (!img) return; cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, ponto(e)); base = null; });
+  function fotoNoPonto(p) {
+    sincronizar();
+    for (let i = fotos.length - 1; i >= 0; i--) {
+      const f = fotos[i], w = f.img.width * f.esc, h = f.img.height * f.esc;
+      if (Math.abs(p.x - (A.x + A.w / 2 + f.ix)) <= w / 2 && Math.abs(p.y - (A.y + A.h / 2 + f.iy)) <= h / 2) return i;
+    }
+    return -1;
+  }
+  cv.addEventListener("pointerdown", e => {
+    if (!fotos.length) return;
+    if (!pts.size) { const i = fotoNoPonto(ponto(e)); if (i >= 0 && i !== sel) { selecionar(i); mostrarAjustes(); desenhar(); } }
+    if (!img) return; cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, ponto(e)); base = null;
+  });
   cv.addEventListener("pointermove", e => {
     if (!pts.has(e.pointerId)) return; const p = ponto(e), ant = pts.get(e.pointerId);
     if (pts.size === 1) { ix += p.x - ant.x; iy += p.y - ant.y; }
@@ -132,12 +157,35 @@
   inp.addEventListener("change", () => {
     const f = inp.files[0]; if (!f) return;
     if (!f.type.startsWith("image/")) { toast("Esse arquivo não é uma imagem. Use JPG ou PNG."); return; }
-    arquivo = f; const im = new Image();
-    im.onload = () => { img = im; prepararLaser(); encaixar(false); desenhar(); document.getElementById("ajustes").hidden = false; fecharMais();
+    inp.value = "";                       // deixa escolher a mesma foto de novo
+    const im = new Image();
+    im.onload = () => {
+      // cada foto nova entra como mais uma, sem apagar as que já estão
+      sincronizar(); const outras = fotos.length;
+      fotos.push({ ...VAZIA, img: im, arquivo: f }); sel = -1; selecionar(fotos.length - 1);
+      prepararLaser(); encaixar(false);
+      if (outras) {                         // espalha as fotos pra não cair uma em cima da outra
+        if (larga) { ix = [0, .3, -.3, .15, -.15][outras % 5] * A.w; esc *= .9; }
+        else { esc *= .6; iy = (outras % 2 ? .22 : -.22) * A.h; }
+        zoom.value = Math.round(esc / escPadrao() * 100);
+      }
+      desenhar(); mostrarAjustes(); fecharMais();
+      if (outras) toast("Foto adicionada. Toque numa foto pra mexer nela.");
       // ~150 dpi: pelo menos 60 pixels da imagem por cm da área
       document.getElementById("qualidade").hidden = (1 / esc) * (A.w / MOD.w) >= 60; };
     im.onerror = () => toast("Não deu pra abrir essa imagem. Tente outra em JPG ou PNG.");
     im.src = URL.createObjectURL(f);
+  });
+  function mostrarAjustes() {
+    document.getElementById("ajustes").hidden = !img;
+    if (img) zoom.value = Math.round(esc / escPadrao() * 100);
+    document.getElementById("inverter").checked = inverter;
+    if (MOD.laser && img) document.getElementById("bloco-inverter").hidden = temAlfa;
+    const n = document.getElementById("fotos-dica"); if (n) n.hidden = fotos.length < 2;
+  }
+  document.getElementById("remover-foto").addEventListener("click", () => {
+    if (sel < 0) return; fotos.splice(sel, 1); sel = -1; selecionar(fotos.length - 1);
+    document.getElementById("qualidade").hidden = true; mostrarAjustes(); desenhar();
   });
   const campoTxt = document.getElementById("texto");
   campoTxt.addEventListener("input", () => { texto = campoTxt.value.trim(); desenhar(); });
@@ -169,33 +217,40 @@
   const atualizarPreco = () => { totalEl.textContent = brl(precoUn()); };
   cx.addEventListener("change", atualizarPreco);
   const descricao = () => { guardar();
-    const comArte = LADOS.filter(l => est[l].img || est[l].texto);
-    return `Cor: ${corNome}${cx.checked ? " · caixinha personalizada" : ""}${MOD.verso ? ` · estampa: ${comArte.join(" e ")}` : MOD.tipo === "camiseta" ? ` · estampa ${lado === "costas" ? "nas costas" : "na frente"}` : ""}${LADOS.map(l => est[l].texto ? ` · texto${MOD.verso ? " (" + l + ")" : ""}: "${est[l].texto}"` : "").join("")}`; };
+    const comArte = LADOS.filter(l => est[l].fotos.length || est[l].texto);
+    const nFotos = LADOS.reduce((n, l) => n + est[l].fotos.length, 0);
+    return `Cor: ${corNome}${cx.checked ? " · caixinha personalizada" : ""}${MOD.verso ? ` · estampa: ${comArte.join(" e ")}` : MOD.tipo === "camiseta" ? ` · estampa ${lado === "costas" ? "nas costas" : "na frente"}` : ""}${LADOS.map(l => est[l].texto ? ` · texto${MOD.verso ? " (" + l + ")" : ""}: "${est[l].texto}"` : "").join("")}${nFotos > comArte.length ? ` · ${nFotos} fotos` : ""}`; };
 
   // foto da caneca 3D (se o aparelho abriu o 3D); senão, a faixa da área de impressão
-  async function previa(tam) {
-    if (window.Caneca3D) { try { return await window.Caneca3D.foto(tam); } catch (e) { } }
-    desenhar(true); return await new Promise(r => cv.toBlob(r, "image/png"));
+  async function previa(tam, l) {
+    if (window.Caneca3D) { try { return await window.Caneca3D.foto(tam, l); } catch (e) { } }
+    return await comLado(l, () => { desenhar(true); return new Promise(r => cv.toBlob(r, "image/png")); });
   }
+  // camiseta frente e verso com arte nos dois lados: uma prévia de cada lado (senão a das costas some)
+  const ladosPrevia = () => { guardar(); const c = LADOS.filter(l => est[l].fotos.length || est[l].texto); return MOD.verso && c.length > 1 ? c : [null]; };
+  const paraURL = b => new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
   // Comprar: coloca no pedido com a prévia e abre a página do pedido
   async function comprar() {
     if (!window.CanecaArte.temArte()) { toast("Adicione uma imagem ou um texto antes de comprar."); return; }
     if (!produto) return;
-    const b = await previa(260); const u = await new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
-    Pedido.add({ c: cId, id: pId, nome: produto.nome, img: produto.img, arte: u, desc: descricao(), qtd: 1, total: precoUn() });
+    const artes = [];
+    for (const l of ladosPrevia()) artes.push(await paraURL(await previa(260, l)));
+    Pedido.add({ c: cId, id: pId, nome: produto.nome, img: produto.img, arte: artes[0], artes: artes.length > 1 ? artes : undefined, desc: descricao(), qtd: 1, total: precoUn() });
+    await apagarSalvo();
     location.href = ROOT + "pedido/";
   }
   document.getElementById("add-pedido").addEventListener("click", comprar);
   document.getElementById("comprar").addEventListener("click", comprar);
   document.getElementById("enviar-arte").addEventListener("click", async () => {
     const msg = `Olá! Montei ${SEU.replace("sua", "minha").replace("seu", "meu")} no site:\n• ${produto.nome}\n• ${descricao()}\n• Valor: ${brl(precoUn())}\n\nSegue a prévia, a arte posicionada e a arte original.`;
-    const prev = new File([await previa(1080)], `previa-${MOD.obj}.png`, { type: "image/png" });
-    guardar(); const files = [prev];
+    const files = [];
+    for (const l of ladosPrevia()) files.push(new File([await previa(1080, l)], `previa-${MOD.obj}${l ? "-" + l : ""}.png`, { type: "image/png" }));
+    const prev = files[0]; guardar();
     for (const l of LADOS) {
-      if (!est[l].img && !est[l].texto) continue;
+      if (!est[l].fotos.length && !est[l].texto) continue;
       const blob = await comLado(l, () => { desenhar(true); return new Promise(r => cv.toBlob(r, "image/png")); });
       files.push(new File([blob], `arte-posicionada-${MOD.obj}${MOD.tipo === "camiseta" ? "-" + l : ""}.png`, { type: "image/png" }));
-      if (est[l].arquivo) files.push(est[l].arquivo);
+      est[l].fotos.forEach(f => f.arquivo && files.push(f.arquivo));
     }
     desenhar(true);
     if (navigator.canShare && navigator.canShare({ files })) {
@@ -216,8 +271,7 @@
       abas.querySelectorAll("[data-l]").forEach(x => x.setAttribute("aria-selected", x === b));
       campoTxt.value = texto; document.getElementById("cor-texto").value = corTexto;
       document.getElementById("bloco-texto").hidden = !texto;
-      document.getElementById("ajustes").hidden = !img; document.getElementById("qualidade").hidden = true;
-      if (img) zoom.value = Math.round(esc / escPadrao() * 100);
+      document.getElementById("qualidade").hidden = true; mostrarAjustes();
       document.querySelector(".ed-faixa-tit small").textContent = `${lado} · até ${MOD.w} x ${MOD.h} cm`;
       document.dispatchEvent(new CustomEvent("mockup-lado", { detail: lado }));
       desenhar();
@@ -236,6 +290,40 @@
       document.dispatchEvent(new CustomEvent("mockup-lado", { detail: lado }));
       desenhar();
     });
+  }
+
+  // ---- salvar o que o cliente montou (IndexedDB): recarregar a página não perde a arte
+  const CHAVE = `editor:${cId}:${pId}`;
+  let pronto = false, tmSalvar;
+  function banco() { return new Promise((ok, erro) => { const r = indexedDB.open("johen-editor", 1); r.onupgradeneeded = () => r.result.createObjectStore("montagens"); r.onsuccess = () => ok(r.result); r.onerror = () => erro(r.error); }); }
+  async function op(modo, fn) { const db = await banco(); return new Promise((ok, erro) => { const t = db.transaction("montagens", modo); const r = fn(t.objectStore("montagens")); t.oncomplete = () => ok(r && r.result); t.onerror = () => erro(t.error); }); }
+  function salvarDepois() {
+    if (!pronto) return; clearTimeout(tmSalvar);
+    tmSalvar = setTimeout(() => {
+      guardar();
+      const lados = {}; for (const l of LADOS) lados[l] = { sel: est[l].sel, texto: est[l].texto, corTexto: est[l].corTexto, fotos: est[l].fotos.map(f => ({ arquivo: f.arquivo, ix: f.ix, iy: f.iy, esc: f.esc, inverter: f.inverter })) };
+      op("readwrite", s => s.put({ lados, ordem: [...LADOS], lado, corNome, cx: cx.checked }, CHAVE)).catch(() => {});
+    }, 400);
+  }
+  function apagarSalvo() { return op("readwrite", s => s.delete(CHAVE)).catch(() => {}); }
+  async function restaurar() {
+    let m; try { m = await op("readonly", s => s.get(CHAVE)); } catch (e) { return; }
+    if (!m || !m.lados) return;
+    const abrir = a => new Promise(ok => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ok(null); im.src = URL.createObjectURL(a); });
+    if (!MOD.verso && m.ordem && m.ordem[0] !== LADOS[0]) abas.querySelector(`[data-l="${m.ordem[0]}"]`)?.click();
+    for (const l of LADOS) {
+      const s = m.lados[l] || m.lados[Object.keys(m.lados)[0]]; if (!s) continue;
+      sel = -1; fotos = []; texto = s.texto || ""; corTexto = s.corTexto || "#1d2427"; lado = l;
+      for (const f of s.fotos) { const im = await abrir(f.arquivo); if (!im) continue; sincronizar(); fotos.push({ ...VAZIA, ...f, img: im }); sel = -1; selecionar(fotos.length - 1); prepararLaser(); sincronizar(); }
+      sel = -1; selecionar(Math.min(s.sel, fotos.length - 1)); guardar();
+    }
+    carregar(MOD.verso && m.lado && est[m.lado] ? m.lado : LADOS[0]);
+    if (MOD.verso && lado !== "frente") { abas.querySelectorAll("[data-l]").forEach(x => x.setAttribute("aria-selected", x.dataset.l === lado)); document.dispatchEvent(new CustomEvent("mockup-lado", { detail: lado })); }
+    campoTxt.value = texto; document.getElementById("cor-texto").value = corTexto; document.getElementById("bloco-texto").hidden = !texto;
+    if (m.cx && !cx.closest("label").hidden) { cx.checked = true; atualizarPreco(); }
+    const b = document.querySelector(`#cores .cor[data-n="${m.corNome}"]`); if (b) b.click();
+    mostrarAjustes(); desenhar();
+    if (fotos.length || texto) toast("Sua arte foi recuperada.");
   }
 
   // carregar produto
@@ -259,7 +347,8 @@
         coresBox.querySelectorAll(".cor").forEach(x => x.setAttribute("aria-pressed", x === b)); if (corDoCorpo) fundoCaneca = b.dataset.c; else detalhe = b.dataset.c; corNome = b.dataset.n; desenhar(); });
     }
     atualizarPreco(); desenhar();
-  }).catch(() => { document.getElementById("nome-produto").textContent = "Não deu pra carregar o produto. Atualize a página."; });
+    return restaurar().catch(() => {});
+  }).then(() => { pronto = true; }).catch(() => { document.getElementById("nome-produto").textContent = "Não deu pra carregar o produto. Atualize a página."; });
   document.fonts && document.fonts.ready.then(() => desenhar());
   desenhar();
 })();

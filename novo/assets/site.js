@@ -109,11 +109,18 @@ function iniciarProduto() {
     desc = o.label + (cx?.checked ? " + caixinha personalizada" : "");
     return { total: un * (multiplica ? qtd : 1), un, desc };
   }
+  // mensagem pronta do "Pedir agora": já sai com produto, opção, quantidade e valor
+  function msgPedir() {
+    const r = calc();
+    const qt = (multiplica || p.m2) && qtd > 1 ? `, ${qtd} ${p.m2 ? "peças" : "un."}` : "";
+    return `Olá! Quero ${p.nome}, ${r.desc}${qt} – ${brl(r.total)}.`;
+  }
   function render() {
     const r = calc();
     totalEl.textContent = brl(r.total);
     if (unEl) unEl.textContent = multiplica && qtd > 1 ? `(${brl(r.un)} cada)` : "";
     if (qtdOut) qtdOut.textContent = qtd;
+    const pa = $("#pedir-agora"); if (pa) pa.href = wppLink(msgPedir());
   }
   [sel, larg, alt, cx].forEach(el => el?.addEventListener("input", render));
   // leva a escolha da caixinha para o editor
@@ -127,10 +134,7 @@ function iniciarProduto() {
     Pedido.add({ c: p.c, id: p.id, nome: p.nome, img: p.img, desc: r.desc, qtd: multiplica || p.m2 ? qtd : 1, total: r.total });
     toast(`Adicionado ao pedido. <a href="${ROOT}pedido/">Ver pedido</a>`);
   });
-  $("#pedir-agora")?.addEventListener("click", e => {
-    const r = calc();
-    e.currentTarget.href = wppLink(`Olá! Quero pedir:\n• ${p.nome}\n• ${r.desc}${(multiplica || p.m2) && qtd > 1 ? `\n• Quantidade: ${qtd}` : ""}\n• Total no site: ${brl(r.total)}\n\nVou mandar a arte aqui na conversa.`);
-  });
+  $("#pedir-agora")?.addEventListener("click", e => { e.currentTarget.href = wppLink(msgPedir()); });
   render();
 }
 
@@ -143,8 +147,8 @@ function iniciarPedido() {
     $("#pedido-cheio").hidden = !itens.length; $("#pedido-vazio").hidden = !!itens.length;
     lista.innerHTML = itens.map(x => `
       <div class="item">
-        <img src="${x.arte || ROOT + x.img}" alt="">
-        <div><b>${x.nome}</b><small>${x.desc}${x.qtd > 1 ? ` · ${x.qtd} un.` : ""}</small>${x.arte ? "<small>Com sua arte (prévia)</small>" : ""}<button data-tirar="${x.uid}">Remover</button></div>
+        ${x.artes ? `<div class="item-fotos">${x.artes.map(a => `<img src="${a}" alt="">`).join("")}</div>` : `<img src="${x.arte || ROOT + x.img}" alt="">`}
+        <div><b>${x.nome}</b><small>${x.desc}${x.qtd > 1 ? ` · ${x.qtd} un.` : ""}</small>${x.artes ? "<small>Com sua arte (prévia da frente e das costas)</small>" : x.arte ? "<small>Com sua arte (prévia)</small>" : ""}<button data-tirar="${x.uid}">Remover</button></div>
         <div class="valor">${brl(x.total)}</div>
       </div>`).join("");
     $("#pedido-total").textContent = brl(tot);

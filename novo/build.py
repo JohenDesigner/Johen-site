@@ -24,6 +24,14 @@ SERVS = [  # slug, nome, foto, fundo, resumo
   ("comercio",       "Para seu Comércio", "img/produtos/adesivos-p12.webp", "bg-amarelo", "Cardápio em 3D na mesa, site com mensalidade e comunicação visual completa."),
 ]
 
+# Pagamento online: preencha quando tiver. Vazio = a página do pedido explica que a chave/link vão pelo WhatsApp.
+PIX = ""          # ex.: "65.480.613/0001-19" ou e-mail/celular da chave
+MERCADO_PAGO = "" # link de pagamento do Mercado Pago
+# Avaliações reais do Google (copie do perfil da loja). Vazio = a home só mostra o convite pra avaliar.
+AVALIACOES = []   # ex.: [("Nome do cliente", "Texto da avaliação", 5)]
+MAPA = "https://www.google.com/maps/search/?api=1&query=" + "R.+Pedro+Fernandes+Arag%C3%A3o,+269+-+Jardim+Selma,+S%C3%A3o+Paulo+-+SP"
+REVIEW = "https://g.page/r/CWKTHinBP02gEAI/review"
+
 TAMBEM = ["Convites", "Crachás", "Blocos e talões", "Envelopes", "Pastas", "Calendários", "Ímãs de geladeira", "Tags", "Cardápios", "Carimbos"]  # rodapé "Também fazemos" (só texto)
 
 ICO = {
@@ -32,6 +40,9 @@ ICO = {
  "busca": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
  "x": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
  "insta": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>',
+ "pix": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l9 9-9 9-9-9z"/><path d="M8.5 12l3.5-3.5 3.5 3.5-3.5 3.5z"/></svg>',
+ "cartao": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/></svg>',
+ "dinheiro": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/></svg>',
  "wpp": '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.1 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>',
 }
 
@@ -66,18 +77,18 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
 <meta property="og:description" content="{E(desc)}">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#ffffff">
-<script>/* recarregou ou entrou direto (sem vir de outra página do site)? vai para a página inicial */(function(){{try{{var h=new URL(document.documentElement.dataset.root||"./",location.href).pathname;if(location.pathname===h||location.pathname===h+"index.html")return;var n=performance.getEntriesByType("navigation")[0],t=n?n.type:"",r=document.referrer,doSite=false;try{{var u=new URL(r);doSite=u.origin===location.origin&&u.pathname.indexOf(h)===0}}catch(e){{}}if(t==="reload"||(t==="navigate"&&!doSite))location.replace(h)}}catch(e){{}}}})()</script>
+<script>/* recarregou ou entrou direto (sem vir de outra página do site)? vai para a página inicial */(function(){{try{{var h=new URL(document.documentElement.dataset.root||"./",location.href).pathname;if(location.pathname===h||location.pathname===h+"index.html"||/[/](editor|pedido)[/]/.test(location.pathname))return;var n=performance.getEntriesByType("navigation")[0],t=n?n.type:"",r=document.referrer,doSite=false;try{{var u=new URL(r);doSite=u.origin===location.origin&&u.pathname.indexOf(h)===0}}catch(e){{}}if(t==="reload"||(t==="navigate"&&!doSite))location.replace(h)}}catch(e){{}}}})()</script>
 <link rel="icon" href="{R}img/marca/logo-icone.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Outfit:wght@500;600&display=swap">
 <link rel="stylesheet" href="{R}assets/site.css?v={VER}">
 </head>
 <body>
-<div class="promo">5% OFF na sua primeira compra</div>
+<div class="promo">5% OFF na 1ª compra — é só dizer 'PRIMEIRA' no WhatsApp.</div>
 <header class="topo">
   <div class="wrap">
     <div class="topo-linha">
-      <a class="logo" href="{R}" aria-label="Johen Arte Gráfica, início"><img src="{R}img/marca/logo-wordmark.webp" alt="Johen Artes Gráficas" width="94" height="30"></a>
+      <a class="logo" href="{R}" aria-label="Johen Arte Gráfica, início"><img src="{R}img/marca/logo-wordmark.webp" alt="Johen Arte Gráfica" width="94" height="30"></a>
       <a class="icone-btn" href="{R}pedido/" aria-label="Meu pedido">{ICO['sacola']}<span class="contador" hidden>0</span></a>
       <button class="icone-btn" data-abrir-menu aria-label="Abrir menu">{ICO['menu']}</button>
     </div>
@@ -91,21 +102,37 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
 </main>
 <footer class="rodape">
   <div class="wrap">
-    <div>
-      <img class="marca" src="{R}img/marca/logo-wordmark.webp" alt="Johen Artes Gráficas">
-      <p>R. Pedro Fernandes Aragão, 269 · Jardim Selma · São Paulo, SP</p>
-      <p><a href="{wpp('Olá! Vim pelo site.')}">WhatsApp (11) 98287-7142</a></p>
-      <p><a href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener">Instagram @johen_artgrafica</a></p>
+    <div class="rod-marca"><img class="marca" src="{R}img/marca/logo-wordmark.webp" alt="Johen Arte Gráfica"><p>Gráfica e personalizados no Jardim Selma, São Paulo.</p></div>
+    <div><h3>Produtos</h3>
+      <ul>{"".join(f'<li><a href="{R}{sl}/">{E(n)}</a></li>' for sl,n,*_ in CATS)}</ul>
+      <p class="rod-sub">Também fazemos</p>
+      <ul class="lista-texto">{"".join(f"<li>{x}</li>" for x in TAMBEM)}</ul>
     </div>
-    <div><h3>Também fazemos</h3><ul class="lista-texto">{"".join(f"<li>{x}</li>" for x in TAMBEM)}</ul></div>
+    <div><h3>Ajuda</h3>
+      <ul class="rod-ajuda">
+        <li><b>Prazos:</b> o prazo de produção aparece em cada produto e começa depois da arte aprovada.</li>
+        <li><b>Como enviar a arte:</b> mande na conversa do WhatsApp ou <a href="{FORM}">pelo formulário</a>. Não tem arte? <a href="{R}design/">A gente cria</a>.</li>
+        <li><b>Retirada:</b> na loja, no Jardim Selma. Combine o horário pelo WhatsApp.</li>
+        <li><b>Pedidos grandes:</b> têm desconto. <a href="{wpp('Olá! Quero um orçamento para grande quantidade.')}">Peça seu orçamento</a></li>
+      </ul>
+    </div>
     <div class="sobre-rod"><h3>Sobre</h3>
       <p class="destaque">Mais de 5 mil projetos aprovados.</p>
-      <p><b>Grande quantidade?</b> Pedidos grandes têm desconto. <a href="{wpp('Olá! Quero um orçamento para grande quantidade.')}">Peça seu orçamento</a></p>
-      <p><b>Horário:</b> segunda a sábado, das 11h às 20h. Antes de vir, confirme pelo WhatsApp.</p>
-      <p><b>Pagamento:</b> dinheiro, Pix e cartões de débito e crédito.</p>
-      <p class="cnpj">CNPJ 65.480.613/0001-19</p>
+      <p><a href="{REVIEW}" target="_blank" rel="noopener">Veja e deixe sua avaliação no Google</a></p>
+    </div>
+    <div><h3>Contato</h3>
+      <ul class="rod-contato">
+        <li><a href="{wpp('Olá! Vim pelo site.')}">WhatsApp (11) 98287-7142</a></li>
+        <li><a href="{MAPA}" target="_blank" rel="noopener">R. Pedro Fernandes Aragão, 269 · Jardim Selma · São Paulo, SP (ver no mapa)</a></li>
+        <li>Segunda a sábado, das 11h às 20h. Antes de vir, confirme pelo WhatsApp.</li>
+      </ul>
     </div>
   </div>
+  <div class="rod-faixa"><div class="wrap">
+    <div class="rod-pag" aria-label="Formas de pagamento"><span>{ICO['pix']}Pix</span><span>{ICO['cartao']}Débito</span><span>{ICO['cartao']}Crédito</span><span>{ICO['dinheiro']}Dinheiro</span></div>
+    <a class="rod-insta" href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener">{ICO['insta']}@johen_artgrafica</a>
+    <p class="cnpj">Johen Arte Gráfica · CNPJ 65.480.613/0001-19</p>
+  </div></div>
 </footer>
 <a class="insta-flut" href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener" aria-label="Instagram @johen_artgrafica">{ICO['insta']}</a>
 <a class="wpp-flut" href="{wpp('Olá! Vim pelo site e quero um orçamento.')}" aria-label="Falar no WhatsApp">{ICO['wpp']}</a>
@@ -123,7 +150,7 @@ def pcard(c, p, fundo):
     sub = p.get('subNome', '')
     sub_html = f"<small>{E(sub)}</small>" if sub and norm(sub) not in norm(p['nome']) else ""
     return f'''<a class="pcard" href="{p['id']}/" data-sub="{p['sub']}"><div class="pcard-img {fundo}"><img src="../{p['img']}" alt="{E(p['nome'])}" loading="lazy"></div>
-<div class="pcard-rod"><b>{E(p['nome'])}</b>{sub_html}</div></a>'''
+<div class="pcard-rod"><b>{E(p['nome'])}</b>{sub_html}<span class="pcard-preco">a partir de {brl(pmin(p))}{un}</span></div></a>'''
 
 # ---------- categorias e produtos ----------
 for slug, nome, masc, fundo, resumo, foto in CATS:
@@ -155,7 +182,7 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
         caixinha = (f'<label class="check caixinha-op"><input type="checkbox" id="caixinha"><img src="../../img/produtos/canecas-caixinha.webp" alt="" width="44" height="44" loading="lazy"><span class="cx-txt">Caixinha personalizada<small><b>+ {brl(p["caixinha"])}</b> · opcional</small></span></label>' if p.get("caixinha") else "")
         personalizar = (f'<a class="btn btn-pri btn-bloco" id="personalizar" href="../../editor/?c={slug}&p={p["id"]}">Personalize sem sair do site</a>' if editavel else "")
         botoes = ('<button class="btn btn-sec btn-bloco" id="add">Adicionar ao pedido</button>' if editavel else '<button class="btn btn-pri btn-bloco" id="add">Adicionar ao pedido</button>')
-        botoes += f'<a class="btn btn-wpp btn-bloco" id="pedir-agora" href="https://wa.me/{WPP}">{ICO["wpp"]} Pedir agora no WhatsApp</a>'
+        botoes += f'<a class="btn btn-wpp btn-bloco" id="pedir-agora" href="{wpp(f'Olá! Quero {p["nome"]}.')}">{ICO["wpp"]} Pedir agora no WhatsApp</a>'
         specs = "".join(f"<dt>{k}</dt><dd>{E(v)}</dd>" for k,v in [("Material",p["material"]),("Acabamento",p["acab"]),("Impressão",p["impressao"]),("Prazo",p["prazo"])] if v)
         relac = [q for q in ps if q["sub"]==p["sub"] and q["id"]!=p["id"]][:4]; relac = (relac + [q for q in ps if q["id"]!=p["id"] and q not in relac])[:4]
         rel = "".join(pcard(slug,q,fundo).replace(f'href="{q["id"]}/"',f'href="../{q["id"]}/"').replace('src="../img','src="../../img') for q in relac)
@@ -207,19 +234,17 @@ for slug, nome, foto, fundo, resumo in SERVS:
     pagina(f"{slug}/index.html", f"{nome} | Johen Arte Gráfica", f"{nome} em São Paulo. {resumo}", corpo, slug)
 
 # ---------- pedido ----------
+if PIX or MERCADO_PAGO:
+    PAGAMENTO = '<div class="pix" style="margin-top:18px">' + (f'<b>Pague com Pix</b><code id="chave-pix">{E(PIX)}</code><button class="btn btn-turq" id="copiar-pix">Copiar chave Pix</button>' if PIX else '') + (f'<a class="btn btn-sec" href="{E(MERCADO_PAGO)}" target="_blank" rel="noopener">Pagar com cartão (Mercado Pago)</a>' if MERCADO_PAGO else '') + '</div>'
+else:
+    PAGAMENTO = '<div class="pix" style="margin-top:18px"><b>Como pagar</b><p class="pag-txt">Pix, cartão de débito ou crédito e dinheiro. Depois que você enviar o pedido, a gente confere a arte e manda o Pix ou o link do cartão na mesma conversa.</p></div>'
 corpo = f'''<div class="wrap" style="max-width:720px">
 <section class="cabeca-cat"><div class="migalha"><a href="../">Início</a> › Meu pedido</div><h1>Meu pedido</h1></section>
 <div id="pedido-vazio" class="vazio" hidden><span class="vazio-ico" aria-hidden="true">{ICO['sacola']}</span><b>Seu pedido está vazio.</b><span>Escolha um produto e toque em "Adicionar ao pedido".</span><a class="btn btn-pri" href="../">Ver produtos</a></div>
 <div id="pedido-cheio" hidden>
   <div class="itens" id="itens"></div>
   <div class="total" style="margin-top:18px"><small>Total do pedido</small><strong id="pedido-total">R$ 0,00</strong></div>
-  <div class="pix" style="margin-top:18px">
-    <span class="rascunho">Rascunho: falta sua chave Pix e o link do Mercado Pago</span>
-    <b>Pague com Pix</b>
-    <code id="chave-pix">SUA-CHAVE-PIX-AQUI</code>
-    <button class="btn btn-turq" id="copiar-pix">Copiar chave Pix</button>
-    <a class="btn btn-sec" href="#" aria-disabled="true">Pagar com cartão (Mercado Pago)</a>
-  </div>
+  {PAGAMENTO}
   <div class="acoes" style="margin-top:18px">
     <a class="btn btn-wpp btn-bloco" id="enviar-pedido" href="https://wa.me/{WPP}">{ICO['wpp']} Enviar pedido no WhatsApp</a>
     <p class="envio-arte">Depois de enviar, mande as artes e o comprovante na mesma conversa. Arquivo grande? <a href="{FORM}">Envie pelo formulário</a>.</p>
@@ -245,6 +270,8 @@ corpo = f'''<div class="wrap editor">
   <div class="ed-lado">
     <div id="painel" class="ed-painel">
       <div id="ajustes" class="campo" hidden><label for="zoom">Tamanho da imagem</label><input id="zoom" type="range" min="40" max="300" value="100"><small>Arraste a imagem na área de impressão pra posicionar. No celular dá pra usar dois dedos.</small>
+        <p id="fotos-dica" class="fotos-dica" hidden>Toque numa foto pra mexer nela. A que está com contorno laranja é a selecionada.</p>
+        <div class="fotos-acoes"><label class="btn btn-sec" for="arquivo">+ Outra foto</label><button class="btn btn-sec" id="remover-foto">Remover esta foto</button></div>
         <label class="check" id="bloco-inverter" hidden><input type="checkbox" id="inverter"> Gravar as partes claras da imagem</label><p id="qualidade" class="aviso-min" hidden>Essa imagem tem resolução baixa e pode sair borrada. Se tiver uma maior, prefira ela.</p></div>
       <div id="bloco-texto" class="campo" hidden><label for="texto">Texto na caneca</label><input id="texto" type="text" maxlength="40" placeholder="Ex.: Melhor pai do mundo" style="height:50px;border:1.5px solid #c9d0d2;border-radius:10px;padding:0 14px"><label for="cor-texto" style="font-weight:600;font-size:14px">Cor do texto</label><input id="cor-texto" type="color" value="#1d2427" style="width:64px;height:40px;border:0;background:none"></div>
       <div id="cores" class="campo" hidden><span class="rot">Cor da alça e de dentro</span><div class="cores"></div></div>
@@ -272,11 +299,13 @@ corpo = f'''<div class="wrap editor">
 pagina("editor/index.html", "Personalizar | Johen Arte Gráfica", "Monte sua caneca, copo térmico ou camiseta com a sua arte e veja em 3D antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script>')
 
 # ---------- home ----------
+AV_HTML = (f'''<section class="depo" aria-labelledby="depo-tit"><h2 id="depo-tit">Quem já comprou</h2><div class="depo-lista">''' + "".join(
+    f'<figure class="depo-card"><span class="estrelas" aria-label="{n} de 5 estrelas">{"★"*n}</span><blockquote>{E(t)}</blockquote><figcaption>{E(a)} · Google</figcaption></figure>' for a,t,n in AVALIACOES)
+    + f'</div><a class="link-seta" href="{REVIEW}" target="_blank" rel="noopener">Ver todas no Google</a></section>') if AVALIACOES else ""
 hero_fotos = ["cartoes-p1","canecas-p2","cartoes-p3","canecas-p9","camisetas-p5","cartoes-p7"]
 CARDS = [("cartoes/","Cartões de Visita","cartoes-p3"),("canecas/","Canecas e Térmicos","canecas-p2"),("adesivos/","Adesivos e Etiquetas","adesivos-p20"),
          ("camisetas/","Camisetas","camisetas-p5"),("panfletos/","Panfletos","panfletos-p5"),("banners/","Banners e Placas","banners-p2"),
          ("gravacao-laser/","Gravação a Laser","canecas-p9"),("envelopamento/","Envelopamento e Vitrine","adesivos-p16"),("comercio/","Para seu Comércio","adesivos-p12")]
-masc = "".join(f'<a class="mascote" href="{sl}/">{masc_anim(m, "", i)}<span>{E(n.split(" e ")[0].replace(" de Visita",""))}</span></a>' for i,(sl,n,m,*_) in enumerate(CATS))
 cards = "".join(f'<a class="mcard" href="{h}"><div class="mcard-img"><img src="img/produtos/{f}.webp" alt="" loading="lazy"></div><span>Ver {E(n)}</span></a>' for h,n,f in CARDS)
 corpo = f'''
 <section class="inicio"><div class="wrap">
@@ -284,16 +313,15 @@ corpo = f'''
     <div class="mcard-img hero-midia" aria-hidden="true">
       <video autoplay muted loop playsinline preload="metadata"><source src="video/hero.mp4" type="video/mp4"></video>
       {"".join(f'<img src="img/produtos/{h}.webp" alt="">' for h in hero_fotos)}
-      <span class="rascunho">Rascunho: vídeo da loja</span>
     </div>
   </a>
   <h1 class="inicio-tit">Sua ideia, impressa com capricho.</h1>
-  <div class="mascotes" id="produtos">{masc}</div>
-  <div class="mcards">{cards}</div>
+  <div class="mcards" id="produtos">{cards}</div>
+  {AV_HTML}
   <section class="avaliar" aria-labelledby="avaliar-tit">
     <img src="img/marca/ic-google.webp" alt="" width="44" height="57" loading="lazy">
     <div class="avaliar-txt"><span class="estrelas" aria-hidden="true">★★★★★</span><h2 id="avaliar-tit">Gostou do nosso trabalho?</h2><p>Sua avaliação no Google ajuda mais gente do bairro a encontrar a Johen.</p></div>
-    <a class="btn btn-pri" href="https://g.page/r/CWKTHinBP02gEAI/review" target="_blank" rel="noopener">Nos avalie no Google</a>
+    <a class="btn btn-pri" href="{REVIEW}" target="_blank" rel="noopener">Nos avalie no Google</a>
   </section>
 </div></section>'''
 pagina("index.html", "Johen Arte Gráfica | Gráfica e personalizados no Jardim Selma, SP", "Cartões de visita, panfletos, banners, adesivos, camisetas e canecas personalizadas em São Paulo. Peça pelo site e acompanhe pelo WhatsApp.", corpo)

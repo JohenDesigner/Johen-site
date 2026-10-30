@@ -9,18 +9,18 @@
 <meta property="og:description" content="15x21cm — 150g Brilho Meia A4 (Frente e Verso): A versão mais completa da linha meia A4: papel couché brilho 150g, mais robusto, com os dois lados impressos.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#ffffff">
-<script>/* recarregou ou entrou direto (sem vir de outra página do site)? vai para a página inicial */(function(){try{var h=new URL(document.documentElement.dataset.root||"./",location.href).pathname;if(location.pathname===h||location.pathname===h+"index.html")return;var n=performance.getEntriesByType("navigation")[0],t=n?n.type:"",r=document.referrer,doSite=false;try{var u=new URL(r);doSite=u.origin===location.origin&&u.pathname.indexOf(h)===0}catch(e){}if(t==="reload"||(t==="navigate"&&!doSite))location.replace(h)}catch(e){}})()</script>
+<script>/* recarregou ou entrou direto (sem vir de outra página do site)? vai para a página inicial */(function(){try{var h=new URL(document.documentElement.dataset.root||"./",location.href).pathname;if(location.pathname===h||location.pathname===h+"index.html"||/[/](editor|pedido)[/]/.test(location.pathname))return;var n=performance.getEntriesByType("navigation")[0],t=n?n.type:"",r=document.referrer,doSite=false;try{var u=new URL(r);doSite=u.origin===location.origin&&u.pathname.indexOf(h)===0}catch(e){}if(t==="reload"||(t==="navigate"&&!doSite))location.replace(h)}catch(e){}})()</script>
 <link rel="icon" href="../../img/marca/logo-icone.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Outfit:wght@500;600&display=swap">
-<link rel="stylesheet" href="../../assets/site.css?v=5c2e9670">
+<link rel="stylesheet" href="../../assets/site.css?v=79f27664">
 </head>
 <body>
-<div class="promo">5% OFF na sua primeira compra</div>
+<div class="promo">5% OFF na 1ª compra — é só dizer 'PRIMEIRA' no WhatsApp.</div>
 <header class="topo">
   <div class="wrap">
     <div class="topo-linha">
-      <a class="logo" href="../../" aria-label="Johen Arte Gráfica, início"><img src="../../img/marca/logo-wordmark.webp" alt="Johen Artes Gráficas" width="94" height="30"></a>
+      <a class="logo" href="../../" aria-label="Johen Arte Gráfica, início"><img src="../../img/marca/logo-wordmark.webp" alt="Johen Arte Gráfica" width="94" height="30"></a>
       <a class="icone-btn" href="../../pedido/" aria-label="Meu pedido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg><span class="contador" hidden>0</span></a>
       <button class="icone-btn" data-abrir-menu aria-label="Abrir menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     </div>
@@ -39,7 +39,7 @@
     <div class="preco-topo"><div class="total"><strong id="total">R$ 700,00</strong><span id="total-un"></span></div></div>
     
     <div class="campo"><label for="opcao">Quantidade</label><select id="opcao"><option>1.000 un. — R$ 700,00</option><option>2.500 un. — R$ 720,00</option><option>5.000 un. — R$ 1.300,00</option></select></div><div class="campo campo-qtd"><span class="rot">Quantas peças?</span><div class="qtd"><button id="menos" aria-label="Menos">−</button><output id="qtd">1</output><button id="mais" aria-label="Mais">+</button></div></div>
-    <div class="acoes"><button class="btn btn-pri btn-bloco" id="add">Adicionar ao pedido</button><a class="btn btn-wpp btn-bloco" id="pedir-agora" href="https://wa.me/5511982877142"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.1 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg> Pedir agora no WhatsApp</a></div>
+    <div class="acoes"><button class="btn btn-pri btn-bloco" id="add">Adicionar ao pedido</button><a class="btn btn-wpp btn-bloco" id="pedir-agora" href="https://wa.me/5511982877142?text=Ol%C3%A1%21%20Quero%2015x21cm%20%E2%80%94%20150g%20Brilho%20Meia%20A4%20%28Frente%20e%20Verso%29."><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.1 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg> Pedir agora no WhatsApp</a></div>
     <p class="envio-arte">Já tem a arte? Mande na conversa do WhatsApp ou <a href="https://docs.google.com/forms/d/e/1FAIpQLScD3J8Bchik66my8m5rNnE-41UHjbVFUAQBomOY7XPBzrBkwA/viewform">envie pelo formulário</a>. Não tem? <a href="../../design/">A gente cria pra você.</a></p>
     <section class="detalhes" aria-labelledby="det-tit">
       <h2 id="det-tit">Detalhes do produto</h2>
@@ -51,34 +51,50 @@
   </div>
 </div>
 <section class="secao" style="padding-top:0"><div class="secao-tit"><h2>Veja também</h2></div><div class="grade grade-4"><a class="pcard" href="../p5/" data-sub="tam_15x21"><div class="pcard-img bg-amarelo"><img src="../../img/produtos/panfletos-p5.webp" alt="15x21cm — 90g Brilho Meia A4 (Frente)" loading="lazy"></div>
-<div class="pcard-rod"><b>15x21cm — 90g Brilho Meia A4 (Frente)</b></div></a><a class="pcard" href="../p6/" data-sub="tam_15x21"><div class="pcard-img bg-amarelo"><img src="../../img/produtos/panfletos-p6.webp" alt="15x21cm — 90g Brilho Meia A4 (Frente e Verso)" loading="lazy"></div>
-<div class="pcard-rod"><b>15x21cm — 90g Brilho Meia A4 (Frente e Verso)</b></div></a><a class="pcard" href="../p7/" data-sub="tam_15x21"><div class="pcard-img bg-amarelo"><img src="../../img/produtos/panfletos-p7.webp" alt="15x21cm — 115g Brilho Meia A4 (Frente)" loading="lazy"></div>
-<div class="pcard-rod"><b>15x21cm — 115g Brilho Meia A4 (Frente)</b></div></a><a class="pcard" href="../p1/" data-sub="tam_10x14"><div class="pcard-img bg-amarelo"><img src="../../img/produtos/panfletos-p1.webp" alt="10x14cm — 90g Brilho Econômico (Frente)" loading="lazy"></div>
-<div class="pcard-rod"><b>10x14cm — 90g Brilho Econômico (Frente)</b></div></a></div></section>
+<div class="pcard-rod"><b>15x21cm — 90g Brilho Meia A4 (Frente)</b><span class="pcard-preco">a partir de R$ 320,00</span></div></a><a class="pcard" href="../p6/" data-sub="tam_15x21"><div class="pcard-img bg-amarelo"><img src="../../img/produtos/panfletos-p6.webp" alt="15x21cm — 90g Brilho Meia A4 (Frente e Verso)" loading="lazy"></div>
+<div class="pcard-rod"><b>15x21cm — 90g Brilho Meia A4 (Frente e Verso)</b><span class="pcard-preco">a partir de R$ 400,00</span></div></a><a class="pcard" href="../p7/" data-sub="tam_15x21"><div class="pcard-img bg-amarelo"><img src="../../img/produtos/panfletos-p7.webp" alt="15x21cm — 115g Brilho Meia A4 (Frente)" loading="lazy"></div>
+<div class="pcard-rod"><b>15x21cm — 115g Brilho Meia A4 (Frente)</b><span class="pcard-preco">a partir de R$ 680,00</span></div></a><a class="pcard" href="../p1/" data-sub="tam_10x14"><div class="pcard-img bg-amarelo"><img src="../../img/produtos/panfletos-p1.webp" alt="10x14cm — 90g Brilho Econômico (Frente)" loading="lazy"></div>
+<div class="pcard-rod"><b>10x14cm — 90g Brilho Econômico (Frente)</b><span class="pcard-preco">a partir de R$ 180,00</span></div></a></div></section>
 </div>
 <script type="application/json" id="dados-produto">{"c": "panfletos", "id": "p8", "nome": "15x21cm — 150g Brilho Meia A4 (Frente e Verso)", "img": "img/produtos/panfletos-p8.webp", "opcoes": [{"label": "1.000 un.", "preco": 700.0}, {"label": "2.500 un.", "preco": 720.0}, {"label": "5.000 un.", "preco": 1300.0}], "m2": null, "minimo": null, "caixinha": null}</script>
 </main>
 <footer class="rodape">
   <div class="wrap">
-    <div>
-      <img class="marca" src="../../img/marca/logo-wordmark.webp" alt="Johen Artes Gráficas">
-      <p>R. Pedro Fernandes Aragão, 269 · Jardim Selma · São Paulo, SP</p>
-      <p><a href="https://wa.me/5511982877142?text=Ol%C3%A1%21%20Vim%20pelo%20site.">WhatsApp (11) 98287-7142</a></p>
-      <p><a href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener">Instagram @johen_artgrafica</a></p>
+    <div class="rod-marca"><img class="marca" src="../../img/marca/logo-wordmark.webp" alt="Johen Arte Gráfica"><p>Gráfica e personalizados no Jardim Selma, São Paulo.</p></div>
+    <div><h3>Produtos</h3>
+      <ul><li><a href="../../cartoes/">Cartões de Visita</a></li><li><a href="../../panfletos/">Panfletos</a></li><li><a href="../../banners/">Banners e Placas</a></li><li><a href="../../adesivos/">Adesivos e Etiquetas</a></li><li><a href="../../camisetas/">Camisetas</a></li><li><a href="../../canecas/">Canecas e Térmicos</a></li></ul>
+      <p class="rod-sub">Também fazemos</p>
+      <ul class="lista-texto"><li>Convites</li><li>Crachás</li><li>Blocos e talões</li><li>Envelopes</li><li>Pastas</li><li>Calendários</li><li>Ímãs de geladeira</li><li>Tags</li><li>Cardápios</li><li>Carimbos</li></ul>
     </div>
-    <div><h3>Também fazemos</h3><ul class="lista-texto"><li>Convites</li><li>Crachás</li><li>Blocos e talões</li><li>Envelopes</li><li>Pastas</li><li>Calendários</li><li>Ímãs de geladeira</li><li>Tags</li><li>Cardápios</li><li>Carimbos</li></ul></div>
+    <div><h3>Ajuda</h3>
+      <ul class="rod-ajuda">
+        <li><b>Prazos:</b> o prazo de produção aparece em cada produto e começa depois da arte aprovada.</li>
+        <li><b>Como enviar a arte:</b> mande na conversa do WhatsApp ou <a href="https://docs.google.com/forms/d/e/1FAIpQLScD3J8Bchik66my8m5rNnE-41UHjbVFUAQBomOY7XPBzrBkwA/viewform">pelo formulário</a>. Não tem arte? <a href="../../design/">A gente cria</a>.</li>
+        <li><b>Retirada:</b> na loja, no Jardim Selma. Combine o horário pelo WhatsApp.</li>
+        <li><b>Pedidos grandes:</b> têm desconto. <a href="https://wa.me/5511982877142?text=Ol%C3%A1%21%20Quero%20um%20or%C3%A7amento%20para%20grande%20quantidade.">Peça seu orçamento</a></li>
+      </ul>
+    </div>
     <div class="sobre-rod"><h3>Sobre</h3>
       <p class="destaque">Mais de 5 mil projetos aprovados.</p>
-      <p><b>Grande quantidade?</b> Pedidos grandes têm desconto. <a href="https://wa.me/5511982877142?text=Ol%C3%A1%21%20Quero%20um%20or%C3%A7amento%20para%20grande%20quantidade.">Peça seu orçamento</a></p>
-      <p><b>Horário:</b> segunda a sábado, das 11h às 20h. Antes de vir, confirme pelo WhatsApp.</p>
-      <p><b>Pagamento:</b> dinheiro, Pix e cartões de débito e crédito.</p>
-      <p class="cnpj">CNPJ 65.480.613/0001-19</p>
+      <p><a href="https://g.page/r/CWKTHinBP02gEAI/review" target="_blank" rel="noopener">Veja e deixe sua avaliação no Google</a></p>
+    </div>
+    <div><h3>Contato</h3>
+      <ul class="rod-contato">
+        <li><a href="https://wa.me/5511982877142?text=Ol%C3%A1%21%20Vim%20pelo%20site.">WhatsApp (11) 98287-7142</a></li>
+        <li><a href="https://www.google.com/maps/search/?api=1&query=R.+Pedro+Fernandes+Arag%C3%A3o,+269+-+Jardim+Selma,+S%C3%A3o+Paulo+-+SP" target="_blank" rel="noopener">R. Pedro Fernandes Aragão, 269 · Jardim Selma · São Paulo, SP (ver no mapa)</a></li>
+        <li>Segunda a sábado, das 11h às 20h. Antes de vir, confirme pelo WhatsApp.</li>
+      </ul>
     </div>
   </div>
+  <div class="rod-faixa"><div class="wrap">
+    <div class="rod-pag" aria-label="Formas de pagamento"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l9 9-9 9-9-9z"/><path d="M8.5 12l3.5-3.5 3.5 3.5-3.5 3.5z"/></svg>Pix</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/></svg>Débito</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/></svg>Crédito</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/></svg>Dinheiro</span></div>
+    <a class="rod-insta" href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>@johen_artgrafica</a>
+    <p class="cnpj">Johen Arte Gráfica · CNPJ 65.480.613/0001-19</p>
+  </div></div>
 </footer>
 <a class="insta-flut" href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener" aria-label="Instagram @johen_artgrafica"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a>
 <a class="wpp-flut" href="https://wa.me/5511982877142?text=Ol%C3%A1%21%20Vim%20pelo%20site%20e%20quero%20um%20or%C3%A7amento." aria-label="Falar no WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.1 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg></a>
-<script src="../../assets/site.js?v=5c2e9670" defer></script>
+<script src="../../assets/site.js?v=79f27664" defer></script>
 
 </body>
 </html>

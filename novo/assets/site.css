@@ -169,6 +169,7 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .pcard-rod{display:flex;flex-direction:column;gap:2px}
 .pcard-rod b{font-weight:500;font-size:15px;line-height:1.3}
 .pcard-rod small{color:var(--tinta-3);font-size:13px}
+.pcard-rod .pcard-preco{font-size:14px;font-weight:600;color:var(--tinta);margin-top:2px}
 .preco-de{font-size:13px;color:var(--tinta-2);margin-top:2px}
 .preco-de strong{font-size:15px;color:var(--tinta);font-weight:600;white-space:nowrap}
 
@@ -237,8 +238,8 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 /* rodapé */
 .rodape{background:var(--azul);color:#fff;border-radius:28px 28px 0 0;margin-top:56px}
 .rodape .wrap{padding-block:40px calc(32px + env(safe-area-inset-bottom,0px));display:grid;gap:28px}
-@media(min-width:760px){.rodape .wrap{grid-template-columns:1fr 1fr}}
-@media(min-width:1000px){.rodape .wrap{grid-template-columns:1.3fr .9fr 1.4fr}}
+@media(min-width:760px){.rodape .wrap{grid-template-columns:1fr 1fr}.rodape .rod-marca{grid-column:1/-1}}
+@media(min-width:1100px){.rodape .wrap{grid-template-columns:1.1fr 1.2fr 1fr 1.1fr}.rodape .rod-marca{grid-column:1/-1}}
 .rodape img.marca{height:28px;width:auto;filter:brightness(0) invert(1);opacity:.95}
 .rodape p{margin:8px 0 0;opacity:.75;font-size:14px}
 .rodape h3{font-family:var(--corpo);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin-bottom:10px}
@@ -372,3 +373,38 @@ body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 .avaliar .btn{margin-top:4px}
 @media(min-width:760px){.avaliar{flex-direction:row;text-align:left;padding:28px 34px;gap:22px}.avaliar-txt{flex:1}.avaliar .btn{margin-top:0}}
 .rodape p a{opacity:1}
+
+/* editor: várias fotos */
+.fotos-dica{margin:8px 0 0;font-size:13px;color:var(--tinta-2)}
+.fotos-acoes{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.fotos-acoes .btn{flex:1;min-height:42px;font-size:14px;padding-inline:12px}
+/* pedido: frente e costas lado a lado na miniatura */
+.item-fotos{width:68px;height:68px;display:grid;grid-template-columns:1fr 1fr;gap:2px;border-radius:12px;overflow:hidden;background:var(--t-azul)}
+.item-fotos img{width:100%;height:100%;border-radius:0;object-fit:cover}
+
+/* rodapé em colunas: Produtos · Ajuda · Sobre · Contato + faixa de pagamento */
+.rodape .rod-marca p{margin-top:10px}
+.rodape .rod-sub{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin:16px 0 8px}
+.rodape .rod-ajuda,.rodape .rod-contato{gap:10px;line-height:1.5}
+.rodape .rod-ajuda li,.rodape .rod-contato li{opacity:.85}
+.rodape .rod-ajuda b{font-weight:600}
+.rodape .rod-ajuda a,.rodape .rod-contato a{text-decoration:underline;text-underline-offset:3px;padding:0}
+.rodape .rod-contato a{display:inline;opacity:1}
+.rod-faixa{border-top:1px solid rgba(255,255,255,.18)}
+.rodape .rod-faixa .wrap{padding-block:18px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+.rod-pag{display:flex;flex-wrap:wrap;gap:8px}
+.rod-pag span{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.rod-pag svg,.rod-insta svg{width:16px;height:16px;flex-shrink:0}
+.rodape .rod-insta{display:inline-flex;align-items:center;gap:6px;font-size:14px;padding-block:6px}
+.rod-faixa .cnpj{margin:0;flex-basis:100%}
+@media(min-width:760px){.rod-faixa .cnpj{flex-basis:auto;margin-left:auto}}
+.pag-txt{margin:6px 0 0;color:var(--tinta-2);font-size:14px;line-height:1.5}
+/* home: avaliações reais */
+.depo{margin:44px 0 0}
+.depo h2{font-size:clamp(22px,5.4vw,28px);margin-bottom:14px}
+.depo-lista{display:grid;gap:12px}
+@media(min-width:760px){.depo-lista{grid-template-columns:repeat(3,1fr)}}
+.depo-card{margin:0;background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:18px}
+.depo-card blockquote{margin:8px 0 10px;font-size:15px;line-height:1.5}
+.depo-card figcaption{font-size:13px;color:var(--tinta-3)}
+.depo .link-seta{display:inline-block;margin-top:12px}
