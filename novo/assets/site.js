@@ -144,6 +144,18 @@ function iniciarProduto() {
   render();
 }
 
+/* ---------- Pix copia e cola (BR Code do Banco Central) com o valor do pedido ---------- */
+function pixCopiaECola(chave, nome, cidade, valor) {
+  const campo = (id, v) => id + String(v.length).padStart(2, "0") + v;
+  const conta = campo("00", "br.gov.bcb.pix") + campo("01", chave);
+  let p = campo("00", "01") + campo("26", conta) + campo("52", "0000") + campo("53", "986")
+    + (valor > 0 ? campo("54", valor.toFixed(2)) : "") + campo("58", "BR")
+    + campo("59", nome.slice(0, 25)) + campo("60", cidade.slice(0, 15)) + campo("62", campo("05", "***")) + "6304";
+  let crc = 0xFFFF;                       // CRC16-CCITT, exigido no fim do código
+  for (const ch of p) { crc ^= ch.charCodeAt(0) << 8; for (let k = 0; k < 8; k++) crc = crc & 0x8000 ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF; }
+  return p + crc.toString(16).toUpperCase().padStart(4, "0");
+}
+
 /* ---------- página do pedido ---------- */
 function iniciarPedido() {
   const lista = $("#itens"); if (!lista) return;
@@ -160,12 +172,14 @@ function iniciarPedido() {
     $("#pedido-total").textContent = brl(tot);
     const msg = "Olá! Quero fazer este pedido pelo site:\n\n" + itens.map((x, n) => `${n + 1}. ${x.nome}\n   ${linhaItem(x)} — ${brl(x.total)}`).join("\n") + `\n\nTotal: ${brl(tot)}\n\nVou mandar as artes aqui na conversa.`;
     $("#enviar-pedido").href = wppLink(msg);
+    const bp = $("#bloco-pix");
+    if (bp) { const v = Math.round(tot * 100) / 100; $("#pix-codigo").textContent = pixCopiaECola(bp.dataset.chave, bp.dataset.nome, bp.dataset.cidade, v); $("#pix-valor").textContent = brl(v); }
   }
   lista.addEventListener("click", e => { const b = e.target.closest("[data-tirar]"); if (b) { Pedido.tirar(b.dataset.tirar); render(); } });
   $("#copiar-pix")?.addEventListener("click", async e => {
-    const txt = ($("#chave-pix").dataset.copiar || $("#chave-pix").textContent).trim();  // CNPJ copia só os números
-    try { await navigator.clipboard.writeText(txt); toast("Chave Pix copiada"); }
-    catch (err) { const r = document.createRange(); r.selectNodeContents($("#chave-pix")); getSelection().removeAllRanges(); getSelection().addRange(r); toast("Chave selecionada, toque em Copiar"); }
+    const alvo = $("#pix-codigo") || $("#chave-pix"); const txt = alvo.textContent.trim();
+    try { await navigator.clipboard.writeText(txt); toast("Código Pix copiado. Agora cole no app do banco."); }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(alvo); getSelection().removeAllRanges(); getSelection().addRange(r); toast("Código selecionado, toque em Copiar"); }
   });
   render();
 }

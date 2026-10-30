@@ -62,7 +62,7 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-30 — Cards de produto (páginas de categoria e "Veja também"): quando o nome de um card ocupava 2 linhas e o do vizinho 3, o "a partir de R$ …" ficava em alturas diferentes nas duas colunas e a grade parecia torta. Agora o preço fica sempre no pé do card, alinhado com o do vizinho na mesma fileira (celular e computador). Nenhum texto ou preço mudou. (site.css: `.pcard-rod` flex:1, `.pcard-preco` margin-top:auto)
 
-- 2026-10-30 — A pedido do Johen: chave Pix no Meu pedido = CNPJ 65.480.613/0001-19. O bloco "Como pagar" continua (Pix, débito, crédito, dinheiro; a gente confere a arte e confirma o valor) e embaixo vem a chave com botão "Copiar chave Pix" (copia só os números, 65480613000119, que todo banco aceita). (build.py `PIX`/`PAGAMENTO`, site.js)
+- 2026-10-30 — A pedido do Johen: Meu pedido com "Pague com Pix" igual app de delivery: o site monta o Pix copia e cola (padrão do Banco Central, chave CNPJ 65.480.613/0001-19, nome JOHEN ARTE GRAFICA, SAO PAULO) já com o total do carrinho, e o botão "Copiar código Pix" copia pra colar no app do banco. Se o cliente remove um item, o código muda junto. Embaixo: cartão e dinheiro continuam valendo, pedindo no WhatsApp. Texto do envio: "Depois de pagar, envie o pedido e mande o comprovante e as artes na mesma conversa." (build.py `PIX`/`PAGAMENTO`, site.js `pixCopiaECola`)
 
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.

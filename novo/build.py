@@ -242,13 +242,22 @@ for slug, nome, foto, fundo, resumo in SERVS:
 
 # ---------- pedido ----------
 # "Como pagar" sempre aparece; a chave Pix (e o Mercado Pago, se tiver) vem logo abaixo
-PAG_TXT = ("Pix, cartão de débito ou crédito e dinheiro. Depois que você enviar o pedido, a gente confere a arte e confirma o valor na mesma conversa. Aí é só pagar no Pix abaixo ou pedir o link do cartão."
-           if PIX else "Pix, cartão de débito ou crédito e dinheiro. Depois que você enviar o pedido, a gente confere a arte e manda o Pix ou o link do cartão na mesma conversa.")
-PIX_COPIA = re.sub(r"[^0-9]", "", PIX) if re.fullmatch(r"[0-9./-]+", PIX) else PIX  # CNPJ: copia só os números
-PAGAMENTO = (f'<div class="pix" style="margin-top:18px"><b>Como pagar</b><p class="pag-txt">{PAG_TXT}</p>'
-    + (f'<span class="pag-txt">Chave Pix (CNPJ):</span><code id="chave-pix" data-copiar="{E(PIX_COPIA)}">{E(PIX)}</code><button class="btn btn-turq" id="copiar-pix" type="button">Copiar chave Pix</button>' if PIX else '')
-    + (f'<a class="btn btn-sec" href="{E(MERCADO_PAGO)}" target="_blank" rel="noopener">Pagar com cartão (Mercado Pago)</a>' if MERCADO_PAGO else '')
-    + '</div>')
+PIX_NOME, PIX_CIDADE = "JOHEN ARTE GRAFICA", "SAO PAULO"  # vão dentro do código Pix (até 25 e 15 letras, sem acento)
+PIX_COPIA = re.sub(r"[^0-9]", "", PIX) if re.fullmatch(r"[0-9./-]+", PIX) else PIX  # CNPJ: só os números
+if PIX:
+    # Pix copia e cola já com o valor do pedido (montado pelo site.js), como nos apps de delivery
+    PAGAMENTO = (f'<div class="pix" id="bloco-pix" style="margin-top:18px" data-chave="{E(PIX_COPIA)}" data-nome="{PIX_NOME}" data-cidade="{PIX_CIDADE}">'
+        '<b>Pague com Pix</b>'
+        '<p class="pag-txt">Copie o código, abra o app do seu banco em <b>Pix › Copia e cola</b> e cole. O valor de <b id="pix-valor"></b> já vem preenchido.</p>'
+        '<code id="pix-codigo"></code>'
+        '<button class="btn btn-turq" id="copiar-pix" type="button">Copiar código Pix</button>'
+        f'<p class="pag-txt">Prefere outra forma? Também aceitamos cartão de débito ou crédito e dinheiro, é só pedir no WhatsApp. Chave Pix (CNPJ): {E(PIX)}.</p>'
+        + (f'<a class="btn btn-sec" href="{E(MERCADO_PAGO)}" target="_blank" rel="noopener">Pagar com cartão (Mercado Pago)</a>' if MERCADO_PAGO else '')
+        + '</div>')
+    POS_ENVIO = "Depois de pagar, envie o pedido e mande o comprovante e as artes na mesma conversa."
+else:
+    PAGAMENTO = '<div class="pix" style="margin-top:18px"><b>Como pagar</b><p class="pag-txt">Pix, cartão de débito ou crédito e dinheiro. Depois que você enviar o pedido, a gente confere a arte e manda o Pix ou o link do cartão na mesma conversa.</p></div>'
+    POS_ENVIO = "Depois de enviar, mande as artes na mesma conversa (o comprovante, só depois de pagar)."
 corpo = f'''<div class="wrap" style="max-width:720px">
 <section class="cabeca-cat"><div class="migalha"><a href="../">Início</a> › Meu pedido</div><h1>Meu pedido</h1></section>
 <div id="pedido-vazio" class="vazio" hidden><span class="vazio-ico" aria-hidden="true">{ICO['sacola']}</span><b>Seu pedido está vazio.</b><span>Escolha um produto e toque em "Adicionar ao pedido".</span><a class="btn btn-pri" href="../">Ver produtos</a></div>
@@ -258,7 +267,7 @@ corpo = f'''<div class="wrap" style="max-width:720px">
   {PAGAMENTO}
   <div class="acoes" style="margin-top:18px">
     <a class="btn btn-wpp btn-bloco" id="enviar-pedido" href="https://wa.me/{WPP}">{ICO['wpp']} Enviar pedido no WhatsApp</a>
-    <p class="envio-arte">Depois de enviar, mande as artes na mesma conversa (o comprovante, só depois de pagar). Arquivo grande? <a href="{FORM}">Envie pelo formulário</a>.</p>
+    <p class="envio-arte">{POS_ENVIO} Arquivo grande? <a href="{FORM}">Envie pelo formulário</a>.</p>
   </div>
 </div></div>'''
 pagina("pedido/index.html", "Meu pedido | Johen Arte Gráfica", "Revise seu pedido e envie pelo WhatsApp.", corpo)

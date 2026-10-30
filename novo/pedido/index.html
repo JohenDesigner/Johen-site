@@ -13,7 +13,7 @@
 <link rel="icon" href="../img/marca/logo-icone.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Outfit:wght@500;600&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=90633e06">
+<link rel="stylesheet" href="../assets/site.css?v=1b726353">
 </head>
 <body>
 <div class="promo">5% OFF na 1ª compra — é só dizer <span class="nw">“PRIMEIRA” no WhatsApp.</span></div>
@@ -36,10 +36,10 @@
 <div id="pedido-cheio" hidden>
   <div class="itens" id="itens"></div>
   <div class="total" style="margin-top:18px"><small>Total do pedido</small><strong id="pedido-total">R$ 0,00</strong></div>
-  <div class="pix" style="margin-top:18px"><b>Como pagar</b><p class="pag-txt">Pix, cartão de débito ou crédito e dinheiro. Depois que você enviar o pedido, a gente confere a arte e confirma o valor na mesma conversa. Aí é só pagar no Pix abaixo ou pedir o link do cartão.</p><span class="pag-txt">Chave Pix (CNPJ):</span><code id="chave-pix" data-copiar="65480613000119">65.480.613/0001-19</code><button class="btn btn-turq" id="copiar-pix" type="button">Copiar chave Pix</button></div>
+  <div class="pix" id="bloco-pix" style="margin-top:18px" data-chave="65480613000119" data-nome="JOHEN ARTE GRAFICA" data-cidade="SAO PAULO"><b>Pague com Pix</b><p class="pag-txt">Copie o código, abra o app do seu banco em <b>Pix › Copia e cola</b> e cole. O valor de <b id="pix-valor"></b> já vem preenchido.</p><code id="pix-codigo"></code><button class="btn btn-turq" id="copiar-pix" type="button">Copiar código Pix</button><p class="pag-txt">Prefere outra forma? Também aceitamos cartão de débito ou crédito e dinheiro, é só pedir no WhatsApp. Chave Pix (CNPJ): 65.480.613/0001-19.</p></div>
   <div class="acoes" style="margin-top:18px">
     <a class="btn btn-wpp btn-bloco" id="enviar-pedido" href="https://wa.me/5511982877142"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.1 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg> Enviar pedido no WhatsApp</a>
-    <p class="envio-arte">Depois de enviar, mande as artes na mesma conversa (o comprovante, só depois de pagar). Arquivo grande? <a href="https://docs.google.com/forms/d/e/1FAIpQLScD3J8Bchik66my8m5rNnE-41UHjbVFUAQBomOY7XPBzrBkwA/viewform">Envie pelo formulário</a>.</p>
+    <p class="envio-arte">Depois de pagar, envie o pedido e mande o comprovante e as artes na mesma conversa. Arquivo grande? <a href="https://docs.google.com/forms/d/e/1FAIpQLScD3J8Bchik66my8m5rNnE-41UHjbVFUAQBomOY7XPBzrBkwA/viewform">Envie pelo formulário</a>.</p>
   </div>
 </div></div>
 </main>
@@ -79,7 +79,7 @@
 </footer>
 <a class="insta-flut" href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener" aria-label="Instagram @johen_artgrafica"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a>
 <a class="wpp-flut" href="https://wa.me/5511982877142?text=Ol%C3%A1%21%20Vim%20pelo%20site%20e%20quero%20um%20or%C3%A7amento." aria-label="Falar no WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.1 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg></a>
-<script src="../assets/site.js?v=90633e06" defer></script>
+<script src="../assets/site.js?v=1b726353" defer></script>
 
 </body>
 </html>
