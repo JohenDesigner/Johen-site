@@ -161,6 +161,10 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .filtros button:last-child{margin-right:24px}
 .filtros button{flex:none;height:36px;padding:0 15px;border-radius:999px;border:1px solid var(--linha);background:var(--branco);font-size:14px;font-weight:500;cursor:pointer;color:var(--tinta-2)}
 .filtros button[aria-pressed="true"]{background:var(--azul);border-color:var(--azul);color:#fff}
+.filtros button{transition:border-color .15s ease,color .15s ease,background-color .15s ease;-webkit-tap-highlight-color:transparent}
+@media(hover:hover){.filtros button[aria-pressed="false"]:hover,.filtros button:not([aria-pressed]):hover{border-color:#b9bfc0;color:var(--tinta)}}
+.filtros button:not([aria-pressed="true"]):active{background:var(--fundo)}
+@media(prefers-reduced-motion:reduce){.filtros button{transition:none}}
 .grade{display:grid;grid-template-columns:1fr 1fr;gap:24px 14px}
 @media(min-width:760px){.grade{grid-template-columns:repeat(3,1fr);gap:34px 22px}}
 @media(min-width:760px){.grade-4{grid-template-columns:repeat(4,1fr)}}

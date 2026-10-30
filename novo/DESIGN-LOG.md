@@ -73,6 +73,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-30 — Aspas tipográficas nos textos corridos: "Você sabia?" dos cartões (Couché Brilho, Fosco + Verniz Localizado, Fosco + Metálico) e o aviso do Meu pedido vazio usavam aspas retas de máquina de escrever ("couchage", "Adicionar ao pedido"), diferente da faixa do topo que já usa “PRIMEIRA”. Agora todas saem curvas (“couchage”, “Adicionar ao pedido”). O texto no produtos.json não mudou; a troca é feita na hora de gerar a página. (build.py: `TX()`)
 
+- 2026-10-30 — Filtros das páginas de categoria (Todos, Couché Brilho, Fosco + Verniz…): no computador, passar o mouse num filtro não dava retorno nenhum, só o cursor de mãozinha, diferente do menu e dos cards que já reagem. Agora o filtro escurece de leve a borda e o texto ao passar o mouse, e no celular ganha um fundo bem claro enquanto o dedo está nele (sem o retângulo cinza do navegador). O filtro escolhido continua azul, igual. Respeita quem desativa animações. (site.css: `.filtros button:hover`, `:active`)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.
