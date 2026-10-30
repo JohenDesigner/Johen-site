@@ -148,7 +148,9 @@ def pcard(c, p, fundo):
     # subtítulo só quando acrescenta algo (ex.: "Couché Brilho" já está em "Couché 250g — Couché Brilho")
     norm = lambda x: " ".join(x.lower().split())
     sub = p.get('subNome', '')
-    sub_html = f"<small>{E(sub)}</small>" if sub and norm(sub) not in norm(p['nome']) else ""
+    # "21x30cm (A4)" também não acrescenta nada a "21x30cm — 115g Brilho A4 (Frente)": todas as palavras já estão no nome
+    palavras = lambda x: set(re.findall(r"[\w]+", x.lower()))
+    sub_html = f"<small>{E(sub)}</small>" if sub and norm(sub) not in norm(p['nome']) and not palavras(sub) <= palavras(p['nome']) else ""
     return f'''<a class="pcard" href="{p['id']}/" data-sub="{p['sub']}"><div class="pcard-img {fundo}"><img src="../{p['img']}" alt="{E(p['nome'])}" loading="lazy"></div>
 <div class="pcard-rod"><b>{E(p['nome'])}</b>{sub_html}<span class="pcard-preco">a partir de {brl(pmin(p))}{un}</span></div></a>'''
 
@@ -189,8 +191,8 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
         caixinha = (f'<label class="check caixinha-op"><input type="checkbox" id="caixinha"><img src="../../img/produtos/canecas-caixinha.webp" alt="" width="44" height="44" loading="lazy"><span class="cx-txt">Caixinha personalizada<small><b>+ {brl(p["caixinha"])}</b> · opcional</small></span></label>' if p.get("caixinha") else "")
         personalizar = (f'<a class="btn btn-pri btn-bloco" id="personalizar" href="../../editor/?c={slug}&p={p["id"]}">Personalize sem sair do site</a>' if editavel else "")
         botoes = ('<button class="btn btn-sec btn-bloco" id="add">Adicionar ao pedido</button>' if editavel else '<button class="btn btn-pri btn-bloco" id="add">Adicionar ao pedido</button>')
-        botoes += f'<a class="btn btn-wpp btn-bloco" id="pedir-agora" href="{wpp(f'Olá! Quero {p["nome"]}.')}">{ICO["wpp"]} Pedir agora no WhatsApp</a>'
-        specs = "".join(f"<dt>{k}</dt><dd>{E(v)}</dd>" for k,v in [("Material",p["material"]),("Acabamento",p["acab"]),("Impressão",p["impressao"]),("Prazo",p["prazo"])] if v)
+        botoes += f'<a class="btn btn-wpp btn-bloco" id="pedir-agora" href="{wpp(f'Olá! Quero {({"cartoes": "Cartão de visita ", "panfletos": "Panfleto "}).get(slug, "")}{p["nome"]}.')}">{ICO["wpp"]} Pedir agora no WhatsApp</a>'
+        specs = "".join(f"<dt>{k}</dt><dd>{E(v)}</dd>" for k,v in [("Material",p["material"]),("Tamanho" if slug == "panfletos" else "Acabamento",p["acab"]),("Impressão",p["impressao"]),("Prazo",p["prazo"])] if v)
         relac = [q for q in ps if q["sub"]==p["sub"] and q["id"]!=p["id"]][:4]; relac = (relac + [q for q in ps if q["id"]!=p["id"] and q not in relac])[:4]
         rel = "".join(pcard(slug,q,fundo).replace(f'href="{q["id"]}/"',f'href="../{q["id"]}/"').replace('src="../img','src="../../img') for q in relac)
         corpo = f'''<div class="wrap">

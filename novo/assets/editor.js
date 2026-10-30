@@ -224,14 +224,17 @@
   document.getElementById("voltar").addEventListener("click", () => { desenhar(); barraEd.hidden = false; barraRev.hidden = true; painel.hidden = false; });
 
   const cx = document.getElementById("caixinha");
-  const precoUn = () => produto ? produto.opcoes[0].preco + (cx.checked ? produto.caixinha || 0 : 0) : 0;
+  // opção do produto (ex.: copo "Gravação 1 lado" / "Frente e Verso"): vem da página do produto (?o=) e pode trocar aqui
+  let opIdx = Math.max(0, parseInt(q.get("o"), 10) || 0);
+  const opcao = () => produto && produto.opcoes.length > 1 ? produto.opcoes[Math.min(opIdx, produto.opcoes.length - 1)] : null;
+  const precoUn = () => produto ? (opcao() || produto.opcoes[0]).preco + (cx.checked ? produto.caixinha || 0 : 0) : 0;
   const totalEl = document.getElementById("total");
   const atualizarPreco = () => { totalEl.textContent = brl(precoUn()); };
   cx.addEventListener("change", atualizarPreco);
   const descricao = () => { guardar();
     const comArte = LADOS.filter(l => est[l].fotos.length || est[l].texto);
     const nFotos = LADOS.reduce((n, l) => n + est[l].fotos.length, 0);
-    return `Cor: ${corNome}${cx.checked ? " · caixinha personalizada" : ""}${MOD.verso ? ` · estampa: ${comArte.join(" e ")}` : MOD.tipo === "camiseta" ? ` · estampa ${lado === "costas" ? "nas costas" : "na frente"}` : ""}${LADOS.map(l => est[l].texto ? ` · texto${MOD.verso ? " (" + l + ")" : ""}: "${est[l].texto}"` : "").join("")}${nFotos > comArte.length ? ` · ${nFotos} fotos` : ""}`; };
+    return `${opcao() ? opcao().label.replace(/\s*\(\+R\$\s*\d+\)/, "") + " · " : ""}Cor: ${corNome}${cx.checked ? " · caixinha personalizada" : ""}${MOD.verso ? ` · estampa: ${comArte.join(" e ")}` : MOD.tipo === "camiseta" ? ` · estampa ${lado === "costas" ? "nas costas" : "na frente"}` : ""}${LADOS.map(l => est[l].texto ? ` · texto${MOD.verso ? " (" + l + ")" : ""}: "${est[l].texto}"` : "").join("")}${nFotos > comArte.length ? ` · ${nFotos} fotos` : ""}`; };
 
   // foto da caneca 3D (se o aparelho abriu o 3D); senão, a faixa da área de impressão
   async function previa(tam, l) {
@@ -314,7 +317,7 @@
     tmSalvar = setTimeout(() => {
       guardar();
       const lados = {}; for (const l of LADOS) lados[l] = { sel: est[l].sel, texto: est[l].texto, corTexto: est[l].corTexto, fotos: est[l].fotos.map(f => ({ arquivo: f.arquivo, ix: f.ix, iy: f.iy, esc: f.esc, inverter: f.inverter })) };
-      op("readwrite", s => s.put({ lados, ordem: [...LADOS], lado, corNome, cx: cx.checked }, CHAVE)).catch(() => {});
+      op("readwrite", s => s.put({ lados, ordem: [...LADOS], lado, corNome, cx: cx.checked, op: opIdx }, CHAVE)).catch(() => {});
     }, 400);
   }
   function apagarSalvo() { return op("readwrite", s => s.delete(CHAVE)).catch(() => {}); }
@@ -333,6 +336,7 @@
     if (MOD.verso && lado !== "frente") { abas.querySelectorAll("[data-l]").forEach(x => x.setAttribute("aria-selected", x.dataset.l === lado)); document.dispatchEvent(new CustomEvent("mockup-lado", { detail: lado })); }
     campoTxt.value = texto; document.getElementById("cor-texto").value = corTexto; document.getElementById("bloco-texto").hidden = !texto;
     if (m.cx && !cx.closest("label").hidden) { cx.checked = true; atualizarPreco(); }
+    if (!q.has("o") && m.op && opcao()) { opIdx = m.op; const so = document.getElementById("ed-opcao"); if (so) so.selectedIndex = Math.min(opIdx, so.options.length - 1); atualizarPreco(); }
     const b = document.querySelector(`#cores .cor[data-n="${m.corNome}"]`); if (b) b.click();
     mostrarAjustes(); desenhar();
     if (fotos.length || texto) toast("Sua arte foi recuperada.");
@@ -348,6 +352,13 @@
     document.getElementById("nome-produto").textContent = produto.nome;
     document.title = "Personalizar: " + produto.nome + " | Johen Arte Gráfica";
     if (!produto.caixinha) cx.closest("label").hidden = true; else if (q.get("cx") === "1") cx.checked = true;
+    if (produto.opcoes.length > 1) {        // mesma escolha da página do produto, com o mesmo preço
+      const bloco = document.createElement("div"); bloco.className = "campo";
+      bloco.innerHTML = `<label for="ed-opcao">${produto.opcoes[0].label.startsWith("Gravação") ? "Gravação" : "Escolha a opção"}</label><select id="ed-opcao">${produto.opcoes.map(o => `<option>${o.label} — ${brl(o.preco)}</option>`).join("")}</select>`;
+      painel.querySelector(".total").before(bloco);
+      const so = bloco.querySelector("select"); opIdx = Math.min(opIdx, produto.opcoes.length - 1); so.selectedIndex = opIdx;
+      so.addEventListener("change", () => { opIdx = so.selectedIndex; atualizarPreco(); salvarDepois(); });
+    }
     const coresBox = document.getElementById("cores");
     const lista = corDoCorpo || /cor/i.test(produto.nome) ? CORES : null;
     if (corDoCorpo) coresBox.querySelector(".rot").textContent = MOD.tipo === "camiseta" ? "Cor da camiseta" : "Cor do copo";

@@ -24,6 +24,10 @@ const qtdTxt = (n, qn) => qn ? `${n} ${n > 1 ? qn[1] : qn[0]}` : `${n} un.`;
 // descrição + quantidade do item no pedido (por cartela/estampa a quantidade sempre aparece)
 const linhaItem = x => [x.desc, x.qtd > 1 || !x.desc ? qtdTxt(x.qtd, x.qn) : ""].filter(Boolean).join(" · ");
 
+// nome do item no pedido e no WhatsApp: "Couché 300g — Fosco…" sozinho não diz que é cartão de visita
+const TIPO = { cartoes: "Cartão de visita", panfletos: "Panfleto" };
+const nomeItem = x => TIPO[x.c] ? `${TIPO[x.c]} ${x.nome}` : x.nome;
+
 /* ---------- menu ---------- */
 function iniciarMenu() {
   const m = $("#menu"); if (!m) return;
@@ -119,7 +123,7 @@ function iniciarProduto() {
   function msgPedir() {
     const r = calc();
     const qt = p.qn || !r.desc ? qtdTxt(qtd, p.qn) : (multiplica || p.m2) && qtd > 1 ? `${qtd} ${p.m2 ? "peças" : "un."}` : "";
-    return `Olá! Quero ${[p.nome, r.desc, qt].filter(Boolean).join(", ")} – ${brl(r.total)}.`;
+    return `Olá! Quero ${[nomeItem(p), r.desc, qt].filter(Boolean).join(", ")} – ${brl(r.total)}.`;
   }
   function render() {
     const r = calc();
@@ -132,6 +136,8 @@ function iniciarProduto() {
   // leva a escolha da caixinha para o editor
   const pers = $("#personalizar");
   if (pers && cx) cx.addEventListener("change", () => { const u = new URL(pers.href); cx.checked ? u.searchParams.set("cx", "1") : u.searchParams.delete("cx"); pers.href = u.toString(); });
+  // leva a opção escolhida (ex.: copo frente e verso) para o editor, com o mesmo preço
+  if (pers && sel) sel.addEventListener("change", () => { const u = new URL(pers.href); sel.selectedIndex ? u.searchParams.set("o", sel.selectedIndex) : u.searchParams.delete("o"); pers.href = u.toString(); });
   $("#menos")?.addEventListener("click", () => { qtd = Math.max(1, qtd - 1); render(); });
   $("#mais")?.addEventListener("click", () => { qtd++; render(); });
   $("#add")?.addEventListener("click", () => {
@@ -166,11 +172,11 @@ function iniciarPedido() {
     lista.innerHTML = itens.map(x => `
       <div class="item">
         ${x.artes ? `<div class="item-fotos">${x.artes.map(a => `<img src="${a}" alt="">`).join("")}</div>` : `<img src="${x.arte || ROOT + x.img}" alt="">`}
-        <div><b>${x.nome}</b><small>${linhaItem(x)}</small>${x.artes ? "<small>Com sua arte (prévia da frente e das costas)</small>" : x.arte ? "<small>Com sua arte (prévia)</small>" : ""}<button data-tirar="${x.uid}">Remover</button></div>
+        <div><b>${nomeItem(x)}</b><small>${linhaItem(x)}</small>${x.artes ? "<small>Com sua arte (prévia da frente e das costas)</small>" : x.arte ? "<small>Com sua arte (prévia)</small>" : ""}<button data-tirar="${x.uid}">Remover</button></div>
         <div class="valor">${brl(x.total)}</div>
       </div>`).join("");
     $("#pedido-total").textContent = brl(tot);
-    const msg = "Olá! Quero fazer este pedido pelo site:\n\n" + itens.map((x, n) => `${n + 1}. ${x.nome}\n   ${linhaItem(x)} — ${brl(x.total)}`).join("\n") + `\n\nTotal: ${brl(tot)}\n\nVou mandar as artes aqui na conversa.`;
+    const msg = "Olá! Quero fazer este pedido pelo site:\n\n" + itens.map((x, n) => `${n + 1}. ${nomeItem(x)}\n   ${linhaItem(x)} — ${brl(x.total)}`).join("\n") + `\n\nTotal: ${brl(tot)}\n\nVou mandar as artes aqui na conversa.`;
     $("#enviar-pedido").href = wppLink(msg);
     const bp = $("#bloco-pix");
     if (bp) { const v = Math.round(tot * 100) / 100; $("#pix-codigo").textContent = pixCopiaECola(bp.dataset.chave, bp.dataset.nome, bp.dataset.cidade, v); $("#pix-valor").textContent = brl(v); }
