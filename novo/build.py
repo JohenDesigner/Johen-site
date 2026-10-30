@@ -1,7 +1,7 @@
 # Gera as páginas do site novo a partir de dados/produtos.json
 # Rodar: python3 build.py   (dentro da pasta novo/)
 import json, os, html, shutil, hashlib
-VER = hashlib.md5((open("assets/site.css","rb").read()+open("assets/site.js","rb").read()+open("assets/editor.js","rb").read()+open("assets/mockup3d.js","rb").read())).hexdigest()[:8]
+VER = hashlib.md5((open("assets/site.css","rb").read()+open("assets/site.js","rb").read()+open("assets/editor.js","rb").read()+open("assets/mockup3d.js","rb").read()+open("assets/tour.js","rb").read())).hexdigest()[:8]
 
 D = json.load(open("dados/produtos.json"))
 WPP = "5511982877142"
@@ -256,7 +256,7 @@ pagina("pedido/index.html", "Meu pedido | Johen Arte Gráfica", "Revise seu pedi
 # ---------- editor de caneca ----------
 corpo = f'''<div class="wrap editor">
 <div class="migalha" style="padding-top:14px"><a href="../">Início</a> › <a id="migalha-cat" href="../canecas/">Canecas</a> › Personalizar</div>
-<h1 class="ed-tit" id="nome-produto">Carregando caneca…</h1>
+<div class="ed-cab"><h1 class="ed-tit" id="nome-produto">Carregando caneca…</h1><button class="ed-ajuda" id="ver-tour" type="button" aria-label="Como usar o editor"><span aria-hidden="true">?</span> Como usar</button></div>
 <div class="ed-grid">
   <div class="ed-esq">
     <div class="ed-palco palco3d" id="palco3d"><canvas id="tela3d" aria-label="Caneca em 3D com a sua arte. Arraste para girar."></canvas><p id="aviso3d" class="aviso3d">Carregando 3D…</p><p class="dica3d" aria-hidden="true">Arraste para girar</p><button class="btn btn-sec cobrir3d" id="centralizar">Cobrir a caneca toda</button><div id="acoes3d" class="ed-3d-acoes"><button class="btn btn-sec" id="girar3d" aria-pressed="true">Girar sozinha</button><button class="btn btn-sec" id="foto3d">Baixar PNG</button><button class="btn btn-sec" id="video3d">Baixar vídeo</button></div></div>
@@ -296,7 +296,7 @@ corpo = f'''<div class="wrap editor">
   <button class="btn btn-wpp" id="enviar-arte">{ICO['wpp']} Enviar</button>
 </div>
 </div>'''
-pagina("editor/index.html", "Personalizar | Johen Arte Gráfica", "Monte sua caneca, copo térmico ou camiseta com a sua arte e veja em 3D antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script>')
+pagina("editor/index.html", "Personalizar | Johen Arte Gráfica", "Monte sua caneca, copo térmico ou camiseta com a sua arte e veja em 3D antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script><script src="../assets/tour.js?v={VER}" defer></script>')
 
 # ---------- home ----------
 AV_HTML = (f'''<section class="depo" aria-labelledby="depo-tit"><h2 id="depo-tit">Quem já comprou</h2><div class="depo-lista">''' + "".join(
