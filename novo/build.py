@@ -1,9 +1,9 @@
 # Gera as páginas do site novo a partir de dados/produtos.json
 # Rodar: python3 build.py   (dentro da pasta novo/)
 import json, os, re, html, shutil, hashlib
-VER = hashlib.md5((open("assets/site.css","rb").read()+open("assets/site.js","rb").read()+open("assets/editor.js","rb").read()+open("assets/mockup3d.js","rb").read()+open("assets/tour.js","rb").read())).hexdigest()[:8]
+VER = hashlib.md5((open("assets/site.css","rb").read()+open("assets/site.js","rb").read()+open("assets/editor.js","rb").read()+open("assets/mockup3d.js","rb").read()+open("assets/tour.js","rb").read()+open("assets/cine.css","rb").read()+open("assets/cine.js","rb").read())).hexdigest()[:8]
 
-D = json.load(open("dados/produtos.json"))
+D = json.load(open("dados/produtos.json", encoding="utf-8"))
 WPP = "5511982877142"
 FORM = "https://docs.google.com/forms/d/e/1FAIpQLScD3J8Bchik66my8m5rNnE-41UHjbVFUAQBomOY7XPBzrBkwA/viewform"
 E = html.escape
@@ -30,7 +30,16 @@ SERVS = [  # slug, nome, foto, fundo, resumo
 PIX = "65.480.613/0001-19"  # chave Pix = CNPJ (informada pelo Johen em 2026-10-30)
 MERCADO_PAGO = "" # link de pagamento do Mercado Pago
 # Avaliações reais do Google (copie do perfil da loja). Vazio = a home só mostra o convite pra avaliar.
-AVALIACOES = []   # ex.: [("Nome do cliente", "Texto da avaliação", 5)]
+AVALIACOES = [   # copiadas do Google em 2026-10-30 (nota 5,0 · 118 avaliações)
+  ("Andressa Correia", "Recomendo muito a Johen, superou minha expectativa eu amei demais que perfeição. Personalizem a garrafa de vocês tbm com a Johen 🤗😍😍", 5),
+  ("Samira Samy", "Atendimento muito bom !!Os trabalhos são ótimos !!! Amei meu Chaveirinho , ficou do jeitinho que eu queria 💖", 5),
+  ("Jorge Silva", "excelente profissional atencioso caprichoso no trabalho que faz muito obrigado", 5),
+]
+NOTA_GOOGLE, TOTAL_AVALIACOES = "5,0", 118
+# Formulário de orçamento da home → FormSubmit (código que entrega em hjose5860@gmail.com sem expor o e-mail)
+FORMSUBMIT = "da882839a1c43226b913ede674340781"
+# Assinatura do Site Cinematográfico (Labrego IA): código do projeto da página inicial cinematográfica
+LBG = "LBG-SC-20261030-2F906668B2"
 MAPA = "https://www.google.com/maps/search/?api=1&query=" + "R.+Pedro+Fernandes+Arag%C3%A3o,+269+-+Jardim+Selma,+S%C3%A3o+Paulo+-+SP"
 REVIEW = "https://g.page/r/CWKTHinBP02gEAI/review"
 
@@ -49,7 +58,7 @@ ICO = {
 }
 
 
-MASC = json.load(open("dados/mascotes.json"))
+MASC = json.load(open("dados/mascotes.json", encoding="utf-8"))
 def masc_anim(nome, R="", i=0):
     m = MASC[nome]; W, H = m["w"], m["h"]
     camadas = f'<img class="camada" style="position:absolute;inset:0;width:100%;height:100%" src="{R}img/mascotes/{nome}.webp" alt="">'
@@ -60,7 +69,7 @@ def brl(v): return ("R$ " + f"{v:,.2f}").replace(",", "X").replace(".", ",").rep
 def pmin(p): return p["m2"] if p.get("m2") else min(o["preco"] for o in p["opcoes"])
 def wpp(msg): import urllib.parse; return f"https://wa.me/{WPP}?text=" + urllib.parse.quote(msg)
 
-def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
+def pagina(caminho, titulo, desc, corpo, atual="", extra_head="", head="", classe=""):
     prof = caminho.count("/")
     R = "../" * prof
     nav = "".join(f'<a href="{R}{s}/"{" aria-current=page" if atual==s else ""}>{E(n.split(" e ")[0] if s!="canecas" else "Canecas")}</a>' for s,n,*_ in CATS)
@@ -69,6 +78,11 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
     menu += "".join(f'<a href="{R}{s}/">{E(n)}</a>' for s,n,*_ in SERVS)
     menu += f'<a href="{R}../cardapio-ar/">Cardápio em 3D (demo)</a><a href="{R}pedido/">Meu pedido</a>'
     doc = f"""<!doctype html>
+<!--
+  Johen Arte Gráfica · Site Cinematográfico por Labrego IA (labregoia.com.br)
+  Projeto: {LBG} · Assinatura LBG-SC-2026-v1
+  © 2026 Labrego IA. Estrutura, código e método licenciados.
+-->
 <html lang="pt-BR" data-root="{R}">
 <head>
 <meta charset="utf-8">
@@ -79,14 +93,16 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
 <meta property="og:description" content="{E(desc)}">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#ffffff">
+<meta name="generator" content="Site Cinematográfico · Labrego IA">
+<meta name="author" content="Labrego IA · labregoia.com.br">
 <script>/* recarregou ou entrou direto (sem vir de outra página do site)? vai para a página inicial */(function(){{try{{var h=new URL(document.documentElement.dataset.root||"./",location.href).pathname;if(location.pathname===h||location.pathname===h+"index.html"||/[/](editor|pedido)[/]/.test(location.pathname))return;var n=performance.getEntriesByType("navigation")[0],t=n?n.type:"",r=document.referrer,doSite=false;try{{var u=new URL(r);doSite=u.origin===location.origin&&u.pathname.indexOf(h)===0}}catch(e){{}}if(t==="reload"||(t==="navigate"&&!doSite))location.replace(h)}}catch(e){{}}}})()</script>
 <link rel="icon" href="{R}img/marca/logo-icone.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Outfit:wght@500;600&display=swap">
 <link rel="stylesheet" href="{R}assets/site.css?v={VER}">
-</head>
-<body>
-<div class="promo">5% OFF na 1ª compra — é só dizer <span class="nw">“PRIMEIRA” no WhatsApp.</span></div>
+{head}</head>
+<body{f' class="{classe}"' if classe else ""}>
+<div class="promo">5% OFF na primeira compra</div>
 <header class="topo">
   <div class="wrap">
     <div class="topo-linha">
@@ -134,6 +150,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
     <div class="rod-pag" aria-label="Formas de pagamento"><span>{ICO['pix']}Pix</span><span>{ICO['cartao']}Débito</span><span>{ICO['cartao']}Crédito</span><span>{ICO['dinheiro']}Dinheiro</span></div>
     <a class="rod-insta" href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener">{ICO['insta']}@johen_artgrafica</a>
     <p class="cnpj">Johen Arte Gráfica · CNPJ 65.480.613/0001-19</p>
+    <a class="credito-lbg" href="https://labregoia.com.br" target="_blank" rel="noopener">Site por Labrego IA</a>
   </div></div>
 </footer>
 <a class="insta-flut" href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener" aria-label="Instagram @johen_artgrafica">{ICO['insta']}</a>
@@ -143,7 +160,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
 </body>
 </html>"""
     os.makedirs(os.path.dirname(caminho) or ".", exist_ok=True)
-    open(caminho, "w").write(doc)
+    open(caminho, "w", encoding="utf-8").write(doc)
 
 def gemeo(c, p):  # outro produto da mesma categoria com o mesmo nome
     return any(q["id"] != p["id"] and q["nome"].strip().lower() == p["nome"].strip().lower() for q in D[c])
@@ -267,7 +284,7 @@ if PIX:
         '<p class="pag-txt">Copie o código, abra o app do seu banco em <b>Pix › Copia e cola</b> e cole. O valor de <b id="pix-valor"></b> já vem preenchido.</p>'
         '<code id="pix-codigo"></code>'
         '<button class="btn btn-turq" id="copiar-pix" type="button">Copiar código Pix</button>'
-        '<p class="pag-txt"><b>Primeira compra?</b> Diga “PRIMEIRA” no WhatsApp antes de pagar para ganhar 5%.</p>'
+        '<p class="pag-txt"><b>Primeira compra?</b> Você ganha 5% OFF. Avise no WhatsApp antes de pagar.</p>'
         f'<p class="pag-txt">Prefere outra forma? Também aceitamos cartão de débito ou crédito e dinheiro, é só pedir no WhatsApp. Chave Pix (CNPJ): {E(PIX)}.</p>'
         + (f'<a class="btn btn-sec" href="{E(MERCADO_PAGO)}" target="_blank" rel="noopener">Pagar com cartão (Mercado Pago)</a>' if MERCADO_PAGO else '')
         + '</div>')
@@ -335,31 +352,148 @@ corpo = f'''<div class="wrap editor">
 </div>'''
 pagina("editor/index.html", "Personalizar | Johen Arte Gráfica", "Monte sua caneca, copo térmico ou camiseta com a sua arte e veja em 3D antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script><script src="../assets/tour.js?v={VER}" defer></script>')
 
-# ---------- home ----------
-AV_HTML = (f'''<section class="depo" aria-labelledby="depo-tit"><h2 id="depo-tit">Quem já comprou</h2><div class="depo-lista">''' + "".join(
-    f'<figure class="depo-card"><span class="estrelas" aria-label="{n} de 5 estrelas">{"★"*n}</span><blockquote>{E(t)}</blockquote><figcaption>{E(a)} · Google</figcaption></figure>' for a,t,n in AVALIACOES)
-    + f'</div><a class="link-seta" href="{REVIEW}" target="_blank" rel="noopener">Ver todas no Google</a></section>') if AVALIACOES else ""
-hero_fotos = ["cartoes-p1","canecas-p2","cartoes-p3","canecas-p9","camisetas-p5","cartoes-p7"]
-CARDS = [("cartoes/","Cartões de Visita","cartoes-p3"),("canecas/","Canecas e Térmicos","canecas-p2"),("adesivos/","Adesivos e Etiquetas","adesivos-p20"),
-         ("camisetas/","Camisetas","camisetas-p5"),("panfletos/","Panfletos","panfletos-p5"),("banners/","Banners e Placas","banners-p2"),
-         ("gravacao-laser/","Gravação a Laser","canecas-p9"),("envelopamento/","Envelopamento e Vitrine","adesivos-p16"),("comercio/","Para seu Comércio","adesivos-p12")]
-cards = "".join(f'<a class="mcard" href="{h}"><div class="mcard-img"><img src="img/produtos/{f}.webp" alt="" loading="lazy"></div><span>Ver {E(n)}</span></a>' for h,n,f in CARDS)
+# ---------- home (cinematográfica: o vídeo da bancada anda com a rolagem) ----------
+# Frames em cine/frames/ (gerados do vídeo com o fatiar_frames.sh do Site Cinematográfico) e artes em img/cine/
+CINE_FRAMES = 160
+CORES_MASC = {"cartoes": "#E8650A", "panfletos": "#D7322A", "banners": "#7B5CC4", "adesivos": "#00C2C7", "camisetas": "#F5A623", "canecas": "#2199BE"}
+PORTFOLIO = [  # fotos reais de trabalhos da loja (img/portfolio/). 1º e 6º ficam grandes. Vídeo: mesmo nome .mp4 + .webp de capa
+  ("vitrine-bianca-souza", "Adesivo de vitrine do Bianca Souza Beauty Studio"), ("camisa-fast-lions", "Camisa sublimada do time Fast Lions"),
+  ("copo-termico-dominique", "Copo térmico rosa gravado a laser com o nome Dominique"), ("panfletos-evds", "Panfletos da EVDS Serviços"),
+  ("cartoes-didi-nanes", "Cartões de visita da Didi Nanes Modas e Acessórios", "video"), ("envelopamento-van-vergueiro", "Envelopamento da van da Carvão e Lenha Vergueiro"),
+  ("caneca-minha-pessoa", "Caneca personalizada com ilustração e frases"), ("banner-dona-do-pedaco", "Banner da confeitaria A Dona do Pedaço"),
+  ("chaveiros-mdf-cha-de-panela", "Chaveiros de MDF gravados a laser para chá de panela"), ("adesivos-frango-da-hora", "Adesivos redondos do Frango da Hora"),
+]
+def a_partir(slug):
+    precos = [min(o["preco"] for o in p["opcoes"]) for p in D[slug] if not p.get("m2") and p.get("opcoes")]
+    return f"a partir de {brl(min(precos))}" if precos else f"{len(D[slug])} opções"
+
+masc_html = "".join(f'''<a class="cin-masc revelar" href="{s}/" style="--cor:{CORES_MASC.get(s, "#E8650A")}">{masc_anim(m, "", i)}<b>{E(n)}</b><small>{a_partir(s)}</small></a>'''
+                    for i, (s, n, m, *_) in enumerate(CATS))
+serv_html = "".join(f'<a class="mcard revelar" href="{s}/"><div class="mcard-img"><img src="{f}" alt="" loading="lazy"></div><span>{E(n)}</span></a>' for s, n, f, *_ in SERVS)
+def port_item(a, t, tipo=""):
+    if tipo == "video":
+        return f'<figure class="revelar"><video src="img/portfolio/{a}.mp4" poster="img/portfolio/{a}.webp" autoplay muted loop playsinline preload="none" aria-label="{E(t)}"></video></figure>'
+    return f'<figure class="revelar"><img src="img/portfolio/{a}.webp" alt="{E(t)}" loading="lazy"></figure>'
+port_html = "".join(port_item(*x) for x in PORTFOLIO)
+depo_html = "".join(f'<figure class="painel cin-depo revelar"><span class="estrelas" aria-label="{n} de 5 estrelas">{"★"*n}</span><blockquote>{E(t)}</blockquote><figcaption>{E(a)} · Google</figcaption></figure>' for a, t, n in AVALIACOES)
+opcoes_form = "".join(f"<option>{E(n)}</option>" for _, n, *_ in CATS + SERVS)
+MAPA_EMBED = "https://www.google.com/maps?q=R.+Pedro+Fernandes+Arag%C3%A3o,+269+-+Jardim+Selma,+S%C3%A3o+Paulo+-+SP,+04431-160&output=embed"
+ROTA = "https://www.google.com/maps/dir/?api=1&destination=R.+Pedro+Fernandes+Arag%C3%A3o,+269,+S%C3%A3o+Paulo+-+SP,+04431-160"
+
 corpo = f'''
-<section class="inicio"><div class="wrap">
-  <a class="mcard mcard-hero" href="#produtos">
-    <div class="mcard-img hero-midia" aria-hidden="true">
-      <video autoplay muted loop playsinline preload="metadata"><source src="video/hero.mp4" type="video/mp4"></video>
-      {"".join(f'<img src="img/produtos/{h}.webp" alt="">' for h in hero_fotos)}
-    </div>
-  </a>
-  <h1 class="inicio-tit">Sua ideia, impressa com capricho.</h1>
-  <div class="mcards" id="produtos">{cards}</div>
-  {AV_HTML}
-  <section class="avaliar" aria-labelledby="avaliar-tit">
+<section id="inicio" class="cine" style="--altura:420vh" data-total="{CINE_FRAMES}" data-desktop="cine/frames/desktop/f_{{n}}.webp" data-mobile="cine/frames/mobile/f_{{n}}.webp">
+  <div class="cine-palco">
+    <canvas class="cine-canvas" aria-hidden="true"></canvas>
+    <div class="cine-vinheta"></div>
+    <div class="momento" data-de="0" data-ate="0.3"><div class="painel painel--vidro">
+      <h1>Seja bem-vindo ao catálogo da Johen</h1>
+      <p>Gráfica rápida e personalizados no Jardim Selma, zona sul de São Paulo. Cartão, adesivo, camiseta, banner, caneca e gravação a laser.</p>
+    </div></div>
+    <div class="momento momento--direita" data-de="0.38" data-ate="0.66"><div class="painel painel--vidro">
+      <p class="destaque-cine">Mais de 5.000 clientes satisfeitos</p>
+      <p>Monte o pedido aqui no site, personalize caneca e camiseta em 3D e feche tudo pelo WhatsApp. Na primeira compra, 5% OFF.</p>
+    </div></div>
+    <div class="momento momento--centro" data-de="0.74" data-ate="1"><div class="painel painel--vidro">
+      <p class="destaque-cine">Da bancada para a sua mão</p>
+      <a class="btn btn-pri" href="#produtos">Ver os produtos</a>
+    </div></div>
+    <div class="cine-dica" aria-hidden="true"><span></span>role</div>
+  </div>
+</section>
+
+<section id="produtos" class="cin-secao cin-larga">
+  <img class="arte arte--fundo" src="img/cine/categorias.webp" alt="" loading="lazy">
+  <div class="painel revelar"><span class="rotulo">01</span><h2>Escolha o que vamos fazer pra você</h2></div>
+  <div class="cin-mascotes">{masc_html}</div>
+  <div class="cin-servicos">{serv_html}</div>
+  <div class="painel revelar">
+    <h3>Também fazemos</h3>
+    <ul class="chips">{"".join(f'<li class="chip">{E(x)}</li>' for x in TAMBEM)}</ul>
+    <a class="link-seta" href="{wpp('Olá! Vim pelo site e não achei o que preciso no catálogo.')}">Não achou o que precisa? Fale com a gente no WhatsApp</a>
+  </div>
+</section>
+
+<section id="arquivo" class="cin-secao">
+  <img class="arte arte--esquerda" src="img/cine/arquivo.webp" alt="" loading="lazy">
+  <div class="cin-grade cin-grade--direita"><div class="painel revelar">
+    <span class="rotulo">02</span>
+    <h2>Como preparar seu arquivo</h2>
+    <ol class="passos">
+      <li><strong>PDF ou imagem em alta</strong><span>PDF é o mais seguro. PNG ou JPG também servem, desde que tenham 300 dpi no tamanho real da peça.</span></li>
+      <li><strong>Sangria de 3 mm</strong><span>Estique o fundo 3 mm além da linha de corte e deixe textos e logos pelo menos 3 mm para dentro. Assim nada some no corte.</span></li>
+      <li><strong>Cores em CMYK</strong><span>A tela mostra luz (RGB); a impressora mistura ciano, magenta, amarelo e preto. Laranja e verde muito neon saem um pouco mais suaves no papel.</span></li>
+      <li><strong>Fontes em curvas</strong><span>Converta os textos em curvas ou mande as fontes junto, senão o programa troca a letra por outra.</span></li>
+      <li><strong>Não tem arte?</strong><span>A gente cria do zero ou ajeita a que você tem.</span></li>
+    </ol>
+    <p><a class="link-seta" href="{FORM}">Enviar meu arquivo pelo formulário</a></p>
+    <p><a class="link-seta" href="design/">Quero que vocês criem a arte</a></p>
+  </div></div>
+</section>
+
+<section id="portfolio" class="cin-secao cin-larga">
+  <div class="painel revelar"><span class="rotulo">03</span><h2>Portfólio</h2>
+    <p>Trabalhos que saíram da nossa bancada. Tem muito mais no Instagram <a href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener">@johen_artgrafica</a>.</p></div>
+  <div class="cin-portfolio">{port_html}</div>
+</section>
+
+<section id="depoimentos" class="cin-secao cin-larga">
+  <div class="painel cin-nota revelar"><span class="rotulo">04</span><h2>{NOTA_GOOGLE} no Google</h2>
+    <p><span class="estrelas" aria-hidden="true">★★★★★</span> {TOTAL_AVALIACOES} avaliações de quem já passou pela loja.</p></div>
+  <div class="cin-depos">{depo_html}</div>
+  <section class="avaliar revelar" aria-labelledby="avaliar-tit">
     <img src="img/marca/ic-google.webp" alt="" width="44" height="57" loading="lazy">
     <div class="avaliar-txt"><span class="estrelas" aria-hidden="true">★★★★★</span><h2 id="avaliar-tit">Gostou do nosso trabalho?</h2><p>Sua avaliação no Google ajuda mais gente do bairro a encontrar a Johen.</p></div>
     <a class="btn btn-pri" href="{REVIEW}" target="_blank" rel="noopener">Nos avalie no Google</a>
   </section>
-</div></section>'''
-pagina("index.html", "Johen Arte Gráfica | Gráfica e personalizados no Jardim Selma, SP", "Cartões de visita, panfletos, banners, adesivos, camisetas e canecas personalizadas em São Paulo. Peça pelo site e acompanhe pelo WhatsApp.", corpo)
+</section>
+
+<section id="sobre" class="cin-secao">
+  <img class="arte arte--direita" src="img/cine/sobre.webp" alt="" loading="lazy">
+  <div class="cin-grade"><div class="painel revelar">
+    <span class="rotulo">05</span>
+    <h2>A gráfica do Jardim Selma</h2>
+    <p>A Johen é gráfica rápida e loja de personalizados na zona sul de São Paulo. Atendemos o comércio do bairro, quem presta serviço e precisa de cartão e panfleto pra ontem, e quem quer dar um presente com nome, foto ou logo.</p>
+    <p>Imprimimos, cortamos, estampamos e gravamos a laser aqui mesmo, e também criamos a arte quando você ainda não tem.</p>
+    <dl class="fatos">
+      <div><dt>Horário</dt><dd>Segunda a sábado, 11h às 20h</dd></div>
+      <div><dt>Pagamento</dt><dd>Pix, dinheiro, débito e crédito</dd></div>
+      <div><dt>Primeira compra</dt><dd>5% OFF</dd></div>
+      <div><dt>Retirada</dt><dd>Na loja. Combine o horário pelo WhatsApp</dd></div>
+    </dl>
+  </div></div>
+</section>
+
+<section id="contato" class="cin-secao">
+  <img class="arte arte--fundo arte--suave" src="img/cine/contato.webp" alt="" loading="lazy">
+  <div class="cin-contato" style="width:100%;max-width:1240px;margin:0 auto">
+    <div class="painel revelar">
+      <span class="rotulo">06</span>
+      <h2>Peça seu orçamento</h2>
+      <p>Pelo WhatsApp a resposta é mais rápida. Se preferir, deixe seus dados aqui que a gente chama você.</p>
+      <form class="cin-form" data-destino="{FORMSUBMIT}" novalidate>
+        <div class="cin-campo"><label for="f-nome">Nome</label><input id="f-nome" name="nome" autocomplete="name" required></div>
+        <div class="cin-campo"><label for="f-email">E-mail</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
+        <div class="cin-campo"><label for="f-tel">WhatsApp</label><input id="f-tel" name="telefone" type="tel" autocomplete="tel" inputmode="tel" required></div>
+        <div class="cin-campo"><label for="f-prod">Produto</label><select id="f-prod" name="produto"><option value="">Escolha…</option>{opcoes_form}<option>Outro</option></select></div>
+        <div class="cin-campo cin-inteiro"><label for="f-msg">O que você precisa? (quantidade, tamanho, prazo)</label><textarea id="f-msg" name="mensagem" rows="4"></textarea></div>
+        <input type="text" name="_honey" class="pote" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" class="btn btn-pri cin-inteiro">Enviar</button>
+        <p class="form-status cin-inteiro" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+    <div class="painel revelar">
+      <h3>Onde estamos</h3>
+      <p>R. Pedro Fernandes Aragão, 269<br>Jardim Selma, São Paulo - SP, 04431-160</p>
+      <div class="cin-mapa"><iframe title="Mapa: Johen Arte Gráfica" src="{MAPA_EMBED}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+      <a class="link-seta" href="{ROTA}" target="_blank" rel="noopener">Traçar rota</a>
+    </div>
+  </div>
+</section>'''
+head_home = f'''<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap">
+<link rel="stylesheet" href="assets/cine.css?v={VER}">
+<link rel="preload" as="image" href="cine/frames/desktop/f_0001.webp">
+<meta property="og:image" content="cine/frames/desktop/f_0001.webp">
+'''
+pagina("index.html", "Johen Arte Gráfica | Gráfica e personalizados no Jardim Selma, SP", "Cartões de visita, panfletos, banners, adesivos, camisetas e canecas personalizadas em São Paulo. Peça pelo site e acompanhe pelo WhatsApp.",
+       corpo, extra_head=f'<script src="assets/cine.js?v={VER}" defer></script>', head=head_home, classe="home-cine")
 print("ok")
