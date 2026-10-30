@@ -240,7 +240,7 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .rodape{background:var(--azul);color:#fff;border-radius:28px 28px 0 0;margin-top:56px}
 .rodape .wrap{padding-block:40px calc(32px + env(safe-area-inset-bottom,0px));display:grid;gap:28px}
 @media(min-width:760px){.rodape .wrap{grid-template-columns:1fr 1fr}.rodape .rod-marca{grid-column:1/-1}}
-@media(min-width:1100px){.rodape .wrap{grid-template-columns:1.1fr 1.2fr 1fr 1.1fr}.rodape .rod-marca{grid-column:1/-1}}
+@media(min-width:1100px){.rodape .wrap{grid-template-columns:1.3fr 1.2fr .85fr 1.1fr}.rodape .rod-marca{grid-column:1/-1}}
 .rodape img.marca{height:28px;width:auto;filter:brightness(0) invert(1);opacity:.95}
 .rodape p{margin:8px 0 0;opacity:.75;font-size:14px}
 .rodape h3{font-family:var(--corpo);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin-bottom:10px}
@@ -362,7 +362,7 @@ body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 .ed-lados{display:inline-flex;gap:4px;padding:4px;background:var(--branco);border:1px solid var(--linha);border-radius:999px;margin-bottom:12px}
 .ed-lados button{border:0;background:transparent;border-radius:999px;padding:8px 18px;font-size:14px;font-weight:600;color:var(--tinta-2);cursor:pointer;min-height:38px}
 .ed-lados button[aria-selected="true"]{background:var(--azul);color:#fff}
-.rodape .lista-texto li{opacity:.88}
+.rodape .lista-texto li{opacity:.88;white-space:nowrap}
 .rodape ul.lista-texto{display:grid;grid-template-columns:1fr 1fr;column-gap:16px;row-gap:6px;max-width:340px}
 
 /* página inicial: convite para avaliar no Google */
