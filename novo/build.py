@@ -7,6 +7,8 @@ D = json.load(open("dados/produtos.json"))
 WPP = "5511982877142"
 FORM = "https://docs.google.com/forms/d/e/1FAIpQLScD3J8Bchik66my8m5rNnE-41UHjbVFUAQBomOY7XPBzrBkwA/viewform"
 E = html.escape
+def TX(t):  # texto corrido: aspas retas "x" viram tipográficas “x”
+  return E(re.sub(r'"([^"\n]+)"', "\u201c\\1\u201d", t))
 
 CATS = [  # slug, nome, mascote, fundo, resumo, foto vitrine
   ("cartoes",   "Cartões de Visita",   "cartao",   "bg-laranja",  "Papel, acabamento e impressão sob medida pro seu negócio. Do couché brilho ao hot stamping.", "img/produtos/cartoes-p4.webp"),
@@ -211,7 +213,7 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
       <p class="sub">{E(p["obs"])}</p>
       <dl class="specs">{specs}</dl>
       {f'<div class="alerta">{E(p["alerta"])}</div>' if p.get("alerta") else ""}
-      {f'<div class="caixa-info"><h3>Você sabia?</h3><p>{E(p["curiosidade"])}</p></div>' if p.get("curiosidade") else ""}
+      {f'<div class="caixa-info"><h3>Você sabia?</h3><p>{TX(p["curiosidade"])}</p></div>' if p.get("curiosidade") else ""}
     </section>
   </div>
 </div>
@@ -263,7 +265,7 @@ else:
     POS_ENVIO = "Depois de enviar, mande as artes na mesma conversa (o comprovante, só depois de pagar)."
 corpo = f'''<div class="wrap" style="max-width:720px">
 <section class="cabeca-cat"><div class="migalha"><a href="../">Início</a> › Meu pedido</div><h1>Meu pedido</h1></section>
-<div id="pedido-vazio" class="vazio" hidden><span class="vazio-ico" aria-hidden="true">{ICO['sacola']}</span><b>Seu pedido está vazio.</b><span>Escolha um produto e toque em "Adicionar ao pedido".</span><a class="btn btn-pri" href="../">Ver produtos</a></div>
+<div id="pedido-vazio" class="vazio" hidden><span class="vazio-ico" aria-hidden="true">{ICO['sacola']}</span><b>Seu pedido está vazio.</b><span>Escolha um produto e toque em “Adicionar ao pedido”.</span><a class="btn btn-pri" href="../">Ver produtos</a></div>
 <div id="pedido-cheio" hidden>
   <div class="itens" id="itens"></div>
   <div class="total" style="margin-top:18px"><small>Total do pedido</small><strong id="pedido-total">R$ 0,00</strong></div>
