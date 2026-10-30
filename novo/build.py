@@ -25,7 +25,7 @@ SERVS = [  # slug, nome, foto, fundo, resumo
 ]
 
 # Pagamento online: preencha quando tiver. Vazio = a página do pedido explica que a chave/link vão pelo WhatsApp.
-PIX = ""          # ex.: "65.480.613/0001-19" ou e-mail/celular da chave
+PIX = "65.480.613/0001-19"  # chave Pix = CNPJ (informada pelo Johen em 2026-10-30)
 MERCADO_PAGO = "" # link de pagamento do Mercado Pago
 # Avaliações reais do Google (copie do perfil da loja). Vazio = a home só mostra o convite pra avaliar.
 AVALIACOES = []   # ex.: [("Nome do cliente", "Texto da avaliação", 5)]
@@ -241,10 +241,14 @@ for slug, nome, foto, fundo, resumo in SERVS:
     pagina(f"{slug}/index.html", f"{nome} | Johen Arte Gráfica", f"{nome} em São Paulo. {resumo}", corpo, slug)
 
 # ---------- pedido ----------
-if PIX or MERCADO_PAGO:
-    PAGAMENTO = '<div class="pix" style="margin-top:18px">' + (f'<b>Pague com Pix</b><code id="chave-pix">{E(PIX)}</code><button class="btn btn-turq" id="copiar-pix">Copiar chave Pix</button>' if PIX else '') + (f'<a class="btn btn-sec" href="{E(MERCADO_PAGO)}" target="_blank" rel="noopener">Pagar com cartão (Mercado Pago)</a>' if MERCADO_PAGO else '') + '</div>'
-else:
-    PAGAMENTO = '<div class="pix" style="margin-top:18px"><b>Como pagar</b><p class="pag-txt">Pix, cartão de débito ou crédito e dinheiro. Depois que você enviar o pedido, a gente confere a arte e manda o Pix ou o link do cartão na mesma conversa.</p></div>'
+# "Como pagar" sempre aparece; a chave Pix (e o Mercado Pago, se tiver) vem logo abaixo
+PAG_TXT = ("Pix, cartão de débito ou crédito e dinheiro. Depois que você enviar o pedido, a gente confere a arte e confirma o valor na mesma conversa. Aí é só pagar no Pix abaixo ou pedir o link do cartão."
+           if PIX else "Pix, cartão de débito ou crédito e dinheiro. Depois que você enviar o pedido, a gente confere a arte e manda o Pix ou o link do cartão na mesma conversa.")
+PIX_COPIA = re.sub(r"[^0-9]", "", PIX) if re.fullmatch(r"[0-9./-]+", PIX) else PIX  # CNPJ: copia só os números
+PAGAMENTO = (f'<div class="pix" style="margin-top:18px"><b>Como pagar</b><p class="pag-txt">{PAG_TXT}</p>'
+    + (f'<span class="pag-txt">Chave Pix (CNPJ):</span><code id="chave-pix" data-copiar="{E(PIX_COPIA)}">{E(PIX)}</code><button class="btn btn-turq" id="copiar-pix" type="button">Copiar chave Pix</button>' if PIX else '')
+    + (f'<a class="btn btn-sec" href="{E(MERCADO_PAGO)}" target="_blank" rel="noopener">Pagar com cartão (Mercado Pago)</a>' if MERCADO_PAGO else '')
+    + '</div>')
 corpo = f'''<div class="wrap" style="max-width:720px">
 <section class="cabeca-cat"><div class="migalha"><a href="../">Início</a> › Meu pedido</div><h1>Meu pedido</h1></section>
 <div id="pedido-vazio" class="vazio" hidden><span class="vazio-ico" aria-hidden="true">{ICO['sacola']}</span><b>Seu pedido está vazio.</b><span>Escolha um produto e toque em "Adicionar ao pedido".</span><a class="btn btn-pri" href="../">Ver produtos</a></div>

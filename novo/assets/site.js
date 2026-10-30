@@ -163,7 +163,7 @@ function iniciarPedido() {
   }
   lista.addEventListener("click", e => { const b = e.target.closest("[data-tirar]"); if (b) { Pedido.tirar(b.dataset.tirar); render(); } });
   $("#copiar-pix")?.addEventListener("click", async e => {
-    const txt = $("#chave-pix").textContent.trim();
+    const txt = ($("#chave-pix").dataset.copiar || $("#chave-pix").textContent).trim();  // CNPJ copia só os números
     try { await navigator.clipboard.writeText(txt); toast("Chave Pix copiada"); }
     catch (err) { const r = document.createRange(); r.selectNodeContents($("#chave-pix")); getSelection().removeAllRanges(); getSelection().addRange(r); toast("Chave selecionada, toque em Copiar"); }
   });
