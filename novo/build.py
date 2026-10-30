@@ -177,7 +177,12 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
             opc = f'<div class="campo"><label for="opcao">{rot}</label><select id="opcao">' + "".join(f'<option>{E(o["label"])} — {brl(o["preco"])}</option>' for o in p["opcoes"]) + '</select></div>'
         else:
             opc = ""  # preço único já aparece logo abaixo do título
-        opc += '<div class="campo campo-qtd"><span class="rot">Quantas peças?</span><div class="qtd"><button id="menos" aria-label="Menos">−</button><output id="qtd">1</output><button id="mais" aria-label="Mais">+</button></div></div>'
+        un = p.get("unidade") or ""
+        rot_qtd = "Quantas cartelas?" if "cartela" in un else "Quantas estampas?" if "estampa" in un else "Quantas peças?"
+        un_topo = un if len(p["opcoes"]) == 1 and not p.get("m2") and un not in ("", "cada") else ""  # ex.: "por cartela" ao lado do preço
+        if un_topo and not un_topo.startswith(("por ", "cada")): un_topo = "por " + un_topo  # "cartela A3" → "por cartela A3"
+        dados["un"] = un_topo
+        opc += f'<div class="campo campo-qtd"><span class="rot">{rot_qtd}</span><div class="qtd"><button id="menos" aria-label="Menos">−</button><output id="qtd">1</output><button id="mais" aria-label="Mais">+</button></div></div>'
         editavel = (slug == "canecas" and (p["sub"] == "canecas" or p["id"] in ("p6", "p7nt99ze"))) or (slug == "camisetas" and p["sub"] in ("dtf", "sublimacao_comum"))  # canecas, copos térmicos e camisetas DTF/sublimação comum têm editor 3D
         caixinha = (f'<label class="check caixinha-op"><input type="checkbox" id="caixinha"><img src="../../img/produtos/canecas-caixinha.webp" alt="" width="44" height="44" loading="lazy"><span class="cx-txt">Caixinha personalizada<small><b>+ {brl(p["caixinha"])}</b> · opcional</small></span></label>' if p.get("caixinha") else "")
         personalizar = (f'<a class="btn btn-pri btn-bloco" id="personalizar" href="../../editor/?c={slug}&p={p["id"]}">Personalize sem sair do site</a>' if editavel else "")
@@ -192,7 +197,7 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
   <div class="foto {fundo}"><img src="../../{p['img']}" alt="{E(p['nome'])}"></div>
   <div class="conf">
     <h1>{E(p["nome"])}</h1>
-    <div class="preco-topo"><div class="total"><strong id="total">{brl(pmin(p))}</strong><span id="total-un"></span></div>{caixinha}</div>
+    <div class="preco-topo"><div class="total"><strong id="total">{brl(pmin(p))}</strong><span id="total-un">{E(un_topo)}</span></div>{caixinha}</div>
     {personalizar}
     {opc}
     <div class="acoes">{botoes}</div>
@@ -213,8 +218,8 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
 
 # ---------- serviços (rascunhos) ----------
 SERV_TXT = {
- "gravacao-laser": [("Garrafas e copos", "Térmicos com nome, logo da empresa ou frase. Ótimo pra brinde corporativo."), ("Sua peça", "Traga seu copo, garrafa ou objeto e a gente grava."), ("Madeira e acrílico", "Placas, chaveiros, tábuas e troféus. Rascunho: confirme os materiais que você grava.")],
- "envelopamento": [("Frota e carros", "Adesivo com sua marca em carro, moto, van e caminhão."), ("Vitrine e fachada", "Adesivo de vitrine, jateado e recorte em vinil aplicado no local."), ("Medida no local", "A gente mede, cria a arte e aplica. Rascunho: confirme se cobra visita.")],
+ "gravacao-laser": [("Garrafas e copos", "Térmicos com nome, logo da empresa ou frase. Ótimo pra brinde corporativo."), ("Sua peça", "Traga seu copo, garrafa ou objeto e a gente grava."), ("Madeira e acrílico", "Placas, chaveiros, tábuas e troféus.")],
+ "envelopamento": [("Frota e carros", "Adesivo com sua marca em carro, moto, van e caminhão."), ("Vitrine e fachada", "Adesivo de vitrine, jateado e recorte em vinil aplicado no local."), ("Medida no local", "A gente mede, cria a arte e aplica.")],
  "design": [("Logo", "Criação ou redesenho da sua marca."), ("Arte pra impressão", "Cartão, panfleto, banner e adesivo prontos pra imprimir."), ("Posts", "Artes pro Instagram e WhatsApp do seu negócio.")],
 }
 for slug, nome, foto, fundo, resumo in SERVS:
@@ -229,7 +234,7 @@ for slug, nome, foto, fundo, resumo in SERVS:
         itens = "".join(f"<div><b>{E(a)}</b><span>{E(b)}</span></div>" for a,b in SERV_TXT[slug])
         corpo = f'''<div class="wrap"><section class="cabeca-cat"><div class="migalha"><a href="../">Início</a> › {E(nome)}</div><h1>{E(nome)}</h1><p>{E(resumo)}</p></section>
 <div class="produto"><div class="foto {fundo}"><img src="../{foto}" alt=""></div>
-<div class="conf"><span class="rascunho">Rascunho: textos e preços pra você revisar</span><div class="serv-lista" style="grid-template-columns:1fr">{itens}</div>
+<div class="conf"><div class="serv-lista" style="grid-template-columns:1fr">{itens}</div>
 <a class="btn btn-wpp btn-bloco" href="{wpp(f'Olá! Quero um orçamento de {nome}.')}">{ICO['wpp']} Pedir orçamento</a></div></div></div>'''
     pagina(f"{slug}/index.html", f"{nome} | Johen Arte Gráfica", f"{nome} em São Paulo. {resumo}", corpo, slug)
 
@@ -247,7 +252,7 @@ corpo = f'''<div class="wrap" style="max-width:720px">
   {PAGAMENTO}
   <div class="acoes" style="margin-top:18px">
     <a class="btn btn-wpp btn-bloco" id="enviar-pedido" href="https://wa.me/{WPP}">{ICO['wpp']} Enviar pedido no WhatsApp</a>
-    <p class="envio-arte">Depois de enviar, mande as artes e o comprovante na mesma conversa. Arquivo grande? <a href="{FORM}">Envie pelo formulário</a>.</p>
+    <p class="envio-arte">Depois de enviar, mande as artes na mesma conversa (o comprovante, só depois de pagar). Arquivo grande? <a href="{FORM}">Envie pelo formulário</a>.</p>
   </div>
 </div></div>'''
 pagina("pedido/index.html", "Meu pedido | Johen Arte Gráfica", "Revise seu pedido e envie pelo WhatsApp.", corpo)

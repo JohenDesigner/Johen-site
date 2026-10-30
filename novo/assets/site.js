@@ -118,7 +118,7 @@ function iniciarProduto() {
   function render() {
     const r = calc();
     totalEl.textContent = brl(r.total);
-    if (unEl) unEl.textContent = multiplica && qtd > 1 ? `(${brl(r.un)} cada)` : "";
+    if (unEl) unEl.textContent = multiplica && qtd > 1 ? `(${brl(r.un)} cada)` : (p.un || "");  // ex.: "por cartela"
     if (qtdOut) qtdOut.textContent = qtd;
     const pa = $("#pedir-agora"); if (pa) pa.href = wppLink(msgPedir());
   }
