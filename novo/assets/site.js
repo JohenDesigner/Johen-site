@@ -44,6 +44,17 @@ async function carregarCatalogo() {
   const r = await fetch(ROOT + "dados/produtos.json"); catalogo = await r.json(); return catalogo;
 }
 const norm = s => (s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+// nomes que o cliente digita pra cada categoria e serviço (mesmos termos das páginas)
+const BUSCA_CAT = { cartoes: "cartao de visita", panfletos: "panfleto folheto flyer", banners: "banner",
+  adesivos: "adesivo", camisetas: "camiseta camisa", canecas: "caneca" };
+const BUSCA_SERV = [
+  ["gravacao-laser", "Gravação a Laser", "gravacao laser garrafa copo madeira acrilico placa chaveiro tabua trofeu", "img/produtos/canecas-p9.webp"],
+  ["envelopamento", "Envelopamento e Vitrine", "envelopamento frota carro moto van caminhao vitrine fachada jateado", "img/produtos/adesivos-p16.webp"],
+  ["design", "Criação de Arte", "criacao arte logo logotipo marca post instagram", "img/produtos/panfletos-p2.webp"],
+  ["comercio", "Para seu Comércio", "comercio cardapio 3d site mensalidade comunicacao visual", "img/produtos/adesivos-p12.webp"]];
+const PAL_VAZIA = new Set(["de", "da", "do", "das", "dos", "e", "com", "pra", "para", "o", "a", "um", "uma"]);
+// "cartões"/"cartão" → "cartao", "canecas" → "caneca"
+const raizes = s => s.split(/[^a-z0-9]+/).filter(Boolean).map(w => w.length > 3 ? w.replace(/(oes|aes)$/, "ao").replace(/s$/, "") : w);
 function precoMin(p) { if (p.m2) return p.m2; return Math.min(...p.opcoes.map(o => o.preco)); }
 function iniciarBusca() {
   const inp = $("#busca"), box = $("#resultados"); if (!inp) return;
@@ -55,11 +66,17 @@ function iniciarBusca() {
       if (q.length < 2) { box.hidden = true; return; }
       let cat;
       try { cat = await carregarCatalogo(); } catch (e) { box.innerHTML = "<p>Não deu pra buscar agora. Confira sua internet e tente de novo.</p>"; box.hidden = false; return; }
+      // palavra por palavra, sem ligar pra plural ("cartão" acha "cartões", "panfleto a4" acha o A4)
+      const pals = raizes(q).filter(w => !PAL_VAZIA.has(w));
+      const bate = txt => { const h = raizes(norm(txt)).join(" "); return pals.length && pals.every(w => h.includes(w)); };
       const res = [];
       for (const [c, ps] of Object.entries(cat)) for (const p of ps)
-        if (norm(p.nome + " " + p.subNome + " " + c + " " + p.material).includes(q)) res.push([c, p]);
-      box.innerHTML = res.length ? res.slice(0, 12).map(([c, p]) =>
-        `<a href="${ROOT}${c}/${p.id}/"><img src="${ROOT}${p.img}" alt="" loading="lazy"><span>${p.nome}<small>a partir de ${brl(precoMin(p))}${p.m2 ? " o m²" : ""}</small></span></a>`).join("")
+        if (bate([p.nome, p.subNome, p.material, p.acab, p.impressao, BUSCA_CAT[c] || c].join(" "))) res.push([c, p]);
+      const serv = BUSCA_SERV.filter(s => bate(s[1] + " " + s[2]));
+      box.innerHTML = (res.length || serv.length) ? res.slice(0, 12).map(([c, p]) =>
+        `<a href="${ROOT}${c}/${p.id}/"><img src="${ROOT}${p.img}" alt="" loading="lazy"><span>${TIPO[c] ? TIPO[c] + " " : ""}${p.nome}<small>a partir de ${brl(precoMin(p))}${p.m2 ? " o m²" : ""}</small></span></a>`).join("") +
+        serv.map(([slug, nome, , img]) =>
+        `<a href="${ROOT}${slug}/"><img src="${ROOT}${img}" alt="" loading="lazy"><span>${nome}<small>orçamento pelo WhatsApp</small></span></a>`).join("")
         : `<p>Nada encontrado pra "${inp.value}". Tente "caneca", "cartão" ou "adesivo", ou <a href="${wppLink("Olá! Procurei no site e não achei: " + inp.value)}">pergunte no WhatsApp</a>.</p>`;
       box.hidden = false;
     }, 180);
@@ -192,5 +209,8 @@ function iniciarPedido() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // links para "#seção" param abaixo do cabeçalho fixo, não por baixo dele
+  const topo = $(".topo");
+  if (topo) { const folga = () => document.documentElement.style.scrollPaddingTop = topo.offsetHeight + 12 + "px"; folga(); addEventListener("resize", folga); }
   Pedido.contar(); iniciarMenu(); iniciarBusca(); iniciarHero(); iniciarFiltros(); iniciarProduto(); iniciarPedido();
 });
