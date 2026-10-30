@@ -13,8 +13,10 @@
     // camiseta DTF: estampa até 28 x 35 cm (aprox. A3) na frente; nas "Frente e Verso", também nas costas
     camiseta:  { tipo: "camiseta", w: 28, h: 35, laser: false, obj: "camiseta", rot: "Área de estampa", sub: "frente · até 28 x 35 cm", guia: null },
     camiseta2: { tipo: "camiseta", w: 28, h: 35, laser: false, verso: true, obj: "camiseta", rot: "Área de estampa", sub: "até 28 x 35 cm em cada lado", guia: null },
+    // sublimação comum (poliéster): frente e verso, só em camiseta branca (a sublimação não aparece em tecido escuro)
+    camisetaSub: { tipo: "camiseta", w: 28, h: 35, laser: false, verso: true, soBranca: true, obj: "camiseta", rot: "Área de estampa", sub: "até 28 x 35 cm em cada lado", guia: null },
   };
-  const MOD = MODELOS[cId === "camisetas" ? (["p8", "p9", "p10"].includes(pId) ? "camiseta2" : "camiseta") : ({ p6: "copo", p7nt99ze: "copo360" }[pId] || "caneca")];
+  const MOD = MODELOS[cId === "camisetas" ? (pId === "p1" ? "camisetaSub" : ["p8", "p9", "p10"].includes(pId) ? "camiseta2" : "camiseta") : ({ p6: "copo", p7nt99ze: "copo360" }[pId] || "caneca")];
   const corDoCorpo = MOD.tipo !== "caneca";               // copo e camiseta: a cor escolhida é a do produto todo
   const SEU = { caneca: "sua caneca", copo: "seu copo", camiseta: "sua camiseta" }[MOD.obj];
   const ACO = "#cfd3d6";                                   // cor do aço que aparece onde o laser grava
@@ -29,7 +31,7 @@
   if (MOD.tipo !== "caneca") document.getElementById("centralizar").textContent = MOD.volta ? "Cobrir o copo todo" : "Preencher a área";
   const guia = document.querySelector(".ed-faixa-guia");
   if (MOD.guia) guia.querySelectorAll("span").forEach((el, i) => el.textContent = MOD.guia[i]); else guia.hidden = true;
-  const CORES = MOD.tipo === "camiseta" ? [["Branca", "#f3f3f1"], ["Preta", "#1d1e20"]]
+  const CORES = MOD.soBranca ? [["Branca", "#f3f3f1"]] : MOD.tipo === "camiseta" ? [["Branca", "#f3f3f1"], ["Preta", "#1d1e20"]]
     : MOD.tipo === "copo" ? [["Preto", "#1e1f21"], ["Branco", "#f4f4f2"]]
     : [["Branca", "#ffffff"], ["Vermelha", "#d6312b"], ["Preta", "#222222"], ["Azul", "#1f5fbf"], ["Verde", "#2f9e57"], ["Amarela", "#f2c230"], ["Rosa", "#ec7fb0"]];
   let produto = null, detalhe = "#ffffff", fundoCaneca = corDoCorpo ? CORES[0][1] : "#ffffff", corNome = corDoCorpo ? CORES[0][0] : "Branca";
@@ -340,7 +342,7 @@
     const lista = corDoCorpo || /cor/i.test(produto.nome) ? CORES : null;
     if (corDoCorpo) coresBox.querySelector(".rot").textContent = MOD.tipo === "camiseta" ? "Cor da camiseta" : "Cor do copo";
     if (/mágica/i.test(produto.nome)) { fundoCaneca = "#2a2a2a"; detalhe = "#2a2a2a"; corNome = "Preta (mágica)"; }
-    if (lista) {
+    if (lista && lista.length > 1) {   // uma cor só (sublimação): nem mostra a escolha
       coresBox.hidden = false;
       coresBox.querySelector("div").innerHTML = lista.map(([n, c], i) => `<button class="cor" style="--c:${c}" aria-label="${n}" aria-pressed="${i === 0}" data-c="${c}" data-n="${n}"></button>`).join("");
       coresBox.addEventListener("click", e => { const b = e.target.closest(".cor"); if (!b) return;
