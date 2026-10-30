@@ -163,7 +163,7 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 @media(min-width:760px){.grade{grid-template-columns:repeat(3,1fr);gap:34px 22px}}
 @media(min-width:760px){.grade-4{grid-template-columns:repeat(4,1fr)}}
 .pcard{text-decoration:none;display:flex;flex-direction:column;gap:10px}
-.pcard-img{aspect-ratio:1;border-radius:var(--raio);overflow:hidden}
+.pcard-img{aspect-ratio:1;border-radius:var(--raio);overflow:hidden;transition:opacity .18s ease}
 .pcard-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
 .pcard:hover .pcard-img img{transform:scale(1.035)}
 .pcard-rod{display:flex;flex-direction:column;gap:2px}
@@ -317,6 +317,11 @@ body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 .mcard > span{display:block;padding:20px 22px;font-family:var(--display);font-weight:500;font-size:20px;color:var(--turquesa-esc)}
 .mcard > span::after{content:" ›";color:var(--laranja)}
 .mcard-hero{border-radius:6px}
+/* toque nos cards (celular): sem o retângulo cinza do navegador; o card afunda de leve enquanto o dedo está nele */
+.mcard,.pcard{-webkit-tap-highlight-color:transparent;transition:transform .18s ease}
+.mcard:active,.pcard:active{transform:scale(.985)}
+.pcard:active .pcard-img{opacity:.92}
+@media(prefers-reduced-motion:reduce){.mcard:active,.pcard:active{transform:none}}
 .mcard-hero .mcard-img{aspect-ratio:4/4.4;border-radius:0;background:var(--t-laranja)}
 @media(min-width:760px){.mcard-hero .mcard-img{aspect-ratio:16/8}}
 
