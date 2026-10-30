@@ -145,6 +145,15 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
     os.makedirs(os.path.dirname(caminho) or ".", exist_ok=True)
     open(caminho, "w").write(doc)
 
+def gemeo(c, p):  # outro produto da mesma categoria com o mesmo nome
+    return any(q["id"] != p["id"] and q["nome"].strip().lower() == p["nome"].strip().lower() for q in D[c])
+
+def faixa_prazo(ps):  # "2 dias úteis" e "3 a 4 dias úteis" → "1 a 4 dias úteis" (a categoria mostra do menor ao maior prazo)
+    nums = [int(n) for p in ps for n in re.findall(r"\d+", p.get("prazo", ""))]
+    if not nums: return ps[0]["prazo"]
+    lo, hi = min(nums), max(nums)
+    return ps[0]["prazo"] if lo == hi and len({p["prazo"] for p in ps}) == 1 else f"{lo} a {hi} dias úteis" if lo != hi else f"{lo} {'dia útil' if lo == 1 else 'dias úteis'}"
+
 def pcard(c, p, fundo):
     un = " o m²" if p.get("m2") else ""
     # subtítulo só quando acrescenta algo (ex.: "Couché Brilho" já está em "Couché 250g — Couché Brilho")
@@ -153,6 +162,8 @@ def pcard(c, p, fundo):
     # "21x30cm (A4)" também não acrescenta nada a "21x30cm — 115g Brilho A4 (Frente)": todas as palavras já estão no nome
     palavras = lambda x: set(re.findall(r"[\w]+", x.lower()))
     sub_html = f"<small>{E(sub)}</small>" if sub and norm(sub) not in norm(p['nome']) and not palavras(sub) <= palavras(p['nome']) else ""
+    # dois produtos com o mesmo nome na categoria (ex.: os dois "Copo Térmico 473ml"): o acabamento diz qual é qual
+    if gemeo(c, p) and p.get("acab"): sub_html = f"<small>{E(p['acab'].strip())}</small>"
     return f'''<a class="pcard" href="{p['id']}/" data-sub="{p['sub']}"><div class="pcard-img {fundo}"><img src="../{p['img']}" alt="{E(p['nome'])}" loading="lazy"></div>
 <div class="pcard-rod"><b>{E(p['nome'])}</b>{sub_html}<span class="pcard-preco">a partir de {brl(pmin(p))}{un}</span></div></a>'''
 
@@ -163,7 +174,7 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
     for p in ps:
         if p["sub"] not in [s[0] for s in subs]: subs.append((p["sub"], p["subNome"]))
     filtros = '<button data-f="todos" aria-pressed="true">Todos</button>' + "".join(f'<button data-f="{s}" aria-pressed="false">{E(n)}</button>' for s,n in subs)
-    prazo = ps[0]["prazo"]
+    prazo = faixa_prazo(ps)
     corpo = f'''<div class="wrap">
 <section class="cabeca-cat"><div class="migalha"><a href="../">Início</a> › {E(nome)}</div><h1>{E(nome)}</h1><p>{E(resumo)} Produção em {E(prazo)}.</p></section>
 <div class="filtros" role="group" aria-label="Filtrar por tipo">{filtros}</div>
@@ -174,6 +185,7 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
 
     for p in ps:
         dados = {"c": slug, "id": p["id"], "nome": p["nome"], "img": p["img"], "opcoes": p["opcoes"], "m2": p.get("m2"), "minimo": p.get("minimo"), "caixinha": p.get("caixinha")}
+        if gemeo(slug, p) and p.get("acab"): dados["dif"] = p["acab"].strip()  # vai no pedido pra saber qual dos dois foi pedido
         if p.get("m2"):
             opc = f'''<div class="campo"><span class="rot">{"Tamanho da placa" if slug == "banners" else "Tamanho do adesivo"}</span><div class="dupla"><div><label for="largura">Largura (cm)</label><input id="largura" type="number" inputmode="decimal" min="1" value="50"></div><div><label for="altura">Altura (cm)</label><input id="altura" type="number" inputmode="decimal" min="1" value="50"></div></div><small>{brl(p['m2'])} o m². Pedido mínimo {brl(p['minimo'])}.</small><p class="aviso-min" id="aviso-min" hidden>Esse tamanho ficou abaixo do pedido mínimo, então o valor sobe pra {brl(p['minimo'])}.</p></div>'''
         elif len(p["opcoes"]) > 1:

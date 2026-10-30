@@ -9,3 +9,5 @@
 7. Cartões 300g: "Impressão: Frente / Frente e Verso" sem opção de escolher. O preço é com verso incluso ou só frente? Se o verso custa a mais, me diga quanto.
 
 Para atualizar produtos e preços: editar `dados/produtos.json` e rodar `python3 build.py` dentro de `novo/`.
+
+8. Há dois produtos chamados "Copo Térmico 473ml" em Canecas (R$ 45/60 gravação 1 lado ou frente e verso, e R$ 70 gravação 360º). O site agora mostra o acabamento pra diferenciar, mas vale dar um nome próprio ao de R$ 70 no produtos.json (ex.: "Copo Térmico 473ml — Gravação 360º").

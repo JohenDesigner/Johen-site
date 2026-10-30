@@ -115,7 +115,8 @@ function iniciarProduto() {
     const o = p.opcoes[sel ? sel.selectedIndex : 0];
     un = o.preco + (cx?.checked ? p.caixinha : 0);
     // opção única ("cada", "por cartela") não entra na descrição: vira "2 un." / "3 cartelas"
-    const rotulo = p.opcoes.length === 1 ? "" : o.label;
+    // p.dif: acabamento que separa dois produtos de mesmo nome (ex.: copo com gravação 360º)
+    const rotulo = [p.dif, p.opcoes.length === 1 ? "" : o.label.replace(/\s*\(\+R\$\s*\d+\)/, "")].filter(Boolean).join(" · ");
     desc = cx?.checked ? (rotulo ? rotulo + " + caixinha personalizada" : "com caixinha personalizada") : rotulo;
     return { total: un * (multiplica ? qtd : 1), un, desc };
   }
