@@ -12,7 +12,9 @@
     copo360: { tipo: "copo", w: 25.7, h: 12, laser: true, volta: true, obj: "copo", rot: "Área de gravação a laser", sub: "volta toda o copo (360°) · 12 cm de altura", guia: ["‹ costas", "frente", "costas ›"] },
     // camiseta DTF: estampa até 28 x 35 cm (aprox. A3) na frente; nas "Frente e Verso", também nas costas
     camiseta:  { tipo: "camiseta", w: 28, h: 35, laser: false, obj: "camiseta", rot: "Área de estampa", sub: "frente · até 28 x 35 cm", guia: null },
-    camiseta2: { tipo: "camiseta", w: 28, h: 35, laser: false, verso: true, obj: "camiseta", rot: "Área de estampa", sub: "até 28 x 35 cm em cada lado", guia: null },
+    // DTF Premium Frente e Verso (p8, p9, p10): regra do produto — frente até 10 cm de estampa, costas até 25 x 40 cm
+    camiseta2: { tipo: "camiseta", w: 28, h: 35, laser: false, verso: true, obj: "camiseta", rot: "Área de estampa", sub: "frente até 10 cm · costas até 25 x 40 cm", guia: null,
+                 limites: { frente: [10, 10, "frente · estampa até 10 cm"], costas: [25, 40, "costas · estampa até 25 x 40 cm"] } },
     // sublimação comum (poliéster): frente e verso, só em camiseta branca (a sublimação não aparece em tecido escuro)
     camisetaSub: { tipo: "camiseta", w: 28, h: 35, laser: false, verso: true, soBranca: true, obj: "camiseta", rot: "Área de estampa", sub: "até 28 x 35 cm em cada lado", guia: null },
   };
@@ -76,7 +78,8 @@
     if (texto) {
       c.fillStyle = MOD.laser ? ACO : corTexto; c.textAlign = "center"; c.textBaseline = "middle";
       let fs = MOD.tipo === "camiseta" ? 160 : 72; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`;
-      while (c.measureText(texto).width > A.w * (larga && MOD.w > 15 ? .36 : .92) && fs > 24) { fs -= 2; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`; }
+      const Lt = MOD.limites && MOD.limites[lado], maxTxt = Math.min(A.w * (larga && MOD.w > 15 ? .36 : .92), Lt ? Lt[0] * A.w / MOD.w : Infinity);
+      while (c.measureText(texto).width > maxTxt && fs > 24) { fs -= 2; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`; }
       c.fillText(texto, A.x + A.w / 2, fotos.length ? A.y + A.h - fs * .8 : A.y + A.h / 2);
     }
     c.restore();
@@ -92,6 +95,7 @@
   };
 
   function desenhar(final) {
+    if (img && MOD.limites) limitar();
     document.dispatchEvent(new Event("caneca-mudou"));
     ctx.clearRect(0, 0, cv.width, cv.height);
     ctx.fillStyle = fundoCaneca; ctx.fillRect(A.x, A.y, A.w, A.h);
@@ -120,8 +124,14 @@
   // imagem larga (como a da caneca toda) cobre a área; imagem quadrada/alta fica na frente, na altura toda.
   // Na área estreita do copo, a imagem cabe inteira na largura.
   const escCobrir = () => img ? Math.max(A.w / img.width, A.h / img.height) : 1;
-  const escPadrao = () => !img ? 1 : !larga ? Math.min(A.w / img.width, A.h / img.height)
-    : (img.width / img.height >= 1.8 ? escCobrir() : A.h / img.height);
+  // tamanho máximo da estampa no lado aberto (camiseta DTF frente e verso: frente até 10 cm, costas até 25 x 40 cm)
+  const escMax = () => { const L = MOD.limites && MOD.limites[lado]; if (!L || !img) return Infinity;
+    const k = A.w / MOD.w; return Math.min(L[0] * k / img.width, Math.min(L[1], MOD.h) * k / img.height); };
+  const escPadrao = () => Math.min(escMax(), !img ? 1 : !larga ? Math.min(A.w / img.width, A.h / img.height)
+    : (img.width / img.height >= 1.8 ? escCobrir() : A.h / img.height));
+  let avisouLimite = false;
+  function limitar() { const m = escMax(); if (esc <= m * 1.001) return; esc = m; zoom.value = 100;
+    if (!avisouLimite && pronto) { avisouLimite = true; toast(`Tamanho máximo: ${MOD.limites[lado][2].replace(" · ", ": ")}.`); } }
   function encaixar(cobrir) { if (!img) return; esc = cobrir ? escCobrir() : escPadrao(); ix = iy = 0; zoom.value = Math.round(esc / escPadrao() * 100); }
 
   // arrastar e pinça na área de impressão
@@ -274,11 +284,11 @@
       campoTxt.value = texto; document.getElementById("cor-texto").value = corTexto;
       document.getElementById("bloco-texto").hidden = !texto;
       document.getElementById("qualidade").hidden = true; mostrarAjustes();
-      document.querySelector(".ed-faixa-tit small").textContent = `${lado} · até ${MOD.w} x ${MOD.h} cm`;
+      document.querySelector(".ed-faixa-tit small").textContent = MOD.limites ? MOD.limites[lado][2] : `${lado} · até ${MOD.w} x ${MOD.h} cm`;
       document.dispatchEvent(new CustomEvent("mockup-lado", { detail: lado }));
       desenhar();
     });
-    document.querySelector(".ed-faixa-tit small").textContent = `frente · até ${MOD.w} x ${MOD.h} cm`;
+    document.querySelector(".ed-faixa-tit small").textContent = MOD.limites ? MOD.limites.frente[2] : `frente · até ${MOD.w} x ${MOD.h} cm`;
   } else if (abas && MOD.tipo === "camiseta") {
     // camiseta de um lado só: o cliente escolhe onde vai a estampa; a mesma arte muda de lado
     abas.hidden = false; abas.setAttribute("aria-label", "Onde vai a estampa");
