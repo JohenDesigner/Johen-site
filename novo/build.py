@@ -84,7 +84,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head=""):
 <link rel="stylesheet" href="{R}assets/site.css?v={VER}">
 </head>
 <body>
-<div class="promo">5% OFF na 1ª compra — é só dizer 'PRIMEIRA' no WhatsApp.</div>
+<div class="promo">5% OFF na 1ª compra — é só dizer <span class="nw">“PRIMEIRA” no WhatsApp.</span></div>
 <header class="topo">
   <div class="wrap">
     <div class="topo-linha">
