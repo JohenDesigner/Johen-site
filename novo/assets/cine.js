@@ -205,12 +205,16 @@
       ev.preventDefault();
       if (form.elements._honey.value) return; // robô
       let valido = true;
-      form.querySelectorAll("[required]").forEach((c) => {
-        const ok = c.type === "email" ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.value) : c.value.trim().length > 1;
+      // WhatsApp com DDD (10 ou 11 números, aceita +55); e-mail é opcional, mas se vier tem que ser válido
+      const zap = form.elements.telefone.value.replace(/\D/g, "").replace(/^55(?=\d{10,11}$)/, "");
+      const zapOk = zap.length === 10 || zap.length === 11;
+      form.querySelectorAll("[required], [type=email]").forEach((c) => {
+        const ok = c.type === "email" ? !c.value.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.value.trim())
+          : c.name === "telefone" ? zapOk : c.value.trim().length > 1;
         c.closest(".cin-campo").classList.toggle("erro", !ok);
         if (!ok) valido = false;
       });
-      if (!valido) return avisar("Confira os campos destacados.", "falha");
+      if (!valido) return avisar(!zapOk ? "Confira os campos destacados. O WhatsApp precisa do DDD, ex.: (11) 98287-7142." : "Confira os campos destacados.", "falha");
 
       const dados = Object.fromEntries(new FormData(form));
       delete dados._honey;

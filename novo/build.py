@@ -422,7 +422,7 @@ corpo = f'''
   <div class="cin-servicos">{serv_html}</div>
   <div class="painel revelar">
     <h3>Também fazemos</h3>
-    <ul class="chips">{"".join(f'<li class="chip">{E(x)}</li>' for x in TAMBEM)}</ul>
+    <ul class="chips">{"".join(f'<li class="chip"><a href="{wpp(f"Olá! Quero um orçamento de {x}.")}">{E(x)}</a></li>' for x in TAMBEM)}</ul>
     <a class="link-seta" href="{wpp('Olá! Vim pelo site e não achei o que preciso no catálogo.')}">Não achou o que precisa? Fale com a gente no WhatsApp</a>
   </div>
 </section>
@@ -486,8 +486,8 @@ corpo = f'''
       <p>Pelo WhatsApp a resposta é mais rápida. Se preferir, deixe seus dados aqui que a gente chama você.</p>
       <form class="cin-form" data-destino="{FORMSUBMIT}" novalidate>
         <div class="cin-campo"><label for="f-nome">Nome</label><input id="f-nome" name="nome" autocomplete="name" required></div>
-        <div class="cin-campo"><label for="f-email">E-mail</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
-        <div class="cin-campo"><label for="f-tel">WhatsApp</label><input id="f-tel" name="telefone" type="tel" autocomplete="tel" inputmode="tel" required></div>
+        <div class="cin-campo"><label for="f-email">E-mail (opcional)</label><input id="f-email" name="email" type="email" autocomplete="email"></div>
+        <div class="cin-campo"><label for="f-tel">WhatsApp</label><input id="f-tel" name="telefone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(11) 90000-0000" required></div>
         <div class="cin-campo"><label for="f-prod">Produto</label><select id="f-prod" name="produto"><option value="">Escolha…</option>{opcoes_form}<option>Outro</option></select></div>
         <div class="cin-campo cin-inteiro"><label for="f-msg">O que você precisa? (quantidade, tamanho, prazo)</label><textarea id="f-msg" name="mensagem" rows="4"></textarea></div>
         <input type="text" name="_honey" class="pote" tabindex="-1" autocomplete="off" aria-hidden="true">

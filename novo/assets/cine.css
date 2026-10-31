@@ -68,7 +68,10 @@
 .cin-servicos{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .cin-servicos .mcard>span{font-size:18px}
 .chips{list-style:none;margin:0 0 22px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
-.chip{font-size:14px;padding:7px 14px;border-radius:999px;background:#fff;border:1px solid rgba(42,38,34,.1)}
+.chip{font-size:14px;border-radius:999px;background:#fff;border:1px solid rgba(42,38,34,.1)}
+/* cada item abre o orçamento no WhatsApp (antes parecia botão e não fazia nada) */
+.chip a{display:block;padding:7px 14px;color:inherit;text-decoration:none;border-radius:inherit}
+.chip:has(a:active){background:#f3efe9}
 @media(max-width:1000px){.cin-mascotes{grid-template-columns:repeat(3,1fr)}.cin-servicos{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.cin-mascotes{grid-template-columns:repeat(2,1fr);gap:12px}.cin-masc b{font-size:22px}.cin-masc .masc-anim{max-width:110px!important}}
 
