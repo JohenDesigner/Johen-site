@@ -14,3 +14,5 @@ Para atualizar produtos e preços: editar `dados/produtos.json` e rodar `python3
 8. Há dois produtos chamados "Copo Térmico 473ml" em Canecas (R$ 45/60 gravação 1 lado ou frente e verso, e R$ 70 gravação 360º). O site agora mostra o acabamento pra diferenciar, mas vale dar um nome próprio ao de R$ 70 no produtos.json (ex.: "Copo Térmico 473ml — Gravação 360º").
 
 10. Nome do banner de lona brilho: no produtos.json está "Banner ou faixa - Lona 480g Brilho — Acabamento em Madeira" (hífen e travessão juntos), enquanto o fosco é "Banner Lona 480g Fosco — Acabamento em Madeira". Sugestão: "Banner ou Faixa Lona 480g Brilho — Acabamento em Madeira" e o mesmo padrão no fosco. Não mudei porque é dado do produto.
+
+11. Editor nos produtos novos: usei 9 x 5 cm pro cartão de visita (medida padrão) e a proporção A4 pras cartelas de etiquetas e folha adesiva (Etiquetas Meio-corte, Corte Redondo e Folha Adesiva), que não têm a medida escrita no site. Se o seu cartão ou a sua cartela forem de outra medida, me diga que eu ajusto. Na sublimação total a área cobre a camiseta inteira, só pra prévia.

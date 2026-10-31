@@ -178,6 +178,7 @@ function iniciarProduto() {
     const pers = $("#personalizar");
     if (pers) { const u = new URL(pers.href); qtd > 1 ? u.searchParams.set("q", qtd) : u.searchParams.delete("q");
       // banner: leva o tamanho (pronto ou personalizado) pro editor, que monta a área nessa medida
+      if (p.m2) { const w = parseFloat(larg.value) || 0, h = parseFloat(alt.value) || 0; if (w > 0 && h > 0) { u.searchParams.set("w", w); u.searchParams.set("h", h); } }
       if (p.m2livre && sel) {
         const m = livre() ? [parseFloat(larg.value) || 0, parseFloat(alt.value) || 0] : (p.opcoes[sel.selectedIndex].label.match(/(\d+)×(\d+)/) || []).slice(1).map(Number);
         u.searchParams.set("o", livre() ? "livre" : sel.selectedIndex);
@@ -239,7 +240,7 @@ function iniciarPedido() {
     lista.innerHTML = itens.map(x => `
       <div class="item">
         ${x.artes ? `<div class="item-fotos">${x.artes.map(a => `<img src="${a}" alt="">`).join("")}</div>` : `<img src="${x.arte || ROOT + x.img}" alt="">`}
-        <div><b>${nomeItem(x)}</b><small>${linhaItem(x)}</small>${x.artes ? "<small>Com sua arte (prévia da frente e das costas)</small>" : x.arte ? "<small>Com sua arte (prévia)</small>" : ""}<button data-tirar="${x.uid}">Remover</button></div>
+        <div><b>${nomeItem(x)}</b><small>${linhaItem(x)}</small>${x.artes ? "<small>Com sua arte (prévia dos dois lados)</small>" : x.arte ? "<small>Com sua arte (prévia)</small>" : ""}<button data-tirar="${x.uid}">Remover</button></div>
         <div class="valor">${brl(x.total)}</div>
       </div>`).join("");
     $("#pedido-total").textContent = brl(tot);

@@ -50,7 +50,7 @@ async function iniciar() {
   const caneca = new T.Group(); scene.add(caneca);           // grupo que gira (caneca ou copo)
   const TW = Math.min(3072, renderer.capabilities.maxTextureSize);
   const V = (x, y) => new T.Vector2(x, y);
-  const M = MOD.tipo === "camiseta" ? await montarCamiseta() : MOD.tipo === "banner" ? montarBanner() : MOD.tipo === "copo" ? montarCopo() : montarCaneca();
+  const M = MOD.tipo === "camiseta" ? await montarCamiseta() : MOD.tipo === "plano" ? montarPlano() : MOD.tipo === "copo" ? montarCopo() : montarCaneca();
   const alvo = M.alvo, pintarTextura = M.pintar;
   camera.far = Math.max(20, M.dist * 2.5); camera.updateProjectionMatrix();
 
@@ -91,51 +91,59 @@ async function iniciar() {
     return { alvo: new T.Vector3(0, 0.47, 0), dist: 3.3, rot: 0.45, pintar };
   }
 
-  // ---------- banner de lona: medida escolhida no editor (muda na hora), frente com a arte e verso liso.
-  // Lona com madeira: ripas em cima e embaixo e cordinha pra pendurar. Ilhós total: argolas de metal em volta.
-  function montarBanner() {
-    const TB = Math.min(2048, TW);
-    const tc = document.createElement("canvas"); tc.width = tc.height = TB; const tx = tc.getContext("2d");
-    const tex = new T.CanvasTexture(tc); tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    const matFrente = new T.MeshPhysicalMaterial({ map: tex, roughness: MOD.fosco ? 0.85 : 0.4, metalness: 0, clearcoat: MOD.fosco ? 0 : 0.45, clearcoatRoughness: 0.35 });
-    const matVerso = new T.MeshStandardMaterial({ color: 0xe6e6e2, roughness: 0.92 });
+  // ---------- peça plana (banner, placa, adesivo, cartela, cartão, panfleto): medida da peça (muda na hora no banner e
+  // nos itens por m²), frente com a arte e verso com a arte do verso (ou liso). Espessura real (placa de 2 mm mais grossa
+  // que papel), cantos arredondados no cartão que tem, ripas de madeira e cordinha no banner com madeira, ilhós no ilhós total.
+  function montarPlano() {
+    const TB = Math.min(2048, TW), alfa = !!MOD.cantos;
+    const tela = () => { const c = document.createElement("canvas"); c.width = c.height = TB; const t = new T.CanvasTexture(c);
+      t.colorSpace = T.SRGBColorSpace; t.anisotropy = renderer.capabilities.getMaxAnisotropy(); return { c, x: c.getContext("2d"), t }; };
+    const fr = tela(), vs = tela();
+    const acab = MOD.fosco ? { roughness: 0.85, clearcoat: 0 } : MOD.papel ? { roughness: 0.45, clearcoat: 0.6, clearcoatRoughness: 0.25 } : { roughness: 0.4, clearcoat: 0.45, clearcoatRoughness: 0.35 };
+    const mat = t => new T.MeshPhysicalMaterial({ map: t, metalness: 0, ...acab, transparent: alfa, alphaTest: alfa ? 0.5 : 0 });
+    const frente = new T.Mesh(new T.PlaneGeometry(1, 1), mat(fr.t));
+    const verso = new T.Mesh(new T.PlaneGeometry(1, 1), mat(vs.t)); verso.rotation.y = Math.PI;
+    const borda = new T.Mesh(new T.BoxGeometry(1, 1, 1), new T.MeshStandardMaterial({ color: 0xf1f1ee, roughness: 0.8 }));
     const matMadeira = new T.MeshStandardMaterial({ color: 0xc79a62, roughness: 0.72 });
     const matMetal = new T.MeshStandardMaterial({ color: 0xd3d6d8, metalness: 1, roughness: 0.28 });
     const matCorda = new T.MeshStandardMaterial({ color: 0x3b3a38, roughness: 0.9 });
-    const frente = new T.Mesh(new T.PlaneGeometry(1, 1), matFrente);
-    const verso = new T.Mesh(new T.PlaneGeometry(1, 1), matVerso); verso.rotation.y = Math.PI;
-    const extras = new T.Group(); caneca.add(frente, verso, extras);
-    const cil = (a, b, r, mat) => {     // cilindro de a até b
-      const d = new T.Vector3().subVectors(b, a), m = new T.Mesh(new T.CylinderGeometry(r, r, d.length(), 16), mat);
-      m.position.copy(a).addScaledVector(d, 0.5); m.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), d.normalize()); return m;
+    const extras = new T.Group(); caneca.add(frente, verso, borda, extras);
+    const cil = (a, b, r, m) => {     // cilindro de a até b
+      const d = new T.Vector3().subVectors(b, a), o = new T.Mesh(new T.CylinderGeometry(r, r, d.length(), 16), m);
+      o.position.copy(a).addScaledVector(d, 0.5); o.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), d.normalize()); return o;
     };
     function montar() {
       extras.children.forEach(o => o.geometry.dispose()); extras.clear();
       const S = 2.2 / Math.max(MOD.w, MOD.h), W = MOD.w * S, H = MOD.h * S;   // maior lado com 2,2 unidades
-      frente.scale.set(W, H, 1); verso.scale.set(W, H, 1);
+      const E2 = Math.max((MOD.esp || 0.03) * S, 0.006) / 2;                   // meia espessura (mínimo visível)
+      frente.scale.set(W, H, 1); verso.scale.set(W, H, 1); frente.position.z = E2 + 0.0004; verso.position.z = -E2 - 0.0004;
+      borda.scale.set(W - 0.0008, H - 0.0008, E2 * 2); borda.visible = !alfa;
       if (MOD.ilhos) {                  // argola a cada ~30 cm, 3 cm pra dentro da borda
         const g = new T.TorusGeometry(Math.max(0.9 * S, 0.012), Math.max(0.28 * S, 0.004), 8, 24), dentro = 3 * S;
         const nx = Math.max(2, Math.round((MOD.w - 6) / 30) + 1), ny = Math.max(2, Math.round((MOD.h - 6) / 30) + 1);
         const pts = [];
         for (let i = 0; i < nx; i++) { const x = -W / 2 + dentro + (W - 2 * dentro) * i / (nx - 1); pts.push([x, H / 2 - dentro], [x, -H / 2 + dentro]); }
         for (let j = 1; j < ny - 1; j++) { const y = -H / 2 + dentro + (H - 2 * dentro) * j / (ny - 1); pts.push([-W / 2 + dentro, y], [W / 2 - dentro, y]); }
-        for (const [x, y] of pts) for (const z of [0.002, -0.002]) { const m = new T.Mesh(g, matMetal); m.position.set(x, y, z); extras.add(m); }
-      } else {                          // ripas de madeira (2,5 cm além de cada lado) e cordinha
+        for (const [x, y] of pts) for (const z of [E2 + 0.002, -E2 - 0.002]) { const m = new T.Mesh(g, matMetal); m.position.set(x, y, z); extras.add(m); }
+      } else if (MOD.madeira) {         // ripas de madeira (2,5 cm além de cada lado) e cordinha
         const r = Math.max(1.2 * S, 0.016), L = W + 5 * S;
         for (const y of [H / 2 + r * 0.5, -H / 2 - r * 0.5]) extras.add(cil(new T.Vector3(-L / 2, y, 0), new T.Vector3(L / 2, y, 0), r, matMadeira));
         const topo = H / 2 + r * 0.5, gancho = new T.Vector3(0, topo + Math.min(0.35, W * 0.18), 0), rc = Math.max(0.25 * S, 0.004);
         for (const x of [-L / 2 + r, L / 2 - r]) extras.add(cil(new T.Vector3(x, topo, 0), gancho, rc, matCorda));
       }
     }
-    function pintar() {
+    function pintarLado({ x, t }, lado) {
       const E = window.CanecaArte;
-      tx.fillStyle = "#ffffff"; tx.fillRect(0, 0, TB, TB);
-      if (E) { const A = E.area; tx.save(); tx.scale(TB / A.w, TB / A.h); tx.translate(-A.x, -A.y); E.pintar(tx); tx.restore(); }
-      tex.needsUpdate = true;
+      x.clearRect(0, 0, TB, TB); x.save();
+      if (alfa) { x.beginPath(); x.roundRect(0, 0, TB, TB, [{ x: MOD.cantos / MOD.w * TB, y: MOD.cantos / MOD.h * TB }]); x.clip(); }
+      x.fillStyle = "#ffffff"; x.fillRect(0, 0, TB, TB);
+      if (E && lado) { const A = E.area; x.scale(TB / A.w, TB / A.h); x.translate(-A.x, -A.y); E.pintar(x, lado); }
+      x.restore(); t.needsUpdate = true;
     }
+    function pintar() { pintarLado(fr, "frente"); pintarLado(vs, MOD.verso ? "costas" : null); }
     document.addEventListener("banner-medida", montar);
     montar();
-    return { alvo: new T.Vector3(0, 0.08, 0), dist: 6, rot: 0.35, elev: 0.08, semSombra: true, balanco: true, pintar };
+    return { alvo: new T.Vector3(0, MOD.madeira ? 0.08 : 0, 0), dist: 6, rot: 0.35, elev: 0.08, semSombra: true, balanco: true, pintar };
   }
 
   // ---------- copo térmico 473 ml: inox com pintura, base e borda de aço, tampa preta com trava
@@ -243,7 +251,7 @@ async function iniciar() {
         x.clearRect(0, 0, c.width, c.height);
         if (E && E.lados && E.lados.includes(l)) {
           const A = E.area, w = MOD.w / 10 * ppu, h = MOD.h / 10 * ppu;
-          const cx = (0 - X0) * ppu, ty = (Y1 - (yg - (l === "frente" ? 0.75 : 0.9))) * ppu;   // 7,5 cm abaixo da gola
+          const cx = (0 - X0) * ppu, ty = (Y1 - (yg - (MOD.desce != null ? MOD.desce / 10 : l === "frente" ? 0.75 : 0.9))) * ppu;   // sublimação total começa acima da gola   // 7,5 cm abaixo da gola
           x.save(); x.translate(cx - w / 2, ty); x.scale(w / A.w, h / A.h); x.translate(-A.x, -A.y);
           x.beginPath(); x.rect(A.x, A.y, A.w, A.h); x.clip(); E.pintar(x, l); x.restore();
         }
@@ -270,7 +278,7 @@ async function iniciar() {
 
   // ---- câmera e giro
   const calmo = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let amp = 0, rotY = M.rot, elev = M.elev ?? 0.3, vel = 0, rotAlvo = null, auto = !calmo, arrastando = false, sujo = true, ligado = false;
+  let base = M.rot, amp = 0, rotY = M.rot, elev = M.elev ?? 0.3, vel = 0, rotAlvo = null, auto = !calmo, arrastando = false, sujo = true, ligado = false;
   const DIST = M.dist;
   function posicionar() {
     camera.position.set(alvo.x, alvo.y + Math.sin(elev) * DIST, Math.cos(elev) * DIST);
@@ -285,7 +293,7 @@ async function iniciar() {
   document.addEventListener("mockup-lado", e => {
     const alvoL = (e.detail === "costas" ? Math.PI : 0) + M.rot * (e.detail === "costas" ? -1 : 1) * 0.6;
     const d = Math.atan2(Math.sin(alvoL - rotY), Math.cos(alvoL - rotY));
-    rotAlvo = rotY + d; vel = 0; marcarAuto(false);
+    rotAlvo = rotY + d; base = alvoL; vel = 0; if (!M.balanco) marcarAuto(false);
   });
 
   let ult = null;
@@ -305,7 +313,7 @@ async function iniciar() {
     if (!ligado) return;
     if (!gravando) {
       if (rotAlvo !== null && !arrastando) { rotY += (rotAlvo - rotY) * 0.12; if (Math.abs(rotAlvo - rotY) < 0.002) { rotY = rotAlvo; rotAlvo = null; } }
-      else if (!arrastando) { if (Math.abs(vel) > 0.0005) { rotY += vel; vel *= 0.92; } else if (auto) { if (M.balanco) rotY += (M.rot + 0.55 * Math.sin(performance.now() / 1900) - rotY) * 0.04; else rotY += 0.006; } }
+      else if (!arrastando) { if (Math.abs(vel) > 0.0005) { rotY += vel; vel *= 0.92; } else if (auto) { if (M.balanco) rotY += (base + 0.55 * Math.sin(performance.now() / 1900) - rotY) * 0.04; else rotY += 0.006; } }
       if (sujo) { pintarTextura(); sujo = false; }
       if (M.animar) { amp += ((auto && !calmo ? 1 : 0) - amp) * 0.06; M.animar(performance.now() / 1000, amp); }
       posicionar(); renderer.render(scene, camera);

@@ -7,7 +7,8 @@
   const $ = s => document.querySelector(s);
   const visivel = el => el && !el.hidden && el.offsetParent !== null && el.getBoundingClientRect().width > 0;
   const obj = () => (window.CanecaArte && window.CanecaArte.modelo.obj) || "caneca";
-  const nomeObj = () => ({ caneca: "a caneca", copo: "o copo", camiseta: "a camiseta", banner: "o banner" }[obj()]);
+  const nomeObj = () => ({ caneca: "a caneca", copo: "o copo", garrafa: "a garrafa", peca: "a peça", camiseta: "a camiseta", banner: "o banner",
+    placa: "a placa", adesivo: "o adesivo", cartela: "a cartela", cartao: "o cartão", panfleto: "o panfleto" }[obj()] || "o produto");
   const brl = v => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   const dados = () => { try { return JSON.parse($("#dados-produto").textContent); } catch (e) { return {}; } };
 
@@ -33,10 +34,10 @@
       txt: "Toque em <b>Adicionar arte</b> pra enviar uma foto do celular ou escrever um texto. Pode pôr mais de uma foto." },
     { alvo: "#tela", tit: "2. Ajuste do seu jeito",
       txt: "Arraste a imagem pra posicionar. Use dois dedos ou a barra <b>Tamanho da imagem</b> pra aumentar e diminuir. Com várias fotos, toque na que quer mexer." },
-    { alvo: "#lados", se: () => visivel($("#lados")), tit: "3. Frente e costas",
-      txt: "Troque o lado aqui. Cada lado guarda a própria arte, e a camiseta vira sozinha pra mostrar." },
-    { alvo: "#ed-tam", se: () => visivel($("#ed-tam")), tit: "Tamanho do banner",
-      txt: "Troque o tamanho aqui: pronto ou digitando a medida. A área da arte e o banner 3D mudam junto, e o valor também." },
+    { alvo: "#lados", se: () => visivel($("#lados")), tit: obj() === "camiseta" ? "3. Frente e costas" : "3. Frente e verso",
+      txt: `Troque o lado aqui. Cada lado guarda a própria arte, e ${nomeObj()} vira sozinh${nomeObj().startsWith("a ") ? "a" : "o"} pra mostrar.` },
+    { alvo: "#ed-tam", se: () => visivel($("#ed-tam")), tit: "Escolha o tamanho",
+      txt: `Troque a medida aqui. A área da arte e ${nomeObj()} em 3D mudam junto, e o valor também.` },
     { alvo: "#palco3d", tit: `${visivel($("#lados")) ? 4 : 3}. Veja como fica`,
       txt: `Aqui ${nomeObj()} aparece em 3D com a sua arte. Arraste pra girar e confira cada detalhe antes de pedir.` },
     { alvo: "#cores", se: () => visivel($("#cores")), tit: "Escolha a cor", txt: "Toque na cor que você quer. A prévia muda na hora." },
