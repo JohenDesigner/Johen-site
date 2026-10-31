@@ -8,6 +8,8 @@
 }
 .home-cine .topo{background:rgba(242,240,236,.86)}
 .home-cine h1,.home-cine h2,.home-cine h3{font-family:var(--titulo);font-weight:400;line-height:.98;letter-spacing:.01em}
+/* o rodapé é o mesmo das outras páginas: rótulos em Figtree, não em Bebas */
+.home-cine .rodape h3{font-family:var(--corpo);font-weight:600;line-height:1.15;letter-spacing:.08em}
 
 /* ── Abertura: o vídeo anda com a rolagem ─────────────────────────────── */
 .cine{position:relative;height:var(--altura,420vh)}
