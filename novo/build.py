@@ -29,6 +29,9 @@ SERVS = [  # slug, nome, foto, fundo, resumo
 # Pagamento online: preencha quando tiver. Vazio = a página do pedido explica que a chave/link vão pelo WhatsApp.
 PIX = "65.480.613/0001-19"  # chave Pix = CNPJ (informada pelo Johen em 2026-10-30)
 MERCADO_PAGO = "" # link de pagamento do Mercado Pago
+# Arquivos do editor ("Personalize sem sair do site") → pasta "Pedidos do site" no Google Drive do Johen.
+# É o endereço do App da Web do Apps Script (drive/Code.gs, termina em /exec). Vazio = não envia (o cliente manda no WhatsApp).
+ARQUIVOS_DRIVE = ""
 # Avaliações reais do Google (copie do perfil da loja). Vazio = a home só mostra o convite pra avaliar.
 AVALIACOES = [   # copiadas do Google em 2026-10-30 (nota 5,0 · 118 avaliações)
   ("Andressa Correia", "Recomendo muito a Johen, superou minha expectativa eu amei demais que perfeição. Personalizem a garrafa de vocês tbm com a Johen 🤗😍😍", 5),
@@ -83,7 +86,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head="", head="", class
   Projeto: {LBG} · Assinatura LBG-SC-2026-v1
   © 2026 Labrego IA. Estrutura, código e método licenciados.
 -->
-<html lang="pt-BR" data-root="{R}">
+<html lang="pt-BR" data-root="{R}"{(' data-arquivos="' + E(ARQUIVOS_DRIVE) + '"') if ARQUIVOS_DRIVE else ""}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">

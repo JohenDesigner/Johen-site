@@ -316,6 +316,37 @@
     if (on) { b.dataset.rot = b.textContent; b.textContent = "Preparando…"; } else if (b.dataset.rot) b.textContent = b.dataset.rot;
     b.disabled = on; b.setAttribute("aria-busy", on); });
   addEventListener("pageshow", () => { if (comprando) { comprando = false; travarComprar(false); } });   // voltou do pedido pelo botão de voltar
+  // ---- arquivos pro Johen: com a pasta do Google Drive ligada (build.py: ARQUIVOS_DRIVE), o Comprar manda a foto original,
+  // a arte posicionada em alta (PNG transparente, só a área de impressão) e a prévia 3D de cada lado pra uma pasta com o código do pedido
+  const DRIVE = document.documentElement.dataset.arquivos || "";
+  const novoCodigo = () => { const d = new Date(), z = n => String(n).padStart(2, "0");
+    return `J${String(d.getFullYear()).slice(2)}${z(d.getMonth() + 1)}${z(d.getDate())}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`; };
+  const base64 = b => paraURL(b).then(u => u.slice(u.indexOf(",") + 1));
+  // arte só da área de impressão, ~300 dpi na medida real (entre 1500 e 6000 px no lado maior), fundo transparente
+  function arteAlta(l) {
+    const px = Math.max(1500, Math.min(6000, Math.round(Math.max(MOD.w, MOD.h) / 2.54 * 300))), k = px / Math.max(A.w, A.h);
+    const c = document.createElement("canvas"); c.width = Math.round(A.w * k); c.height = Math.round(A.h * k);
+    const x = c.getContext("2d"); x.scale(k, k); x.translate(-A.x, -A.y);
+    comLado(l, () => pintarArte(x));
+    return new Promise(r => c.toBlob(r, "image/png"));
+  }
+  async function enviarArquivos(codigo, desc) {
+    guardar();
+    const arqs = [], nomeL = l => ATIVOS().length > 1 || MOD.tipo === "camiseta" ? "-" + nomeLado(l) : "";
+    const add = async (nome, blob) => blob && arqs.push({ nome, tipo: blob.type || "application/octet-stream", dados: await base64(blob) });
+    for (const l of ATIVOS()) {
+      if (!est[l].fotos.length && !est[l].texto) continue;
+      let n = 0;
+      for (const f of est[l].fotos) if (f.arquivo) { n++; const ext = (f.arquivo.name || "").match(/\.\w+$/)?.[0] || ".jpg"; await add(`original${nomeL(l)}-${n}${ext}`, f.arquivo); }
+      await add(`arte-posicionada${nomeL(l)}.png`, await arteAlta(l));
+    }
+    for (const l of ladosPrevia()) await add(`previa${l ? nomeL(l) : ""}.png`, await previa(1080, l));
+    const corpo = JSON.stringify({ codigo, produto: nomeItem({ c: cId, nome: produto.nome }), desc, qtd: qtdTxt(qtd, QN), total: brl(precoTotal()),
+      textos: ATIVOS().map(l => est[l].texto ? `${nomeLado(l)}: ${est[l].texto}` : "").filter(Boolean), arquivos: arqs });
+    // Apps Script não responde com CORS: "no-cors" envia igual (a resposta não dá pra ler); 60 s no máximo
+    await Promise.race([fetch(DRIVE, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: corpo }),
+      new Promise((_, erro) => setTimeout(() => erro(new Error("tempo")), 60000))]);
+  }
   async function comprar() {
     if (comprando) return;
     if (!window.CanecaArte.temArte()) { toast("Adicione uma imagem ou um texto antes de comprar."); return; }
@@ -327,7 +358,11 @@
     try {
       const artes = [];
       for (const l of ladosPrevia()) artes.push(await paraURL(await previa(260, l)));
-      Pedido.add({ c: cId, id: pId, nome: produto.nome, img: produto.img, arte: artes[0], artes: artes.length > 1 ? artes : undefined, desc: descricao(), qtd, qn: QN, total: precoTotal() });
+      // manda os arquivos pro Drive do Johen; se falhar (sem internet, demorou), o pedido segue e o WhatsApp pede as artes como antes
+      let cod;
+      if (DRIVE) { const c = novoCodigo(); btsComprar().forEach(b => b.textContent = "Enviando sua arte…");
+        try { await enviarArquivos(c, descricao()); cod = c; } catch (e) { } }
+      Pedido.add({ c: cId, id: pId, nome: produto.nome, img: produto.img, arte: artes[0], artes: artes.length > 1 ? artes : undefined, desc: descricao(), qtd, qn: QN, total: precoTotal(), cod });
       await apagarSalvo();
       location.href = ROOT + "pedido/";
     } catch (e) { comprando = false; travarComprar(false); toast("Não deu pra preparar a prévia. Tente de novo."); }

@@ -245,7 +245,10 @@ function iniciarPedido() {
         <div class="valor">${brl(x.total)}</div>
       </div>`).join("");
     $("#pedido-total").textContent = brl(tot);
-    const msg = "Olá! Quero fazer este pedido pelo site:\n\n" + itens.map((x, n) => `${n + 1}. ${nomeItem(x)}\n   ${linhaItem(x)} — ${brl(x.total)}`).join("\n") + `\n\nTotal: ${brl(tot)}\n\nVou mandar as artes aqui na conversa.`;
+    // itens montados no editor com a arte já enviada pro Drive levam o código da pasta; o resto o cliente manda na conversa
+    const faltaArte = itens.some(x => !x.cod);
+    const msg = "Olá! Quero fazer este pedido pelo site:\n\n" + itens.map((x, n) => `${n + 1}. ${nomeItem(x)}\n   ${linhaItem(x)} — ${brl(x.total)}${x.cod ? `\n   Arte enviada pelo site: ${x.cod}` : ""}`).join("\n")
+      + `\n\nTotal: ${brl(tot)}\n\n${faltaArte ? (itens.some(x => x.cod) ? "Vou mandar as outras artes aqui na conversa." : "Vou mandar as artes aqui na conversa.") : "As artes já foram enviadas pelo site."}`;
     $("#enviar-pedido").href = wppLink(msg);
     const bp = $("#bloco-pix");
     if (bp) { const v = Math.round(tot * 100) / 100; $("#pix-codigo").textContent = pixCopiaECola(bp.dataset.chave, bp.dataset.nome, bp.dataset.cidade, v); $("#pix-valor").textContent = brl(v); }
