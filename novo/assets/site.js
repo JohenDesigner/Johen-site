@@ -117,7 +117,9 @@ function iniciarProduto() {
   const qtdOut = $("#qtd"), totalEl = $("#total"), unEl = $("#total-un"), minEl = $("#aviso-min");
   let qtd = 1;
   const multiplica = !p.m2 && !(p.opcoes[0]?.label || "").includes(" un.");
-  if (!multiplica && $(".campo-qtd")) $(".campo-qtd").hidden = true;
+  // por m² (adesivos, placas) também escolhe quantas peças iguais; o mínimo vale pro total
+  if (!multiplica && !p.m2 && $(".campo-qtd")) $(".campo-qtd").hidden = true;
+  let mexeu = false;  // aviso de mínimo só depois que o cliente mexe no tamanho/quantidade, não ao abrir a página
   function calc() {
     let un, desc;
     if (p.m2) {
@@ -125,7 +127,7 @@ function iniciarProduto() {
       const area = (w / 100) * (h / 100);
       un = area * p.m2; desc = `${w} × ${h} cm`;
       let tot = un * qtd;
-      minEl.hidden = !(tot > 0 && tot < p.minimo);
+      minEl.hidden = !(mexeu && tot > 0 && tot < p.minimo);
       if (tot > 0 && tot < p.minimo) tot = p.minimo;
       return { total: tot, un, desc };
     }
@@ -151,21 +153,22 @@ function iniciarProduto() {
       // o valor "assenta" de leve quando muda (quantidade/opção), pra pessoa notar sem chamar atenção
       totalEl.classList.remove("muda"); void totalEl.offsetWidth; totalEl.classList.add("muda");
     } else totalEl.textContent = novo;
-    if (unEl) unEl.textContent = multiplica && qtd > 1 ? `(${brl(r.un)} cada)` : (p.un || "");  // ex.: "por cartela"
+    if (unEl) unEl.textContent = (multiplica || (p.m2 && r.total > p.minimo)) && qtd > 1 ? `(${brl(r.un)} cada)` : (p.un || "");  // ex.: "por cartela"
     if (qtdOut) qtdOut.textContent = qtd;
     const pa = $("#pedir-agora"); if (pa) pa.href = wppLink(msgPedir());
     // leva a quantidade escolhida para o editor (senão o pedido montado lá sai com 1 peça só)
     const pers = $("#personalizar");
     if (pers) { const u = new URL(pers.href); qtd > 1 ? u.searchParams.set("q", qtd) : u.searchParams.delete("q"); pers.href = u.toString(); }
   }
-  [sel, larg, alt, cx].forEach(el => el?.addEventListener("input", render));
+  [sel, cx].forEach(el => el?.addEventListener("input", render));
+  [larg, alt].forEach(el => el?.addEventListener("input", () => { mexeu = true; render(); }));
   // leva a escolha da caixinha para o editor
   const pers = $("#personalizar");
   if (pers && cx) cx.addEventListener("change", () => { const u = new URL(pers.href); cx.checked ? u.searchParams.set("cx", "1") : u.searchParams.delete("cx"); pers.href = u.toString(); });
   // leva a opção escolhida (ex.: copo frente e verso) para o editor, com o mesmo preço
   if (pers && sel) sel.addEventListener("change", () => { const u = new URL(pers.href); sel.selectedIndex ? u.searchParams.set("o", sel.selectedIndex) : u.searchParams.delete("o"); pers.href = u.toString(); });
-  $("#menos")?.addEventListener("click", () => { qtd = Math.max(1, qtd - 1); render(); });
-  $("#mais")?.addEventListener("click", () => { qtd++; render(); });
+  $("#menos")?.addEventListener("click", () => { qtd = Math.max(1, qtd - 1); mexeu = true; render(); });
+  $("#mais")?.addEventListener("click", () => { qtd++; mexeu = true; render(); });
   $("#add")?.addEventListener("click", () => {
     const r = calc();
     if (p.m2 && !(r.un > 0)) { toast("Coloque a largura e a altura em cm"); larg.focus(); return; }

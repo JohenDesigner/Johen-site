@@ -81,6 +81,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-31 — Página do produto (todas as categorias, celular e computador): ao trocar a quantidade ou a opção, o valor grande (ex.: R$ 76,50 → R$ 115,00) trocava seco e era fácil não perceber que mudou. Agora o número novo "assenta" de leve (sobe 4px e clareia por 0,3s); ao abrir a página nada se mexe. Quem usa leitor de tela passa a ouvir o novo valor. Respeita quem desativa animações. Preços e textos iguais; páginas paradas ficaram idênticas nas screenshots. (assets/site.js `render`; assets/site.css `.total strong.muda`; build.py `aria-live` no valor do produto)
 
+- 2026-10-31 — A pedido do Johen (adesivos com recorte e placas PS, cobrados por m²): não dava pra escolher quantas peças (o campo ficava escondido) e a página já abria com o aviso laranja de "abaixo do pedido mínimo". Agora aparece "Quantas peças?" (o valor multiplica e mostra "R$ 30,00 cada"; o mínimo de R$ 85 vale pro total) e o aviso só aparece depois que o cliente mexe no tamanho ou na quantidade, com o texto "Ficou abaixo do pedido mínimo, então o valor sobe pra R$ 85,00.". Pedido e WhatsApp levam a quantidade. (assets/site.js: `iniciarProduto`, `mexeu`; build.py: texto do `aviso-min`)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.
