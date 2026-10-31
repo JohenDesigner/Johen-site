@@ -40,6 +40,9 @@
     { alvo: "#lados", se: () => visivel($("#lados")), tit: umLado() ? "3. Frente ou costas" : obj() === "camiseta" ? "3. Frente e costas" : "3. Frente e verso",
       txt: umLado() ? "Escolha onde vai a estampa: <b>na frente</b> ou <b>nas costas</b>. É um lado só: se trocar, a mesma arte muda de lado e a camiseta vira pra mostrar."
         : `Troque o lado aqui. Cada lado guarda a própria arte, e ${nomeObj()} vira sozinh${nomeObj().startsWith("a ") ? "a" : "o"} pra mostrar.` },
+    // adesivo de vitrine: a impressão sai espelhada
+    { alvo: "#bloco-espelho", se: () => visivel($("#bloco-espelho")), tit: "Arte espelhada",
+      txt: "Este adesivo é colado por dentro do vidro, então sai espelhado. Se a sua arte ainda não está espelhada, toque em <b>Espelhar arte</b> e a gente imprime do jeito certo." },
     { alvo: "#ed-tam", se: () => visivel($("#ed-tam")), tit: "Escolha o tamanho",
       txt: `Troque a medida aqui. A área da arte e ${nomeObj()} em 3D mudam junto, e o valor também.` },
     { alvo: "#palco3d", tit: `${visivel($("#lados")) ? 4 : 3}. Veja como fica`,

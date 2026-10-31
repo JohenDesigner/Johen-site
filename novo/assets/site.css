@@ -394,6 +394,7 @@ body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 
 /* editor: várias fotos */
 .fotos-dica{margin:8px 0 0;font-size:13px;color:var(--tinta-2)}
+.espelho p{margin:4px 0 10px;font-size:14px;color:var(--tinta-2);line-height:1.45}.espelho .btn[aria-pressed="true"]{border-color:var(--laranja-esc);color:var(--laranja-esc)}
 .fotos-acoes{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .fotos-acoes .btn{flex:1;min-height:42px;font-size:14px;padding-inline:12px}
 /* pedido: frente e costas lado a lado na miniatura */

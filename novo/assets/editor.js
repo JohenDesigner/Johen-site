@@ -29,7 +29,7 @@
     : cId === "adesivos" ? (["p1", "p2", "p3"].includes(pId) ? PL({ obj: "cartela", w: 21, h: 29.7, esp: 0.02, sub: pId === "p3" ? "folha adesiva inteira" : "cartela de etiquetas · arte da folha inteira" })
       : pId === "p8" ? PL({ obj: "cartela", w: 29.7, h: 42, esp: 0.02, sub: "cartela A3 · 29,7 x 42 cm" })
       : pId === "p9" ? PL({ obj: "cartela", w: 21, h: 29.7, esp: 0.02, sub: "cartela A4 · 21 x 29,7 cm" })
-      : PL({ obj: "adesivo", w: qm("w", 50), h: qm("h", 50), medida: true, m2: true, esp: 0.02 }))
+      : PL({ obj: "adesivo", w: qm("w", 50), h: qm("h", 50), medida: true, m2: true, esp: 0.02, espelho: pId === "p22" }))
     : cId === "cartoes" ? PL({ obj: "cartao", w: 9, h: 5, verso: pId !== "p1", cantos: ["p5", "p7"].includes(pId) ? 0.4 : 0, papel: true, esp: 0.035, sub: "cartão de visita · 9 x 5 cm" })
     : cId === "panfletos" ? PL({ obj: "panfleto", w: (PANF[pId] || [15, 21])[0], h: (PANF[pId] || [15, 21])[1], verso: ["p2", "p4", "p6", "p8", "p10"].includes(pId), papel: true, esp: 0.015,
         sub: `panfleto · ${(PANF[pId] || [15, 21]).join(" x ")} cm` })
@@ -98,6 +98,10 @@
   let img = null, arquivo = null, ix = 0, iy = 0, esc = 1, texto = "", corTexto = "#1d2427";
   // várias fotos por lado: "fotos" guarda todas; img/arquivo/ix/iy/esc/gravada/temAlfa/inverter são as da foto selecionada
   let fotos = [], sel = -1;
+  // adesivo de vitrine: colado por dentro do vidro, a impressão sai espelhada; "Espelhar arte" vira tudo na horizontal
+  let espelhar = false;
+  const meio = () => A.x + A.w / 2;
+  const virar = c => { if (espelhar) { c.translate(2 * meio(), 0); c.scale(-1, 1); } };
   const VAZIA = { img: null, arquivo: null, ix: 0, iy: 0, esc: 1, gravada: null, temAlfa: false, inverter: false };
   function sincronizar() { if (sel >= 0 && fotos[sel]) fotos[sel] = { img, arquivo, ix, iy, esc, gravada, temAlfa, inverter }; }
   function selecionar(i) { sincronizar(); sel = fotos[i] ? i : -1; ({ img, arquivo, ix, iy, esc, gravada, temAlfa, inverter } = fotos[i] || VAZIA); }
@@ -116,7 +120,7 @@
 
   // desenha só a arte (imagem + texto) dentro da área de impressão; usado também pela caneca 3D
   function pintarArte(c) {
-    c.save(); c.beginPath(); c.rect(A.x, A.y, A.w, A.h); c.clip();
+    c.save(); c.beginPath(); c.rect(A.x, A.y, A.w, A.h); c.clip(); virar(c);
     sincronizar();
     for (const f of fotos) { const w = f.img.width * f.esc, h = f.img.height * f.esc; c.drawImage(f.gravada || f.img, A.x + A.w / 2 + f.ix - w / 2, A.y + A.h / 2 + f.iy - h / 2, w, h); }
     if (texto) {
@@ -153,7 +157,7 @@
     ctx.setLineDash([12, 9]); ctx.lineWidth = 3; ctx.strokeStyle = "#1d2427"; ctx.strokeRect(A.x, A.y, A.w, A.h);
     // com mais de uma foto, a selecionada ganha contorno laranja (é ela que mexe ao arrastar)
     if (img && fotos.length > 1) {
-      const w = img.width * esc, h = img.height * esc;
+      const w = img.width * esc, h = img.height * esc; virar(ctx);
       ctx.setLineDash([10, 7]); ctx.lineWidth = 4; ctx.strokeStyle = "#E8650A";
       ctx.strokeRect(A.x + A.w / 2 + ix - w / 2, A.y + A.h / 2 + iy - h / 2, w, h);
     }
@@ -183,7 +187,7 @@
   const pts = new Map(); let base = null;
   const ponto = e => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * cv.width / r.width, y: (e.clientY - r.top) * cv.height / r.height }; };
   function fotoNoPonto(p) {
-    sincronizar();
+    sincronizar(); if (espelhar) p = { x: 2 * meio() - p.x, y: p.y };
     for (let i = fotos.length - 1; i >= 0; i--) {
       const f = fotos[i], w = f.img.width * f.esc, h = f.img.height * f.esc;
       if (Math.abs(p.x - (A.x + A.w / 2 + f.ix)) <= w / 2 && Math.abs(p.y - (A.y + A.h / 2 + f.iy)) <= h / 2) return i;
@@ -197,7 +201,7 @@
   });
   cv.addEventListener("pointermove", e => {
     if (!pts.has(e.pointerId)) return; const p = ponto(e), ant = pts.get(e.pointerId);
-    if (pts.size === 1) { ix += p.x - ant.x; iy += p.y - ant.y; }
+    if (pts.size === 1) { ix += (espelhar ? -1 : 1) * (p.x - ant.x); iy += p.y - ant.y; }
     pts.set(e.pointerId, p);
     if (pts.size === 2) {
       const [a, b] = [...pts.values()]; const d = Math.hypot(a.x - b.x, a.y - b.y);
@@ -258,6 +262,19 @@
   function fecharMais() { mais.hidden = true; }
   document.getElementById("add-txt").addEventListener("click", () => { fecharMais(); document.getElementById("bloco-texto").hidden = false; campoTxt.focus(); });
 
+  // adesivo de vitrine: aviso + botão "Espelhar arte" (a prévia, a arte posicionada e o PNG saem espelhados, como vão ser impressos)
+  const btEsp = document.getElementById("espelhar");
+  function marcarEspelho(on) {
+    espelhar = on; btEsp.setAttribute("aria-pressed", on); btEsp.textContent = on ? "Desfazer espelho" : "Espelhar arte";
+    document.getElementById("espelho-txt").innerHTML = on
+      ? "Pronto: a arte está espelhada, do jeito que vai ser impressa. Colada por dentro do vidro, ela fica certa pra quem olha de fora."
+      : "Este adesivo é colado por dentro do vidro, então a impressão sai espelhada (invertida) pra ler certo de fora. Se a sua arte ainda não está espelhada, toque em <b>Espelhar arte</b>.";
+  }
+  if (MOD.espelho) {
+    document.getElementById("bloco-espelho").hidden = false;
+    btEsp.addEventListener("click", () => { marcarEspelho(!espelhar); desenhar(); });
+  }
+
   // revisar
   const barraEd = document.getElementById("barra-editar"), barraRev = document.getElementById("barra-revisar");
   const painel = document.getElementById("painel");
@@ -297,7 +314,7 @@
     const comArte = ATIVOS().filter(l => est[l].fotos.length || est[l].texto);
     const nFotos = ATIVOS().reduce((n, l) => n + est[l].fotos.length, 0);
     const gemeo = (catalogo?.[cId] || []).some(o => o.id !== produto.id && o.nome.trim() === produto.nome.trim());  // dois produtos com o mesmo nome: o acabamento diz qual é
-    if (MOD.tipo === "plano") return [MED ? medidaTxt() : opcao() ? opcao().label : "", MOD.verso ? (comArte.length > 1 ? "arte na frente e no verso" : comArte[0] === "costas" ? "arte só no verso" : "arte só na frente") : "",  ...LADOS.map(l => est[l].texto ? `texto: "${est[l].texto}"` : ""), nFotos > Math.max(1, comArte.length) ? `${nFotos} fotos` : ""].filter(Boolean).join(" · ");
+    if (MOD.tipo === "plano") return [MED ? medidaTxt() : opcao() ? opcao().label : "", MOD.espelho ? (espelhar ? "arte espelhada no site" : "arte enviada já espelhada") : "", MOD.verso ? (comArte.length > 1 ? "arte na frente e no verso" : comArte[0] === "costas" ? "arte só no verso" : "arte só na frente") : "",  ...LADOS.map(l => est[l].texto ? `texto: "${est[l].texto}"` : ""), nFotos > Math.max(1, comArte.length) ? `${nFotos} fotos` : ""].filter(Boolean).join(" · ");
     return `${gemeo && produto.acab ? produto.acab.trim() + " · " : ""}${opcao() ? opcao().label.replace(/\s*\(\+R\$\s*\d+\)/, "") + " · " : ""}${MOD.propria ? "na peça do cliente" : "Cor: " + corNome}${cx.checked ? " · caixinha personalizada" : ""}${MOD.versoOp ? (versoOn ? (comArte.length > 1 ? " · arte na frente e no verso" : comArte[0] === "costas" ? " · arte só no verso" : " · arte só na frente") : "") : MOD.verso ? ` · estampa: ${comArte.join(" e ")}` : MOD.tipo === "camiseta" ? ` · estampa ${lado === "costas" ? "nas costas" : "na frente"}` : ""}${ATIVOS().map(l => est[l].texto ? ` · texto${ATIVOS().length > 1 ? " (" + nomeLado(l) + ")" : ""}: "${est[l].texto}"` : "").join("")}${nFotos > comArte.length ? ` · ${nFotos} fotos` : ""}`; };
 
   // foto da caneca 3D (se o aparelho abriu o 3D); senão, a faixa da área de impressão
@@ -310,7 +327,7 @@
   const paraURL = b => new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
   // Comprar: coloca no pedido com a prévia e abre a página do pedido
   // enquanto a prévia é preparada, os botões travam e dizem "Preparando…": tocar de novo não põe o mesmo item duas vezes no pedido
-  let comprando = false, avisouVerso = false;
+  let comprando = false, avisouVerso = false, avisouEspelho = false;
   const btsComprar = () => ["comprar", "add-pedido"].map(id => document.getElementById(id)).filter(Boolean);
   const travarComprar = on => btsComprar().forEach(b => {
     if (on) { b.dataset.rot = b.textContent; b.textContent = "Preparando…"; } else if (b.dataset.rot) b.textContent = b.dataset.rot;
@@ -353,6 +370,8 @@
     if (!produto) return;
     if (MOD.versoOp && versoOn && !avisouVerso) { guardar(); const f = ATIVOS().filter(l => est[l].fotos.length || est[l].texto);
       if (f.length < 2) { avisouVerso = true; toast(`Você escolheu Frente e Verso, mas só tem arte ${f[0] === "costas" ? "no verso" : "na frente"}. Toque em ${f[0] === "costas" ? "Frente" : "Verso"} pra pôr a outra, ou em Comprar de novo pra seguir assim.`); return; } }
+    if (MOD.espelho && !espelhar && !avisouEspelho) { avisouEspelho = true;
+      toast("Adesivo de vitrine sai espelhado. Se a sua arte ainda não está espelhada, toque em Espelhar arte. Se já está, toque em Comprar de novo."); document.getElementById("bloco-espelho").scrollIntoView({ block: "center" }); return; }
     comprando = true; travarComprar(true);
     await new Promise(r => requestAnimationFrame(() => setTimeout(r, 30)));   // mostra o "Preparando…" antes do trabalho pesado
     try {
@@ -475,7 +494,7 @@
     tmSalvar = setTimeout(() => {
       guardar();
       const lados = {}; for (const l of LADOS) lados[l] = { sel: est[l].sel, texto: est[l].texto, corTexto: est[l].corTexto, fotos: est[l].fotos.map(f => ({ arquivo: f.arquivo, ix: f.ix, iy: f.iy, esc: f.esc, inverter: f.inverter })) };
-      op("readwrite", s => s.put({ lados, ordem: [...LADOS], lado, corNome, cx: cx.checked, op: opIdx, qtd, area: { w: A.w, h: A.h }, med: MED ? { w: MOD.w, h: MOD.h, livre: medLivre } : undefined }, CHAVE)).catch(() => {});
+      op("readwrite", s => s.put({ lados, ordem: [...LADOS], lado, corNome, espelhar, cx: cx.checked, op: opIdx, qtd, area: { w: A.w, h: A.h }, med: MED ? { w: MOD.w, h: MOD.h, livre: medLivre } : undefined }, CHAVE)).catch(() => {});
     }, 400);
   }
   function apagarSalvo() { return op("readwrite", s => s.delete(CHAVE)).catch(() => {}); }
@@ -494,6 +513,7 @@
       sel = -1; selecionar(Math.min(s.sel, fotos.length - 1)); guardar();
     }
     carregar(MOD.verso && m.lado && est[m.lado] ? m.lado : LADOS[0]);
+    if (MOD.espelho && m.espelhar) marcarEspelho(true);
     if (MOD.verso && lado !== "frente") { abas.querySelectorAll("[data-l]").forEach(x => x.setAttribute("aria-selected", x.dataset.l === lado)); document.dispatchEvent(new CustomEvent("mockup-lado", { detail: lado })); }
     campoTxt.value = texto; document.getElementById("cor-texto").value = corTexto; document.getElementById("bloco-texto").hidden = !texto;
     if (m.cx && !cx.closest("label").hidden) { cx.checked = true; atualizarPreco(); }

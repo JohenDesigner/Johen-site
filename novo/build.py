@@ -335,6 +335,7 @@ corpo = f'''<div class="wrap editor">
   </div>
   <div class="ed-lado">
     <div id="painel" class="ed-painel">
+      <div id="bloco-espelho" class="campo espelho" hidden><span class="rot">Arte espelhada</span><p id="espelho-txt">Este adesivo é colado por dentro do vidro, então a impressão sai espelhada (invertida) pra ler certo de fora. Se a sua arte ainda não está espelhada, toque em <b>Espelhar arte</b>.</p><button class="btn btn-sec" id="espelhar" type="button" aria-pressed="false">Espelhar arte</button></div>
       <div id="ajustes" class="campo" hidden><label for="zoom">Tamanho da imagem</label><input id="zoom" type="range" min="40" max="300" value="100"><small>Arraste a imagem na área de impressão pra posicionar. No celular dá pra usar dois dedos.</small>
         <p id="fotos-dica" class="fotos-dica" hidden>Toque numa foto pra mexer nela. A que está com contorno laranja é a selecionada.</p>
         <div class="fotos-acoes"><label class="btn btn-sec" for="arquivo">+ Outra foto</label><button class="btn btn-sec" id="remover-foto">Remover esta foto</button></div>
