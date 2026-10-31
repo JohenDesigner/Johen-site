@@ -47,10 +47,12 @@ async function carregarCatalogo() {
 const norm = s => (s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 // nomes que o cliente digita pra cada categoria e serviço (mesmos termos das páginas)
 const BUSCA_CAT = { cartoes: "cartao de visita", panfletos: "panfleto folheto flyer", banners: "banner",
-  adesivos: "adesivo", camisetas: "camiseta camisa", canecas: "caneca" };
+  adesivos: "adesivo plotagem", camisetas: "camiseta camisa", canecas: "caneca" };
+// palavras do cliente por tipo de produto: toda lona é banner/faixa; placa PS é placa de sinalização
+const BUSCA_SUB = { lona_brilho: "faixa", lona_fosco: "faixa", lona_ilhos: "faixa", placas_ps: "placa sinalizacao" };
 const BUSCA_SERV = [
   ["gravacao-laser", "Gravação a Laser", "gravacao laser garrafa copo madeira acrilico placa chaveiro tabua trofeu", "img/produtos/canecas-p9.webp"],
-  ["envelopamento", "Envelopamento e Vitrine", "envelopamento frota carro moto van caminhao vitrine fachada jateado", "img/produtos/adesivos-p16.webp"],
+  ["envelopamento", "Envelopamento e Vitrine", "envelopamento frota carro moto van caminhao vitrine fachada jateado plotagem", "img/produtos/adesivos-p16.webp"],
   ["design", "Criação de Arte", "criacao arte logo logotipo marca post instagram", "img/produtos/panfletos-p2.webp"],
   ["comercio", "Para seu Comércio", "comercio cardapio 3d site mensalidade comunicacao visual", "img/produtos/adesivos-p12.webp"]];
 // "adesivo pro carro/moto/van": quem busca assim procura o envelopamento (frota)
@@ -73,13 +75,22 @@ function iniciarBusca() {
       const pals = raizes(q).filter(w => !PAL_VAZIA.has(w));
       // cada palavra digitada tem que ser o começo de uma palavra do produto ("tag" não acha "instagram")
       const bate = txt => { const h = raizes(norm(txt)); return pals.length && pals.every(w => h.some(x => x.startsWith(w))); };
-      const res = [];
-      for (const [c, ps] of Object.entries(cat)) for (const p of ps)
-        if (bate([p.nome, p.subNome, p.material, p.acab, p.impressao, BUSCA_CAT[c] || c].join(" "))) res.push([c, p]);
-      const serv = BUSCA_SERV.filter(s => bate(s[1] + " " + s[2]));
+      const txtP = (c, p) => [p.nome, p.subNome, p.material, p.acab, p.impressao, BUSCA_SUB[p.sub], BUSCA_CAT[c] || c].join(" ");
+      let res = [];
+      for (const [c, ps] of Object.entries(cat)) for (const p of ps) if (bate(txtP(c, p))) res.push([c, p]);
+      let serv = BUSCA_SERV.filter(s => bate(s[1] + " " + s[2]));
       // "Também fazemos" do rodapé (convites, crachás, carimbos…): sem página própria, vai direto pro orçamento no WhatsApp
       let tambem = []; try { tambem = JSON.parse(box.dataset.tambem || "[]").filter(bate); } catch (e) {}
-      box.innerHTML = (res.length || serv.length || tambem.length) ? res.slice(0, 12).map(([c, p]) =>
+      // nada com todas as palavras ("faixa de aniversário", "banner 2x1"): mostra o que bate com a palavra principal
+      let aprox = false;
+      if (!res.length && !serv.length && !tambem.length && pals.length > 1) {
+        const chave = pals.filter(w => w.length >= 4 && !/\d/.test(w));
+        const bateUma = txt => { const h = raizes(norm(txt)); return chave.some(w => h.some(x => x.startsWith(w))); };
+        for (const [c, ps] of Object.entries(cat)) for (const p of ps) if (bateUma(txtP(c, p))) res.push([c, p]);
+        serv = BUSCA_SERV.filter(s => bateUma(s[1] + " " + s[2]));
+        aprox = res.length + serv.length > 0;
+      }
+      box.innerHTML = (res.length || serv.length || tambem.length) ? (aprox ? `<p>Não achamos "${inp.value.replace(/[<>&"]/g, "")}" exatamente. Veja o que temos parecido ou <a href="${wppLink("Olá! Procurei no site e não achei: " + inp.value)}">pergunte no WhatsApp</a>.</p>` : "") + res.slice(0, 12).map(([c, p]) =>
         `<a href="${ROOT}${c}/${p.id}/"><img src="${ROOT}${p.img}" alt="" loading="lazy"><span>${TIPO[c] ? TIPO[c] + " " : ""}${p.nome}<small>a partir de ${brl(precoMin(p))}${p.m2 ? " o m²" : ""}</small></span></a>`).join("") +
         serv.map(([slug, nome, , img]) =>
         `<a href="${ROOT}${slug}/"><img src="${ROOT}${img}" alt="" loading="lazy"><span>${nome}<small>orçamento pelo WhatsApp</small></span></a>`).join("") +
