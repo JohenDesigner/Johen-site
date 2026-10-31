@@ -184,7 +184,11 @@ function iniciarProduto() {
     Pedido.add({ c: p.c, id: p.id, nome: p.nome, img: p.img, desc: r.desc, qtd: multiplica || p.m2 ? qtd : 1, qn: p.qn || undefined, total: r.total });
     toast(`Adicionado ao pedido. <a href="${ROOT}pedido/">Ver pedido</a>`);
   });
-  $("#pedir-agora")?.addEventListener("click", e => { e.currentTarget.href = wppLink(msgPedir()); });
+  $("#pedir-agora")?.addEventListener("click", e => {
+    // sem medida não manda "0 × 50 cm – R$ 0,00" pro WhatsApp
+    if ((p.m2 || livre()) && !(calc().un > 0)) { e.preventDefault(); toast("Coloque a largura e a altura em cm"); larg.focus(); return; }
+    e.currentTarget.href = wppLink(msgPedir());
+  });
   render();
 }
 
