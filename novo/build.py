@@ -201,13 +201,17 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
     pagina(f"{slug}/index.html", f"{nome} | Johen Arte Gráfica", f"{nome} personalizados em São Paulo. {resumo}", corpo, slug)
 
     for p in ps:
-        dados = {"c": slug, "id": p["id"], "nome": p["nome"], "img": p["img"], "opcoes": p["opcoes"], "m2": p.get("m2"), "minimo": p.get("minimo"), "caixinha": p.get("caixinha")}
+        dados = {"c": slug, "id": p["id"], "nome": p["nome"], "img": p["img"], "opcoes": p["opcoes"], "m2": p.get("m2"), "minimo": p.get("minimo"), "caixinha": p.get("caixinha"), "m2livre": p.get("m2livre")}
         if gemeo(slug, p) and p.get("acab"): dados["dif"] = p["acab"].strip()  # vai no pedido pra saber qual dos dois foi pedido
         if p.get("m2"):
             opc = f'''<div class="campo"><span class="rot">{"Tamanho da placa" if slug == "banners" else "Tamanho do adesivo"}</span><div class="dupla"><div><label for="largura">Largura (cm)</label><input id="largura" type="number" inputmode="decimal" min="1" value="50"></div><div><label for="altura">Altura (cm)</label><input id="altura" type="number" inputmode="decimal" min="1" value="50"></div></div><small>{brl(p['m2'])} o m². Pedido mínimo {brl(p['minimo'])}.</small><p class="aviso-min" id="aviso-min" hidden>Ficou abaixo do pedido mínimo, então o valor sobe pra {brl(p['minimo'])}.</p></div>'''
         elif len(p["opcoes"]) > 1:
             rot = "Quantidade" if " un." in p["opcoes"][0]["label"] else "Tamanho" if all(re.fullmatch(r"\d+×\d+cm", o["label"]) for o in p["opcoes"]) else "Escolha a opção"
-            opc = f'<div class="campo"><label for="opcao">{rot}</label><select id="opcao">' + "".join(f'<option>{E(o["label"])} — {brl(o["preco"])}</option>' for o in p["opcoes"]) + '</select></div>'
+            opc = f'<div class="campo"><label for="opcao">{rot}</label><select id="opcao">' + "".join(f'<option>{E(o["label"])} — {brl(o["preco"])}</option>' for o in p["opcoes"])
+            if p.get("m2livre"):  # banner: além dos tamanhos prontos, o cliente digita a medida que quiser (preço por m², com mínimo)
+                opc += f'<option value="livre">Outro tamanho (você escolhe)</option></select><div id="medida-livre" class="dupla" hidden><div><label for="largura">Largura (cm)</label><input id="largura" type="number" inputmode="decimal" min="1" value="100"></div><div><label for="altura">Altura (cm)</label><input id="altura" type="number" inputmode="decimal" min="1" value="100"></div></div><small id="medida-livre-info" hidden>{brl(p["m2livre"]).replace(" ", "&nbsp;")} o m². Banner pequeno paga o mínimo de {brl(p["minimo"]).replace(" ", "&nbsp;")}.</small></div>'
+            else:
+                opc += '</select></div>'
         else:
             opc = ""  # preço único já aparece logo abaixo do título
         un = p.get("unidade") or ""

@@ -119,6 +119,7 @@ function iniciarProduto() {
   const multiplica = !p.m2 && !(p.opcoes[0]?.label || "").includes(" un.");
   // por m² (adesivos, placas) também escolhe quantas peças iguais; o mínimo vale pro total
   if (!multiplica && !p.m2 && $(".campo-qtd")) $(".campo-qtd").hidden = true;
+  const livre = () => !!(p.m2livre && sel && sel.value === "livre");
   let mexeu = false;  // aviso de mínimo só depois que o cliente mexe no tamanho/quantidade, não ao abrir a página
   function calc() {
     let un, desc;
@@ -130,6 +131,12 @@ function iniciarProduto() {
       minEl.hidden = !(mexeu && tot > 0 && tot < p.minimo);
       if (tot > 0 && tot < p.minimo) tot = p.minimo;
       return { total: tot, un, desc };
+    }
+    // banner com "Outro tamanho": medida digitada × preço do m², nunca abaixo do mínimo por peça
+    if (livre()) {
+      const w = parseFloat(larg.value) || 0, h = parseFloat(alt.value) || 0;
+      un = w > 0 && h > 0 ? Math.max(p.minimo || 0, Math.round(w * h / 10000 * p.m2livre * 100) / 100) : 0;
+      return { total: un * qtd, un, desc: `${w} × ${h} cm (tamanho personalizado)` };
     }
     const o = p.opcoes[sel ? sel.selectedIndex : 0];
     un = o.preco + (cx?.checked ? p.caixinha : 0);
@@ -161,6 +168,8 @@ function iniciarProduto() {
     if (pers) { const u = new URL(pers.href); qtd > 1 ? u.searchParams.set("q", qtd) : u.searchParams.delete("q"); pers.href = u.toString(); }
   }
   [sel, cx].forEach(el => el?.addEventListener("input", render));
+  // "Outro tamanho": mostra os campos de largura e altura só quando escolhido
+  if (p.m2livre && sel) sel.addEventListener("change", () => { const l = livre(); $("#medida-livre").hidden = !l; $("#medida-livre-info").hidden = !l; if (l) larg.focus(); });
   [larg, alt].forEach(el => el?.addEventListener("input", () => { mexeu = true; render(); }));
   // leva a escolha da caixinha para o editor
   const pers = $("#personalizar");
@@ -171,7 +180,7 @@ function iniciarProduto() {
   $("#mais")?.addEventListener("click", () => { qtd++; mexeu = true; render(); });
   $("#add")?.addEventListener("click", () => {
     const r = calc();
-    if (p.m2 && !(r.un > 0)) { toast("Coloque a largura e a altura em cm"); larg.focus(); return; }
+    if ((p.m2 || livre()) && !(r.un > 0)) { toast("Coloque a largura e a altura em cm"); larg.focus(); return; }
     Pedido.add({ c: p.c, id: p.id, nome: p.nome, img: p.img, desc: r.desc, qtd: multiplica || p.m2 ? qtd : 1, qn: p.qn || undefined, total: r.total });
     toast(`Adicionado ao pedido. <a href="${ROOT}pedido/">Ver pedido</a>`);
   });

@@ -513,7 +513,7 @@
 "opcoes": [
 {
 "label": "60×40cm",
-"preco": 45.0
+"preco": 55.0
 },
 {
 "label": "80×50cm",
@@ -521,50 +521,52 @@
 },
 {
 "label": "90×60cm",
-"preco": 68.0
+"preco": 64.8
 },
 {
 "label": "100×70cm",
-"preco": 78.0
+"preco": 84.0
 },
 {
 "label": "120×80cm",
-"preco": 99.0
+"preco": 115.2
 },
 {
 "label": "100×100cm",
-"preco": 102.0
-},
-{
-"label": "120×100cm",
 "preco": 120.0
 },
 {
-"label": "150×100cm",
-"preco": 150.0
+"label": "120×100cm",
+"preco": 144.0
 },
 {
-"label": "180×100cm",
+"label": "150×100cm",
 "preco": 180.0
 },
 {
-"label": "200×100cm",
-"preco": 200.0
+"label": "180×100cm",
+"preco": 216.0
 },
 {
-"label": "200×120cm",
+"label": "200×100cm",
 "preco": 240.0
 },
 {
+"label": "200×120cm",
+"preco": 288.0
+},
+{
 "label": "250×100cm",
-"preco": 250.0
+"preco": 300.0
 },
 {
 "label": "300×100cm",
-"preco": 300.0
+"preco": 360.0
 }
 ],
-"img": "img/produtos/banners-p1.webp"
+"img": "img/produtos/banners-p1.webp",
+"m2livre": 120.0,
+"minimo": 55.0
 },
 {
 "id": "p2",
@@ -582,58 +584,60 @@
 "opcoes": [
 {
 "label": "60×40cm",
-"preco": 46.0
+"preco": 55.0
 },
 {
 "label": "80×50cm",
-"preco": 57.0
+"preco": 55.0
 },
 {
 "label": "90×60cm",
-"preco": 70.0
+"preco": 70.2
 },
 {
 "label": "100×70cm",
-"preco": 82.0
+"preco": 91.0
 },
 {
 "label": "120×80cm",
-"preco": 106.0
+"preco": 124.8
 },
 {
 "label": "100×100cm",
-"preco": 110.0
+"preco": 130.0
 },
 {
 "label": "120×100cm",
-"preco": 132.0
+"preco": 156.0
 },
 {
 "label": "150×100cm",
-"preco": 165.0
+"preco": 195.0
 },
 {
 "label": "180×100cm",
-"preco": 198.0
+"preco": 234.0
 },
 {
 "label": "200×100cm",
-"preco": 220.0
+"preco": 260.0
 },
 {
 "label": "200×120cm",
-"preco": 264.0
+"preco": 312.0
 },
 {
 "label": "250×100cm",
-"preco": 275.0
+"preco": 325.0
 },
 {
 "label": "300×100cm",
-"preco": 330.0
+"preco": 390.0
 }
 ],
-"img": "img/produtos/banners-p2.webp"
+"img": "img/produtos/banners-p2.webp",
+"m2livre": 130.0,
+"minimo": 55.0
 },
 {
 "id": "p3",
@@ -651,58 +655,60 @@
 "opcoes": [
 {
 "label": "60×40cm",
-"preco": 50.0
+"preco": 55.0
 },
 {
 "label": "80×50cm",
-"preco": 62.0
+"preco": 58.0
 },
 {
 "label": "90×60cm",
-"preco": 75.0
+"preco": 78.3
 },
 {
 "label": "100×70cm",
-"preco": 88.0
+"preco": 101.5
 },
 {
 "label": "120×80cm",
-"preco": 120.0
+"preco": 139.2
 },
 {
 "label": "100×100cm",
-"preco": 125.0
+"preco": 145.0
 },
 {
 "label": "120×100cm",
-"preco": 150.0
+"preco": 174.0
 },
 {
 "label": "150×100cm",
-"preco": 188.0
+"preco": 217.5
 },
 {
 "label": "180×100cm",
-"preco": 225.0
+"preco": 261.0
 },
 {
 "label": "200×100cm",
-"preco": 250.0
+"preco": 290.0
 },
 {
 "label": "200×120cm",
-"preco": 300.0
+"preco": 348.0
 },
 {
 "label": "250×100cm",
-"preco": 313.0
+"preco": 362.5
 },
 {
 "label": "300×100cm",
-"preco": 375.0
+"preco": 435.0
 }
 ],
-"img": "img/produtos/banners-p3.webp"
+"img": "img/produtos/banners-p3.webp",
+"m2livre": 145.0,
+"minimo": 55.0
 },
 {
 "id": "p4",
