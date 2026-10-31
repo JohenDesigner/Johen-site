@@ -410,6 +410,8 @@ body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 .rod-pag{display:flex;flex-wrap:wrap;gap:8px}
 .rod-pag span{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
 .rod-pag svg,.rod-insta svg{width:16px;height:16px;flex-shrink:0}
+/* celular: as 4 formas de pagamento cabem numa linha só (antes "Dinheiro" caía sozinho) */
+@media(max-width:420px){.rod-pag{gap:6px;justify-content:space-between}.rod-pag span{gap:5px;padding:6px 9px}}
 .rodape .rod-insta{display:inline-flex;align-items:center;gap:6px;font-size:14px;padding-block:6px}
 .rod-faixa .cnpj{margin:0;flex-basis:100%}
 @media(min-width:760px){.rod-faixa .cnpj{flex-basis:auto;margin-left:auto}}

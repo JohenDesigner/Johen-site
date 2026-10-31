@@ -87,6 +87,8 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 
 - 2026-10-31 — Aviso rápido de baixo ("Adicionado ao pedido. Ver pedido", "Código Pix copiado…"; páginas de produto e Meu pedido): no celular (390px) o aviso ficava espremido em ~190px, quebrando "Adicionado ao / pedido." e "Ver / pedido" em duas linhas, e flutuava em cima do botão do Instagram. Agora ele ocupa a largura que o texto precisa, "Ver pedido" não quebra e tem área de toque maior; no celular fica no canto de baixo à esquerda, alinhado com o botão do WhatsApp e sem encostar nos botões redondos; entra com um leve deslize (respeita quem desativa animações). No computador continua centralizado, numa linha só. No editor nada muda. (site.css: `.toast`)
 
+- 2026-10-31 — Rodapé (todas as páginas, celular): as formas de pagamento (Pix, Débito, Crédito, Dinheiro) quebravam em duas linhas em 390px, com "Dinheiro" sozinho embaixo. Agora as quatro cabem numa linha só, distribuídas na largura (selos um pouco mais justos: 9px de margem interna e 6px entre eles). Em telas de 360px ou menos continua quebrando como antes; no computador nada muda. (site.css: `.rod-pag` em `@media(max-width:420px)`)
+
 ## Sugestões para o Johen (não feitas)
 - Próximos mockups 3D pedidos pelo Johen: cartão de visita, sticker, banner e camiseta (camiseta é a mais difícil de ficar realista). Reaproveitar assets/mockup3d.js.
 - O botão flutuante do WhatsApp cobre metade do mascote do Banner em 390px quando a página está no topo. Dá para escondê-lo até a pessoa rolar um pouco, ou subir o botão. Mexe no comportamento, então fica para aprovação.
