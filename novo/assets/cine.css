@@ -126,7 +126,6 @@
 .revelar{opacity:0;transform:translateY(40px);transition:opacity 1s var(--ease),transform 1.2s var(--ease)}
 .revelar.visto{opacity:1;transform:none}
 .home-cine .rodape{margin-top:0}
-.credito-lbg{font-size:12px;opacity:.8!important}
 
 /* ── Celular ─────────────────────────────────────────────────────────── */
 @media(max-width:860px){

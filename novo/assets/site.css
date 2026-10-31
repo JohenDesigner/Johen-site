@@ -419,6 +419,8 @@ body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 .rodape .rod-insta{display:inline-flex;align-items:center;gap:6px;font-size:14px;padding-block:6px}
 .rod-faixa .cnpj{margin:0;flex-basis:100%}
 @media(min-width:760px){.rod-faixa .cnpj{flex-basis:auto;margin-left:auto}}
+.rodape .credito-lbg{font-size:12px;opacity:.8;padding-block:6px;text-underline-offset:3px}
+.rodape .credito-lbg:hover{opacity:1}
 .pag-txt{margin:6px 0 0;color:var(--tinta-2);font-size:14px;line-height:1.5}
 /* home: avaliações reais */
 .depo{margin:44px 0 0}
