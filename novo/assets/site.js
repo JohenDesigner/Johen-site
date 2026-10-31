@@ -26,7 +26,8 @@ const linhaItem = x => [x.desc, x.qtd > 1 || !x.desc ? qtdTxt(x.qtd, x.qn) : ""]
 
 // nome do item no pedido e no WhatsApp: "Couché 300g — Fosco…" sozinho não diz que é cartão de visita
 const TIPO = { cartoes: "Cartão de visita", panfletos: "Panfleto" };
-const nomeItem = x => TIPO[x.c] ? `${TIPO[x.c]} ${x.nome}` : x.nome;
+// (espaços repetidos no nome do produto, como "Adesivo DTF  —", saem como um só na mensagem do WhatsApp)
+const nomeItem = x => (TIPO[x.c] ? `${TIPO[x.c]} ${x.nome}` : x.nome).replace(/\s+/g, " ").trim();
 
 /* ---------- menu ---------- */
 function iniciarMenu() {
@@ -207,7 +208,7 @@ function iniciarProduto() {
   $("#add")?.addEventListener("click", () => {
     const r = calc();
     if ((p.m2 || livre()) && !(r.un > 0)) { toast("Coloque a largura e a altura em cm"); larg.focus(); return; }
-    Pedido.add({ c: p.c, id: p.id, nome: p.nome, img: p.img, desc: r.desc, qtd: multiplica || p.m2 ? qtd : 1, qn: p.qn || undefined, total: r.total });
+    Pedido.add({ c: p.c, id: p.id, nome: p.nome, img: p.img, desc: r.desc, qtd: multiplica || p.m2 ? qtd : 1, qn: p.qn || (p.m2 ? ["peça", "peças"] : undefined), total: r.total });
     toast(`Adicionado ao pedido. <a href="${ROOT}pedido/">Ver pedido</a>`);
   });
   $("#pedir-agora")?.addEventListener("click", e => {

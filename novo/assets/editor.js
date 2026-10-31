@@ -316,7 +316,7 @@
   document.getElementById("add-pedido").addEventListener("click", comprar);
   document.getElementById("comprar").addEventListener("click", comprar);
   document.getElementById("enviar-arte").addEventListener("click", async () => {
-    const msg = `Olá! Montei ${SEU.replace("sua", "minha").replace("seu", "meu")} no site:\n• ${produto.nome}\n• ${descricao()}${qtd > 1 ? `\n• Quantidade: ${qtdTxt(qtd, QN)}` : ""}\n• Valor: ${brl(precoTotal())}\n\nSegue a prévia, a arte posicionada e a arte original.`;
+    const msg = `Olá! Montei ${SEU.replace("sua", "minha").replace("seu", "meu")} no site:\n• ${nomeItem({ c: cId, nome: produto.nome })}\n• ${descricao()}${qtd > 1 ? `\n• Quantidade: ${qtdTxt(qtd, QN)}` : ""}\n• Valor: ${brl(precoTotal())}\n\nSegue a prévia, a arte posicionada e a arte original.`;
     const files = [];
     for (const l of ladosPrevia()) files.push(new File([await previa(1080, l)], `previa-${MOD.obj}${l ? "-" + l : ""}.png`, { type: "image/png" }));
     const prev = files[0]; guardar();
@@ -463,7 +463,7 @@
     if (!produto.caixinha) cx.closest("label").hidden = true; else if (q.get("cx") === "1") cx.checked = true;
     // cartão/panfleto: a quantidade já vem na opção ("500 un."), então some o + e −; cartela/estampa: "Quantas cartelas?"
     POR_UN = produto.opcoes.length > 1 && produto.opcoes[0].label.includes(" un.");
-    const un = produto.unidade || ""; QN = /cartela/.test(un) ? ["cartela", "cartelas"] : /estampa/.test(un) ? ["estampa", "estampas"] : undefined;
+    const un = produto.unidade || ""; QN = /cartela/.test(un) ? ["cartela", "cartelas"] : /estampa/.test(un) ? ["estampa", "estampas"] : MOD.m2 ? ["peça", "peças"] : undefined;  // por m²: "2 peças", igual ao "Pedir agora" da página do produto
     if (POR_UN) { qtd = 1; painel.querySelector(".campo-qtd").hidden = true; }
     else if (QN) document.getElementById("ed-qtd-rot").textContent = `Quantas ${QN[1]}?`;
     if (MED) montarTamanho();
@@ -472,7 +472,9 @@
       bloco.innerHTML = `<label for="ed-opcao">${produto.opcoes[0].label.startsWith("Gravação") ? "Gravação" : POR_UN ? "Quantidade" : "Escolha a opção"}</label><select id="ed-opcao">${produto.opcoes.map(o => `<option>${o.label} — ${brl(o.preco)}</option>`).join("")}</select>`;
       painel.querySelector(".total").before(bloco);
       const so = bloco.querySelector("select"); opIdx = Math.min(opIdx, produto.opcoes.length - 1); so.selectedIndex = opIdx;
-      so.addEventListener("change", () => { opIdx = so.selectedIndex; atualizarPreco(); salvarDepois(); });
+      so.addEventListener("change", () => { opIdx = so.selectedIndex; atualizarPreco(); salvarDepois();
+        // recarregar a página (no celular, abrir a galeria pode recarregar) mantém a opção escolhida aqui, e não a que veio do produto
+        try { const u = new URL(location.href); u.searchParams.set("o", opIdx); history.replaceState(history.state, "", u); } catch (err) {} });
     }
     const coresBox = document.getElementById("cores");
     const lista = corDoCorpo || /cor/i.test(produto.nome) ? CORES : null;
