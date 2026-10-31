@@ -207,6 +207,9 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .total small{display:block;font-size:13px;color:var(--tinta-2)}
 .total strong{font-family:var(--display);font-size:34px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .total span{color:var(--tinta-3);margin-left:6px;font-size:14px}
+.total strong.muda{display:inline-block;animation:preco-muda .32s cubic-bezier(.2,.7,.3,1)}
+@keyframes preco-muda{from{opacity:.3;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.total strong.muda{animation:none}}
 .aviso-min{color:var(--laranja-esc);font-size:13px;margin:2px 0 0}
 .acoes{display:flex;flex-direction:column;gap:10px}
 .caixa-info{border-top:1px solid var(--linha);padding-top:18px;font-size:14px}

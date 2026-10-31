@@ -232,7 +232,7 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
   <div class="foto {fundo}"><img src="../../{p['img']}" alt="{E(p['nome'])}"></div>
   <div class="conf">
     <h1>{E(p["nome"])}</h1>
-    <div class="preco-topo"><div class="total"><strong id="total">{brl(pmin(p))}</strong><span id="total-un">{E(un_topo)}</span></div>{caixinha}</div>
+    <div class="preco-topo"><div class="total" aria-live="polite"><strong id="total">{brl(pmin(p))}</strong><span id="total-un">{E(un_topo)}</span></div>{caixinha}</div>
     {personalizar}
     {opc}
     <div class="acoes">{botoes}</div>

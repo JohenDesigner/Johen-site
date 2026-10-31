@@ -145,7 +145,12 @@ function iniciarProduto() {
   }
   function render() {
     const r = calc();
-    totalEl.textContent = brl(r.total);
+    const novo = brl(r.total);
+    if (totalEl.textContent.replace(/\s/g, "") !== novo.replace(/\s/g, "")) {
+      totalEl.textContent = novo;
+      // o valor "assenta" de leve quando muda (quantidade/opção), pra pessoa notar sem chamar atenção
+      totalEl.classList.remove("muda"); void totalEl.offsetWidth; totalEl.classList.add("muda");
+    } else totalEl.textContent = novo;
     if (unEl) unEl.textContent = multiplica && qtd > 1 ? `(${brl(r.un)} cada)` : (p.un || "");  // ex.: "por cartela"
     if (qtdOut) qtdOut.textContent = qtd;
     const pa = $("#pedir-agora"); if (pa) pa.href = wppLink(msgPedir());
