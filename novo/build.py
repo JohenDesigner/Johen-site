@@ -46,7 +46,7 @@ LBG = "LBG-SC-20261030-2F906668B2"
 MAPA = "https://www.google.com/maps/search/?api=1&query=" + "R.+Pedro+Fernandes+Arag%C3%A3o,+269+-+Jardim+Selma,+S%C3%A3o+Paulo+-+SP"
 REVIEW = "https://g.page/r/CWKTHinBP02gEAI/review"
 
-TAMBEM = ["Convites", "Crachás", "Blocos e talões", "Envelopes", "Pastas", "Calendários", "Ímãs de geladeira", "Tags", "Cardápios", "Carimbos"]  # rodapé "Também fazemos" (só texto)
+TAMBEM = ["Convites", "Crachás", "Blocos e talões", "Envelopes", "Pastas", "Calendários", "Ímãs de geladeira", "Tags", "Cardápios", "Carimbos"]  # rodapé "Também fazemos" (cada item abre orçamento no WhatsApp, igual à home e à busca)
 
 ICO = {
  "menu": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
@@ -128,7 +128,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head="", head="", class
     <div><h3>Produtos</h3>
       <ul>{"".join(f'<li><a href="{R}{sl}/">{E(n)}</a></li>' for sl,n,*_ in CATS)}</ul>
       <p class="rod-sub">Também fazemos</p>
-      <ul class="lista-texto">{"".join(f"<li>{x}</li>" for x in TAMBEM)}</ul>
+      <ul class="lista-texto">{"".join(f'<li><a href="{wpp(f"Olá! Quero um orçamento de {x}.")}" aria-label="{E(x)} — pedir orçamento no WhatsApp">{E(x)}</a></li>' for x in TAMBEM)}</ul>
     </div>
     <div><h3>Ajuda</h3>
       <ul class="rod-ajuda">
