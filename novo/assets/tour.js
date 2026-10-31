@@ -1,20 +1,42 @@
 // Tutorial do editor: caixinhas passo a passo que destacam cada parte da tela.
 // A pedido do Johen: abre sozinho toda vez que o editor abre (qualquer produto) ou a página recarrega; o botão "Como usar" abre de novo.
+// Também guia a escolha do tamanho na página dos banners de lona (termina no "Personalize sem sair do site").
 (function () {
-  if (!document.getElementById("tela")) return;
+  const EDITOR = !!document.getElementById("tela"), PRODUTO = !EDITOR && !!document.getElementById("tam-modo");
+  if (!EDITOR && !PRODUTO) return;
   const $ = s => document.querySelector(s);
   const visivel = el => el && !el.hidden && el.offsetParent !== null && el.getBoundingClientRect().width > 0;
   const obj = () => (window.CanecaArte && window.CanecaArte.modelo.obj) || "caneca";
-  const nomeObj = () => ({ caneca: "a caneca", copo: "o copo", camiseta: "a camiseta" }[obj()]);
+  const nomeObj = () => ({ caneca: "a caneca", copo: "o copo", camiseta: "a camiseta", banner: "o banner" }[obj()]);
+  const brl = v => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const dados = () => { try { return JSON.parse($("#dados-produto").textContent); } catch (e) { return {}; } };
+
+  // página do banner: como escolher o tamanho, onde aparece o valor e onde personalizar
+  const PASSOS_PRODUTO = () => { const d = dados(); return [
+    { alvo: "#tam-modo", tit: "Pronto ou do seu jeito",
+      txt: "Escolha aqui como quer o tamanho: <b>Tamanho pronto</b> mostra as medidas mais pedidas; <b>Outro tamanho</b> deixa você digitar a medida que precisa." },
+    { alvo: "#opcao", se: () => visivel($("#opcao")), tit: "Escolha na lista",
+      txt: "Em <b>Tamanho pronto</b>, toque na lista e escolha a medida (largura × altura). O preço de cada uma já aparece do lado." },
+    { alvo: '#tam-modo [data-m="livre"]', tit: "Precisa de outra medida?",
+      txt: `Toque em <b>Outro tamanho</b> e digite a largura e a altura em centímetros. O valor é calculado pelo m² (${brl(d.m2livre || 0)} o m²)${d.minimo ? `, com mínimo de ${brl(d.minimo)} por banner` : ""}.` },
+    { alvo: ".preco-topo .total", tit: "O valor aparece aqui",
+      txt: "Trocou o tamanho ou a quantidade? O valor muda na hora, já com tudo somado." },
+    { alvo: ".campo-qtd", tit: "Quantas peças",
+      txt: "Precisa de mais de um banner igual? Use <b>+</b> e <b>−</b>. Quando for mais de um, aparece também o valor de cada." },
+    { alvo: "#personalizar", tit: "Agora é só montar",
+      txt: "Toque em <b>Personalize sem sair do site</b> pra colocar sua foto ou texto no banner, no tamanho que você escolheu, e ver como fica em 3D antes de pedir." },
+  ]; };
 
   // cada passo: o que destacar, título e texto. "se" decide se o passo aparece (ex.: abas só na camiseta)
-  const PASSOS = () => [
+  const PASSOS = () => PRODUTO ? PASSOS_PRODUTO() : [
     { alvo: "#btn-mais", tit: "1. Coloque sua arte",
       txt: "Toque em <b>Adicionar arte</b> pra enviar uma foto do celular ou escrever um texto. Pode pôr mais de uma foto." },
     { alvo: "#tela", tit: "2. Ajuste do seu jeito",
       txt: "Arraste a imagem pra posicionar. Use dois dedos ou a barra <b>Tamanho da imagem</b> pra aumentar e diminuir. Com várias fotos, toque na que quer mexer." },
     { alvo: "#lados", se: () => visivel($("#lados")), tit: "3. Frente e costas",
       txt: "Troque o lado aqui. Cada lado guarda a própria arte, e a camiseta vira sozinha pra mostrar." },
+    { alvo: "#ed-tam", se: () => visivel($("#ed-tam")), tit: "Tamanho do banner",
+      txt: "Troque o tamanho aqui: pronto ou digitando a medida. A área da arte e o banner 3D mudam junto, e o valor também." },
     { alvo: "#palco3d", tit: `${visivel($("#lados")) ? 4 : 3}. Veja como fica`,
       txt: `Aqui ${nomeObj()} aparece em 3D com a sua arte. Arraste pra girar e confira cada detalhe antes de pedir.` },
     { alvo: "#cores", se: () => visivel($("#cores")), tit: "Escolha a cor", txt: "Toque na cor que você quer. A prévia muda na hora." },
@@ -65,7 +87,7 @@
     c.querySelector(".tour-txt").innerHTML = p.txt;
     c.querySelector(".tour-pontos").innerHTML = passos.map((_, k) => `<span${k === i ? ' class="on"' : ""}></span>`).join("");
     c.querySelector(".tour-voltar").hidden = i === 0;
-    c.querySelector(".tour-prox").textContent = i === passos.length - 1 ? "Começar" : "Próximo";
+    c.querySelector(".tour-prox").textContent = i === passos.length - 1 ? (PRODUTO ? "Entendi" : "Começar") : "Próximo";
     const fixo = getComputedStyle(alvoAtual.closest(".ed-barra") || alvoAtual).position === "fixed";
     if (!fixo) {
       // rola pra que o destaque e a caixinha caibam juntos entre o topo do site e a barra de baixo
@@ -96,7 +118,9 @@
     document.documentElement.classList.remove("tour-aberto");
     removeEventListener("resize", posicionar); removeEventListener("scroll", posicionar);
     document.removeEventListener("keydown", tecla);
-    scrollTo({ top: 0, behavior: "auto" });
+    if (EDITOR) scrollTo({ top: 0, behavior: "auto" });
+    else $("#personalizar")?.scrollIntoView({ block: "center" });   // termina no botão de personalizar
+    if (PRODUTO) try { localStorage.setItem("johen-tour-banner", "1"); } catch (e) {}
   }
   function tecla(e) {
     if (e.key === "Escape") fechar();
@@ -106,7 +130,10 @@
 
   $("#ver-tour")?.addEventListener("click", abrir);
   // toda abertura do editor: espera terminar de carregar (nome do produto e 3D) antes de abrir
-  if (!/[?&]sem-tour/.test(location.search)) {
+  // página do banner: abre sozinho só na primeira visita (depois, pelo botão "Como escolher")
+  let jaViu = false; try { jaViu = !!localStorage.getItem("johen-tour-banner"); } catch (e) {}
+  if (PRODUTO) { if (!jaViu && !/[?&]sem-tour/.test(location.search)) setTimeout(abrir, 900); }
+  else if (!/[?&]sem-tour/.test(location.search)) {
     let n = 0; const t = setInterval(() => {
       n++; const pronto = window.CanecaArte && !/^Carregando/.test($("#nome-produto")?.textContent || "");
       if (pronto || n > 20) { clearInterval(t); setTimeout(abrir, 600); }

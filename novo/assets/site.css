@@ -439,3 +439,9 @@ body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 .tour-acoes .tour-voltar[hidden]{display:none}
 .tour-aberto .wpp-flut,.tour-aberto .insta-flut{visibility:hidden}
 @media (prefers-reduced-motion: reduce){.tour-luz,.tour-card{transition:none}}
+/* banner: "Tamanho pronto" / "Outro tamanho" à vista, lado a lado (produto e editor) */
+.rot-linha{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rot-linha .ed-ajuda{margin-top:0}
+.tam-modo{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--branco);border:1px solid var(--linha);border-radius:14px}
+.tam-modo button{border:0;background:transparent;border-radius:10px;min-height:44px;padding:6px 10px;font:600 15px var(--corpo);color:var(--tinta-2);cursor:pointer}
+.tam-modo button[aria-pressed="true"]{background:var(--azul);color:#fff}

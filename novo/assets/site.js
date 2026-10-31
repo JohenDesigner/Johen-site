@@ -119,7 +119,9 @@ function iniciarProduto() {
   const multiplica = !p.m2 && !(p.opcoes[0]?.label || "").includes(" un.");
   // por m² (adesivos, placas) também escolhe quantas peças iguais; o mínimo vale pro total
   if (!multiplica && !p.m2 && $(".campo-qtd")) $(".campo-qtd").hidden = true;
-  const livre = () => !!(p.m2livre && sel && sel.value === "livre");
+  // banner: "Tamanho pronto" (lista) ou "Outro tamanho" (largura × altura), escolhidos pelos botões à vista
+  let modoLivre = false;
+  const livre = () => !!(p.m2livre && modoLivre);
   let mexeu = false;  // aviso de mínimo só depois que o cliente mexe no tamanho/quantidade, não ao abrir a página
   function calc() {
     let un, desc;
@@ -165,17 +167,31 @@ function iniciarProduto() {
     const pa = $("#pedir-agora"); if (pa) pa.href = wppLink(msgPedir());
     // leva a quantidade escolhida para o editor (senão o pedido montado lá sai com 1 peça só)
     const pers = $("#personalizar");
-    if (pers) { const u = new URL(pers.href); qtd > 1 ? u.searchParams.set("q", qtd) : u.searchParams.delete("q"); pers.href = u.toString(); }
+    if (pers) { const u = new URL(pers.href); qtd > 1 ? u.searchParams.set("q", qtd) : u.searchParams.delete("q");
+      // banner: leva o tamanho (pronto ou personalizado) pro editor, que monta a área nessa medida
+      if (p.m2livre && sel) {
+        const m = livre() ? [parseFloat(larg.value) || 0, parseFloat(alt.value) || 0] : (p.opcoes[sel.selectedIndex].label.match(/(\d+)×(\d+)/) || []).slice(1).map(Number);
+        u.searchParams.set("o", livre() ? "livre" : sel.selectedIndex);
+        if (m[0] > 0 && m[1] > 0) { u.searchParams.set("w", m[0]); u.searchParams.set("h", m[1]); }
+      }
+      pers.href = u.toString(); }
   }
   [sel, cx].forEach(el => el?.addEventListener("input", render));
   // "Outro tamanho": mostra os campos de largura e altura só quando escolhido
-  if (p.m2livre && sel) sel.addEventListener("change", () => { const l = livre(); $("#medida-livre").hidden = !l; $("#medida-livre-info").hidden = !l; if (l) larg.focus(); });
+  const modo = $("#tam-modo");
+  if (p.m2livre && modo) modo.addEventListener("click", e => {
+    const b = e.target.closest("[data-m]"); if (!b) return;
+    modoLivre = b.dataset.m === "livre";
+    $$("[data-m]", modo).forEach(x => x.setAttribute("aria-pressed", x === b));
+    sel.hidden = modoLivre; $("#medida-livre").hidden = !modoLivre; $("#medida-livre-info").hidden = !modoLivre;
+    if (modoLivre) larg.focus(); render();
+  });
   [larg, alt].forEach(el => el?.addEventListener("input", () => { mexeu = true; render(); }));
   // leva a escolha da caixinha para o editor
   const pers = $("#personalizar");
   if (pers && cx) cx.addEventListener("change", () => { const u = new URL(pers.href); cx.checked ? u.searchParams.set("cx", "1") : u.searchParams.delete("cx"); pers.href = u.toString(); });
   // leva a opção escolhida (ex.: copo frente e verso) para o editor, com o mesmo preço
-  if (pers && sel) sel.addEventListener("change", () => { const u = new URL(pers.href); sel.selectedIndex ? u.searchParams.set("o", sel.selectedIndex) : u.searchParams.delete("o"); pers.href = u.toString(); });
+  if (pers && sel && !p.m2livre) sel.addEventListener("change", () => { const u = new URL(pers.href); sel.selectedIndex ? u.searchParams.set("o", sel.selectedIndex) : u.searchParams.delete("o"); pers.href = u.toString(); });
   $("#menos")?.addEventListener("click", () => { qtd = Math.max(1, qtd - 1); mexeu = true; render(); });
   $("#mais")?.addEventListener("click", () => { qtd++; mexeu = true; render(); });
   $("#add")?.addEventListener("click", () => {

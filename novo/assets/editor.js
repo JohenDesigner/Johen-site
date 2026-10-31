@@ -18,22 +18,34 @@
     // sublimação comum (poliéster): frente e verso, só em camiseta branca (a sublimação não aparece em tecido escuro)
     camisetaSub: { tipo: "camiseta", w: 28, h: 35, laser: false, verso: true, soBranca: true, obj: "camiseta", rot: "Área de estampa", sub: "até 28 x 35 cm em cada lado", guia: null },
   };
-  const MOD = MODELOS[cId === "camisetas" ? (pId === "p1" ? "camisetaSub" : ["p8", "p9", "p10"].includes(pId) ? "camiseta2" : "camiseta") : ({ p6: "copo", p7nt99ze: "copo360" }[pId] || "caneca")];
-  const corDoCorpo = MOD.tipo !== "caneca";               // copo e camiseta: a cor escolhida é a do produto todo
-  const SEU = { caneca: "sua caneca", copo: "seu copo", camiseta: "sua camiseta" }[MOD.obj];
+  // banner de lona: a área é o próprio banner, na medida escolhida (vem da página do produto em ?w=&h=, pode trocar aqui)
+  const BANNER = cId === "banners";
+  const MOD = BANNER ? { tipo: "banner", w: Math.max(10, parseFloat(q.get("w")) || 60), h: Math.max(10, parseFloat(q.get("h")) || 40), laser: false, obj: "banner",
+      rot: "Área de impressão", sub: "", guia: null, ilhos: pId === "p3", fosco: pId === "p2" }
+    : MODELOS[cId === "camisetas" ? (pId === "p1" ? "camisetaSub" : ["p8", "p9", "p10"].includes(pId) ? "camiseta2" : "camiseta") : ({ p6: "copo", p7nt99ze: "copo360" }[pId] || "caneca")];
+  const corDoCorpo = MOD.tipo !== "caneca" && !BANNER;              // copo e camiseta: a cor escolhida é a do produto todo
+  const SEU = { caneca: "sua caneca", copo: "seu copo", camiseta: "sua camiseta", banner: "seu banner" }[MOD.obj];
   const ACO = "#cfd3d6";                                   // cor do aço que aparece onde o laser grava
   // área na tela: lado maior com 1000 px, margem em volta
-  const PAD = 16, larga = MOD.w >= MOD.h;
-  const AW = larga ? 1000 - PAD * 2 : Math.round((1000 - PAD * 2) * MOD.w / MOD.h), AH = larga ? Math.round((1000 - PAD * 2) * MOD.h / MOD.w) : 1000 - PAD * 2;
-  cv.width = AW + PAD * 2; cv.height = AH + PAD * 2;
-  if (!larga) Object.assign(cv.style, { width: "auto", height: "min(440px, 62vh)", margin: "0 auto" });
-  const A = { x: PAD, y: PAD, w: AW, h: AH };
+  const PAD = 16, A = { x: PAD, y: PAD, w: 0, h: 0 };
+  let larga;
+  // mede a área na proporção do produto (no banner, roda de novo quando o tamanho muda)
+  function medirArea() {
+    larga = MOD.w >= MOD.h;
+    A.w = larga ? 1000 - PAD * 2 : Math.round((1000 - PAD * 2) * MOD.w / MOD.h); A.h = larga ? Math.round((1000 - PAD * 2) * MOD.h / MOD.w) : 1000 - PAD * 2;
+    cv.width = A.w + PAD * 2; cv.height = A.h + PAD * 2;
+    Object.assign(cv.style, larga ? { width: "", height: "", margin: "" } : { width: "auto", height: "min(440px, 62vh)", margin: "0 auto" });
+    if (BANNER) document.querySelector(".ed-faixa-tit small").textContent = `tamanho do banner · ${String(MOD.w).replace(".", ",")} x ${String(MOD.h).replace(".", ",")} cm`;
+  }
+  medirArea();
   document.querySelector(".ed-faixa-tit .rot").textContent = MOD.rot;
-  document.querySelector(".ed-faixa-tit small").textContent = MOD.sub;
-  if (MOD.tipo !== "caneca") document.getElementById("centralizar").textContent = MOD.volta ? "Cobrir o copo todo" : "Preencher a área";
+  if (!BANNER) document.querySelector(".ed-faixa-tit small").textContent = MOD.sub;
+  if (MOD.tipo !== "caneca") document.getElementById("centralizar").textContent = BANNER ? "Preencher o banner" : MOD.volta ? "Cobrir o copo todo" : "Preencher a área";
+  if (BANNER) { const t = document.querySelector('label[for="texto"]'); if (t) t.textContent = "Texto no banner"; document.getElementById("texto").placeholder = "Ex.: Feliz aniversário, Ana!"; }
+  else if (MOD.tipo !== "caneca") { const t = document.querySelector('label[for="texto"]'); if (t) t.textContent = MOD.tipo === "copo" ? "Texto no copo" : "Texto na camiseta"; }
   const guia = document.querySelector(".ed-faixa-guia");
   if (MOD.guia) guia.querySelectorAll("span").forEach((el, i) => el.textContent = MOD.guia[i]); else guia.hidden = true;
-  const CORES = MOD.soBranca ? [["Branca", "#f3f3f1"]] : MOD.tipo === "camiseta" ? [["Branca", "#f3f3f1"], ["Preta", "#1d1e20"]]
+  const CORES = BANNER || MOD.soBranca ? [["Branca", "#f3f3f1"]] : MOD.tipo === "camiseta" ? [["Branca", "#f3f3f1"], ["Preta", "#1d1e20"]]
     : MOD.tipo === "copo" ? [["Preto", "#1e1f21"], ["Branco", "#f4f4f2"]]
     : [["Branca", "#ffffff"], ["Vermelha", "#d6312b"], ["Preta", "#222222"], ["Azul", "#1f5fbf"], ["Verde", "#2f9e57"], ["Amarela", "#f2c230"], ["Rosa", "#ec7fb0"]];
   let produto = null, detalhe = "#ffffff", fundoCaneca = corDoCorpo ? CORES[0][1] : "#ffffff", corNome = corDoCorpo ? CORES[0][0] : "Branca";
@@ -77,8 +89,8 @@
     for (const f of fotos) { const w = f.img.width * f.esc, h = f.img.height * f.esc; c.drawImage(f.gravada || f.img, A.x + A.w / 2 + f.ix - w / 2, A.y + A.h / 2 + f.iy - h / 2, w, h); }
     if (texto) {
       c.fillStyle = MOD.laser ? ACO : corTexto; c.textAlign = "center"; c.textBaseline = "middle";
-      let fs = MOD.tipo === "camiseta" ? 160 : 72; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`;
-      const Lt = MOD.limites && MOD.limites[lado], maxTxt = Math.min(A.w * (larga && MOD.w > 15 ? .36 : .92), Lt ? Lt[0] * A.w / MOD.w : Infinity);
+      let fs = BANNER ? Math.round(Math.min(170, A.h * .26)) : MOD.tipo === "camiseta" ? 160 : 72; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`;
+      const Lt = MOD.limites && MOD.limites[lado], maxTxt = Math.min(A.w * (larga && MOD.w > 15 && !BANNER ? .36 : .92), Lt ? Lt[0] * A.w / MOD.w : Infinity);
       while (c.measureText(texto).width > maxTxt && fs > 24) { fs -= 2; c.font = `600 ${fs}px Outfit, Figtree, sans-serif`; }
       c.fillText(texto, A.x + A.w / 2, fotos.length ? A.y + A.h - fs * .8 : A.y + A.h / 2);
     }
@@ -127,7 +139,7 @@
   // tamanho máximo da estampa no lado aberto (camiseta DTF frente e verso: frente até 10 cm, costas até 25 x 40 cm)
   const escMax = () => { const L = MOD.limites && MOD.limites[lado]; if (!L || !img) return Infinity;
     const k = A.w / MOD.w; return Math.min(L[0] * k / img.width, Math.min(L[1], MOD.h) * k / img.height); };
-  const escPadrao = () => Math.min(escMax(), !img ? 1 : !larga ? Math.min(A.w / img.width, A.h / img.height)
+  const escPadrao = () => Math.min(escMax(), !img ? 1 : !larga || BANNER ? Math.min(A.w / img.width, A.h / img.height)
     : (img.width / img.height >= 1.8 ? escCobrir() : A.h / img.height));
   let avisouLimite = false;
   function limitar() { const m = escMax(); if (esc <= m * 1.001) return; esc = m; zoom.value = 100;
@@ -184,7 +196,7 @@
       desenhar(); mostrarAjustes(); fecharMais();
       if (outras) toast("Foto adicionada. Toque numa foto pra mexer nela.");
       // ~150 dpi: pelo menos 60 pixels da imagem por cm da área
-      document.getElementById("qualidade").hidden = (1 / esc) * (A.w / MOD.w) >= 60; };
+      document.getElementById("qualidade").hidden = (1 / esc) * (A.w / MOD.w) >= (BANNER ? 12 : 60); };  // banner é visto de longe: ~30 dpi basta
     im.onerror = () => toast("Não deu pra abrir essa imagem. Tente outra em JPG ou PNG.");
     im.src = URL.createObjectURL(f);
   });
@@ -225,9 +237,13 @@
 
   const cx = document.getElementById("caixinha");
   // opção do produto (ex.: copo "Gravação 1 lado" / "Frente e Verso"): vem da página do produto (?o=) e pode trocar aqui
-  let opIdx = Math.max(0, parseInt(q.get("o"), 10) || 0);
+  let opIdx = BANNER && q.get("o") === "livre" ? 0 : Math.max(0, parseInt(q.get("o"), 10) || 0);
   const opcao = () => produto && produto.opcoes.length > 1 ? produto.opcoes[Math.min(opIdx, produto.opcoes.length - 1)] : null;
-  const precoUn = () => produto ? (opcao() || produto.opcoes[0]).preco + (cx.checked ? produto.caixinha || 0 : 0) : 0;
+  // banner com "Outro tamanho": medida × preço do m², nunca abaixo do mínimo (mesma conta da página do produto)
+  let medLivre = BANNER && q.get("o") === "livre";
+  const precoLivre = () => Math.max(produto.minimo || 0, Math.round(MOD.w * MOD.h / 10000 * produto.m2livre * 100) / 100);
+  const precoUn = () => !produto ? 0 : BANNER && medLivre && produto.m2livre ? precoLivre() : (opcao() || produto.opcoes[0]).preco + (cx.checked ? produto.caixinha || 0 : 0);
+  const medidaTxt = () => medLivre ? `${MOD.w} × ${MOD.h} cm (tamanho personalizado)` : opcao() ? opcao().label : `${MOD.w}×${MOD.h}cm`;
   const totalEl = document.getElementById("total");
   // quantas peças iguais: vem da página do produto (?q=) e pode mudar aqui; vai junto pro pedido
   let qtd = Math.max(1, parseInt(q.get("q"), 10) || 1);
@@ -243,6 +259,7 @@
     const comArte = LADOS.filter(l => est[l].fotos.length || est[l].texto);
     const nFotos = LADOS.reduce((n, l) => n + est[l].fotos.length, 0);
     const gemeo = (catalogo?.[cId] || []).some(o => o.id !== produto.id && o.nome.trim() === produto.nome.trim());  // dois produtos com o mesmo nome: o acabamento diz qual é
+    if (BANNER) return [medidaTxt(), ...LADOS.map(l => est[l].texto ? `texto: "${est[l].texto}"` : ""), nFotos > 1 ? `${nFotos} fotos` : ""].filter(Boolean).join(" · ");
     return `${gemeo && produto.acab ? produto.acab.trim() + " · " : ""}${opcao() ? opcao().label.replace(/\s*\(\+R\$\s*\d+\)/, "") + " · " : ""}Cor: ${corNome}${cx.checked ? " · caixinha personalizada" : ""}${MOD.verso ? ` · estampa: ${comArte.join(" e ")}` : MOD.tipo === "camiseta" ? ` · estampa ${lado === "costas" ? "nas costas" : "na frente"}` : ""}${LADOS.map(l => est[l].texto ? ` · texto${MOD.verso ? " (" + l + ")" : ""}: "${est[l].texto}"` : "").join("")}${nFotos > comArte.length ? ` · ${nFotos} fotos` : ""}`; };
 
   // foto da caneca 3D (se o aparelho abriu o 3D); senão, a faixa da área de impressão
@@ -316,6 +333,47 @@
     });
   }
 
+  // ---- banner: tamanho pronto ou "Outro tamanho" (largura × altura), igual à página do produto
+  function mudarMedida(w, h) {
+    if (!BANNER || !(w >= 10 && h >= 10) || (w === MOD.w && h === MOD.h)) return;
+    guardar(); const ow = A.w, oh = A.h; MOD.w = w; MOD.h = h; medirArea();
+    const kx = A.w / ow, ky = A.h / oh, k = Math.min(kx, ky);       // a arte acompanha a nova proporção
+    for (const l of LADOS) for (const f of est[l].fotos) { f.ix *= kx; f.iy *= ky; f.esc *= k; }
+    carregar(lado); mostrarAjustes();
+    document.dispatchEvent(new Event("banner-medida")); desenhar();
+  }
+  function lembrarTamanho() {   // recarregar a página mantém o tamanho escolhido aqui
+    try { const u = new URL(location.href); u.searchParams.set("o", medLivre ? "livre" : opIdx); u.searchParams.set("w", MOD.w); u.searchParams.set("h", MOD.h); history.replaceState(history.state, "", u); } catch (err) {}
+  }
+  const medidaDoRotulo = i => (produto.opcoes[i].label.match(/(\d+)×(\d+)/) || []).slice(1).map(Number);
+  function definirTamanho(o, w, h) {
+    const bloco = document.getElementById("ed-tam"); if (!bloco) return;
+    medLivre = o === "livre" && !!produto.m2livre;
+    if (!medLivre) { opIdx = Math.min(Math.max(0, parseInt(o, 10) || 0), produto.opcoes.length - 1); [w, h] = medidaDoRotulo(opIdx); }
+    bloco.querySelectorAll("[data-m]").forEach(x => x.setAttribute("aria-pressed", (x.dataset.m === "livre") === medLivre));
+    const so = document.getElementById("ed-opcao"); so.selectedIndex = opIdx; so.hidden = medLivre;
+    document.getElementById("ed-livre").hidden = document.getElementById("ed-livre-info").hidden = !medLivre;
+    if (medLivre) { document.getElementById("ed-larg").value = w; document.getElementById("ed-alt").value = h; }
+    mudarMedida(w, h); atualizarPreco(); lembrarTamanho(); salvarDepois();
+  }
+  function montarTamanho() {
+    const bloco = document.createElement("div"); bloco.className = "campo"; bloco.id = "ed-tam";
+    bloco.innerHTML = `<label for="ed-opcao">Tamanho do banner</label>
+      ${produto.m2livre ? '<div class="tam-modo" role="group" aria-label="Tipo de tamanho"><button type="button" data-m="pronto" aria-pressed="true">Tamanho pronto</button><button type="button" data-m="livre" aria-pressed="false">Outro tamanho</button></div>' : ""}
+      <select id="ed-opcao">${produto.opcoes.map(o => `<option>${o.label} — ${brl(o.preco)}</option>`).join("")}</select>
+      <div id="ed-livre" class="dupla" hidden><div><label for="ed-larg">Largura (cm)</label><input id="ed-larg" type="number" inputmode="decimal" min="10" value="${MOD.w}"></div><div><label for="ed-alt">Altura (cm)</label><input id="ed-alt" type="number" inputmode="decimal" min="10" value="${MOD.h}"></div></div>
+      ${produto.m2livre ? `<small id="ed-livre-info" hidden>${brl(produto.m2livre)} o m². Banner pequeno paga o mínimo de ${brl(produto.minimo || 0)}.</small>` : '<small id="ed-livre-info" hidden></small>'}`;
+    (painel.querySelector(".campo-qtd") || painel.querySelector(".total")).before(bloco);   // tamanho antes da quantidade
+    bloco.querySelector("select").addEventListener("change", e => definirTamanho(e.target.selectedIndex));
+    bloco.addEventListener("click", e => { const b = e.target.closest("[data-m]"); if (!b) return;
+      if (b.dataset.m === "livre") { definirTamanho("livre", MOD.w, MOD.h); document.getElementById("ed-larg").focus(); } else definirTamanho(opIdx); });
+    let tm; const digitou = () => { clearTimeout(tm); tm = setTimeout(() => {
+      const w = parseFloat(document.getElementById("ed-larg").value), h = parseFloat(document.getElementById("ed-alt").value);
+      if (w >= 10 && h >= 10) { mudarMedida(w, h); atualizarPreco(); lembrarTamanho(); salvarDepois(); } }, 350); };
+    ["ed-larg", "ed-alt"].forEach(id => document.getElementById(id).addEventListener("input", digitou));
+    definirTamanho(q.get("o") === "livre" ? "livre" : opIdx, MOD.w, MOD.h);
+  }
+
   // ---- salvar o que o cliente montou (IndexedDB): recarregar a página não perde a arte
   const CHAVE = `editor:${cId}:${pId}`;
   let pronto = false, tmSalvar;
@@ -326,7 +384,7 @@
     tmSalvar = setTimeout(() => {
       guardar();
       const lados = {}; for (const l of LADOS) lados[l] = { sel: est[l].sel, texto: est[l].texto, corTexto: est[l].corTexto, fotos: est[l].fotos.map(f => ({ arquivo: f.arquivo, ix: f.ix, iy: f.iy, esc: f.esc, inverter: f.inverter })) };
-      op("readwrite", s => s.put({ lados, ordem: [...LADOS], lado, corNome, cx: cx.checked, op: opIdx, qtd }, CHAVE)).catch(() => {});
+      op("readwrite", s => s.put({ lados, ordem: [...LADOS], lado, corNome, cx: cx.checked, op: opIdx, qtd, area: { w: A.w, h: A.h }, med: BANNER ? { w: MOD.w, h: MOD.h, livre: medLivre } : undefined }, CHAVE)).catch(() => {});
     }, 400);
   }
   function apagarSalvo() { return op("readwrite", s => s.delete(CHAVE)).catch(() => {}); }
@@ -334,18 +392,21 @@
     let m; try { m = await op("readonly", s => s.get(CHAVE)); } catch (e) { return; }
     if (!m || !m.lados) return;
     const abrir = a => new Promise(ok => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ok(null); im.src = URL.createObjectURL(a); });
+    if (BANNER && m.med && !q.has("w")) definirTamanho(m.med.livre ? "livre" : m.op || 0, m.med.w, m.med.h);
+    // fotos salvas noutra medida de área (banner trocou de tamanho): reposiciona na proporção
+    const kx = m.area ? A.w / m.area.w : 1, ky = m.area ? A.h / m.area.h : 1, kk = Math.min(kx, ky);
     if (!MOD.verso && m.ordem && m.ordem[0] !== LADOS[0]) abas.querySelector(`[data-l="${m.ordem[0]}"]`)?.click();
     for (const l of LADOS) {
       const s = m.lados[l] || m.lados[Object.keys(m.lados)[0]]; if (!s) continue;
       sel = -1; fotos = []; texto = s.texto || ""; corTexto = s.corTexto || "#1d2427"; lado = l;
-      for (const f of s.fotos) { const im = await abrir(f.arquivo); if (!im) continue; sincronizar(); fotos.push({ ...VAZIA, ...f, img: im }); sel = -1; selecionar(fotos.length - 1); prepararLaser(); sincronizar(); }
+      for (const f of s.fotos) { const im = await abrir(f.arquivo); if (!im) continue; sincronizar(); fotos.push({ ...VAZIA, ...f, ix: f.ix * kx, iy: f.iy * ky, esc: f.esc * kk, img: im }); sel = -1; selecionar(fotos.length - 1); prepararLaser(); sincronizar(); }
       sel = -1; selecionar(Math.min(s.sel, fotos.length - 1)); guardar();
     }
     carregar(MOD.verso && m.lado && est[m.lado] ? m.lado : LADOS[0]);
     if (MOD.verso && lado !== "frente") { abas.querySelectorAll("[data-l]").forEach(x => x.setAttribute("aria-selected", x.dataset.l === lado)); document.dispatchEvent(new CustomEvent("mockup-lado", { detail: lado })); }
     campoTxt.value = texto; document.getElementById("cor-texto").value = corTexto; document.getElementById("bloco-texto").hidden = !texto;
     if (m.cx && !cx.closest("label").hidden) { cx.checked = true; atualizarPreco(); }
-    if (!q.has("o") && m.op && opcao()) { opIdx = m.op; const so = document.getElementById("ed-opcao"); if (so) so.selectedIndex = Math.min(opIdx, so.options.length - 1); atualizarPreco(); }
+    if (!BANNER && !q.has("o") && m.op && opcao()) { opIdx = m.op; const so = document.getElementById("ed-opcao"); if (so) so.selectedIndex = Math.min(opIdx, so.options.length - 1); atualizarPreco(); }
     if (!q.has("q") && m.qtd > 1) mudarQtd(m.qtd);
     const b = document.querySelector(`#cores .cor[data-n="${m.corNome}"]`); if (b) b.click();
     mostrarAjustes(); desenhar();
@@ -355,14 +416,16 @@
   // carregar produto
   carregarCatalogo().then(cat => {
     produto = (cat[cId] || []).find(p => p.id === pId) || cat.canecas[0];
-    if (cId === "camisetas") {             // migalha e menu apontam para Camisetas
-      const m = document.getElementById("migalha-cat"); if (m) { m.textContent = "Camisetas"; m.href = ROOT + "camisetas/"; }
-      document.querySelectorAll(".nav-cat a").forEach(a => { const s = new URL(a.href).pathname.replace(/\/$/, "").split("/").pop(); a.toggleAttribute("aria-current", s === "camisetas"); if (s === "camisetas") a.setAttribute("aria-current", "page"); });
+    const CAT = { camisetas: "Camisetas", banners: "Banners e Placas" }[cId];
+    if (CAT) {                             // migalha e menu apontam para a categoria certa
+      const m = document.getElementById("migalha-cat"); if (m) { m.textContent = CAT; m.href = ROOT + cId + "/"; }
+      document.querySelectorAll(".nav-cat a").forEach(a => { const s = new URL(a.href).pathname.replace(/\/$/, "").split("/").pop(); a.toggleAttribute("aria-current", s === cId); if (s === cId) a.setAttribute("aria-current", "page"); });
     }
     document.getElementById("nome-produto").textContent = produto.nome;
     document.title = "Personalizar: " + produto.nome + " | Johen Arte Gráfica";
     if (!produto.caixinha) cx.closest("label").hidden = true; else if (q.get("cx") === "1") cx.checked = true;
-    if (produto.opcoes.length > 1) {        // mesma escolha da página do produto, com o mesmo preço
+    if (BANNER) montarTamanho();
+    else if (produto.opcoes.length > 1) {        // mesma escolha da página do produto, com o mesmo preço
       const bloco = document.createElement("div"); bloco.className = "campo";
       bloco.innerHTML = `<label for="ed-opcao">${produto.opcoes[0].label.startsWith("Gravação") ? "Gravação" : "Escolha a opção"}</label><select id="ed-opcao">${produto.opcoes.map(o => `<option>${o.label} — ${brl(o.preco)}</option>`).join("")}</select>`;
       painel.querySelector(".total").before(bloco);

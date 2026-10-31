@@ -207,9 +207,12 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
             opc = f'''<div class="campo"><span class="rot">{"Tamanho da placa" if slug == "banners" else "Tamanho do adesivo"}</span><div class="dupla"><div><label for="largura">Largura (cm)</label><input id="largura" type="number" inputmode="decimal" min="1" value="50"></div><div><label for="altura">Altura (cm)</label><input id="altura" type="number" inputmode="decimal" min="1" value="50"></div></div><small>{brl(p['m2'])} o m². Pedido mínimo {brl(p['minimo'])}.</small><p class="aviso-min" id="aviso-min" hidden>Ficou abaixo do pedido mínimo, então o valor sobe pra {brl(p['minimo'])}.</p></div>'''
         elif len(p["opcoes"]) > 1:
             rot = "Quantidade" if " un." in p["opcoes"][0]["label"] else "Tamanho" if all(re.fullmatch(r"\d+×\d+cm", o["label"]) for o in p["opcoes"]) else "Escolha a opção"
-            opc = f'<div class="campo"><label for="opcao">{rot}</label><select id="opcao">' + "".join(f'<option>{E(o["label"])} — {brl(o["preco"])}</option>' for o in p["opcoes"])
+            # banner: "Tamanho pronto" e "Outro tamanho" lado a lado, à vista (não escondido dentro da lista)
+            cab = (f'<div class="rot-linha"><label for="opcao">{rot}</label><button class="ed-ajuda" id="ver-tour" type="button"><span aria-hidden="true">?</span> Como escolher</button></div>'
+                   '<div class="tam-modo" id="tam-modo" role="group" aria-label="Tipo de tamanho"><button type="button" data-m="pronto" aria-pressed="true">Tamanho pronto</button><button type="button" data-m="livre" aria-pressed="false">Outro tamanho</button></div>') if p.get("m2livre") else f'<label for="opcao">{rot}</label>'
+            opc = f'<div class="campo" id="campo-tam">{cab}<select id="opcao">' + "".join(f'<option>{E(o["label"])} — {brl(o["preco"])}</option>' for o in p["opcoes"])
             if p.get("m2livre"):  # banner: além dos tamanhos prontos, o cliente digita a medida que quiser (preço por m², com mínimo)
-                opc += f'<option value="livre">Outro tamanho (você escolhe)</option></select><div id="medida-livre" class="dupla" hidden><div><label for="largura">Largura (cm)</label><input id="largura" type="number" inputmode="decimal" min="1" value="100"></div><div><label for="altura">Altura (cm)</label><input id="altura" type="number" inputmode="decimal" min="1" value="100"></div></div><small id="medida-livre-info" hidden>{brl(p["m2livre"]).replace(" ", "&nbsp;")} o m². Banner pequeno paga o mínimo de {brl(p["minimo"]).replace(" ", "&nbsp;")}.</small></div>'
+                opc += f'</select><div id="medida-livre" class="dupla" hidden><div><label for="largura">Largura (cm)</label><input id="largura" type="number" inputmode="decimal" min="1" value="100"></div><div><label for="altura">Altura (cm)</label><input id="altura" type="number" inputmode="decimal" min="1" value="100"></div></div><small id="medida-livre-info" hidden>{brl(p["m2livre"]).replace(" ", "&nbsp;")} o m². Banner pequeno paga o mínimo de {brl(p["minimo"]).replace(" ", "&nbsp;")}.</small></div>'
             else:
                 opc += '</select></div>'
         else:
@@ -222,7 +225,7 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
         # quantidade com o nome certo no pedido e no WhatsApp: "3 cartelas", "2 estampas" (não "por cartela, 3 un.")
         dados["qn"] = ["cartela", "cartelas"] if "cartela" in un else ["estampa", "estampas"] if "estampa" in un else None
         opc += f'<div class="campo campo-qtd"><span class="rot">{rot_qtd}</span><div class="qtd"><button id="menos" aria-label="Menos">−</button><output id="qtd">1</output><button id="mais" aria-label="Mais">+</button></div></div>'
-        editavel = (slug == "canecas" and (p["sub"] == "canecas" or p["id"] in ("p6", "p7nt99ze"))) or (slug == "camisetas" and p["sub"] in ("dtf", "sublimacao_comum"))  # canecas, copos térmicos e camisetas DTF/sublimação comum têm editor 3D
+        editavel = (slug == "canecas" and (p["sub"] == "canecas" or p["id"] in ("p6", "p7nt99ze"))) or (slug == "camisetas" and p["sub"] in ("dtf", "sublimacao_comum")) or (slug == "banners" and bool(p.get("m2livre")))  # banners de lona também; canecas, copos térmicos e camisetas DTF/sublimação comum têm editor 3D
         caixinha = (f'<label class="check caixinha-op"><input type="checkbox" id="caixinha"><img src="../../img/produtos/canecas-caixinha.webp" alt="" width="44" height="44" loading="lazy"><span class="cx-txt">Caixinha personalizada<small><b>+ {brl(p["caixinha"])}</b> · opcional</small></span></label>' if p.get("caixinha") else "")
         personalizar = (f'<a class="btn btn-pri btn-bloco" id="personalizar" href="../../editor/?c={slug}&p={p["id"]}">Personalize sem sair do site</a>' if editavel else "")
         botoes = ('<button class="btn btn-sec btn-bloco" id="add">Adicionar ao pedido</button>' if editavel else '<button class="btn btn-pri btn-bloco" id="add">Adicionar ao pedido</button>')
@@ -253,7 +256,8 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
 {f'<section class="secao" style="padding-top:0"><div class="secao-tit"><h2>Veja também</h2></div><div class="grade grade-4">{rel}</div></section>' if rel else ""}
 </div>
 <script type="application/json" id="dados-produto">{json.dumps(dados, ensure_ascii=False)}</script>'''
-        pagina(f"{slug}/{p['id']}/index.html", f"{p['nome']} | Johen Arte Gráfica", f"{p['nome']}: {p['obs'][:140]}", corpo, slug)
+        pagina(f"{slug}/{p['id']}/index.html", f"{p['nome']} | Johen Arte Gráfica", f"{p['nome']}: {p['obs'][:140]}", corpo, slug,
+               f'<script src="../../assets/tour.js?v={VER}" defer></script>' if p.get("m2livre") else "")  # guia "Como escolher o tamanho"
 
 # ---------- serviços (rascunhos) ----------
 SERV_TXT = {
@@ -355,7 +359,7 @@ corpo = f'''<div class="wrap editor">
   <button class="btn btn-wpp" id="enviar-arte">{ICO['wpp']} Enviar</button>
 </div>
 </div>'''
-pagina("editor/index.html", "Personalizar | Johen Arte Gráfica", "Monte sua caneca, copo térmico ou camiseta com a sua arte e veja em 3D antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script><script src="../assets/tour.js?v={VER}" defer></script>')
+pagina("editor/index.html", "Personalizar | Johen Arte Gráfica", "Monte sua caneca, copo térmico, camiseta ou banner com a sua arte e veja em 3D antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script><script src="../assets/tour.js?v={VER}" defer></script>')
 
 # ---------- home (cinematográfica: o vídeo da bancada anda com a rolagem) ----------
 # Frames em cine/frames/ (gerados do vídeo com o fatiar_frames.sh do Site Cinematográfico) e artes em img/cine/
