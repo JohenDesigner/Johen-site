@@ -107,6 +107,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head="", head="", class
   <div class="wrap">
     <div class="topo-linha">
       <a class="logo" href="{R}" aria-label="Johen Arte Gráfica, início"><img src="{R}img/marca/logo-wordmark.webp" alt="Johen Arte Gráfica" width="94" height="30"></a>
+      <button class="icone-btn lupa-btn" type="button" aria-label="Buscar produto" aria-controls="busca" aria-expanded="false" hidden>{ICO['busca']}</button>
       <a class="icone-btn" href="{R}pedido/" aria-label="Meu pedido">{ICO['sacola']}<span class="contador" hidden>0</span></a>
       <button class="icone-btn" data-abrir-menu aria-label="Abrir menu">{ICO['menu']}</button>
     </div>
@@ -359,7 +360,7 @@ corpo = f'''<div class="wrap editor">
   <button class="btn btn-wpp" id="enviar-arte">{ICO['wpp']} Enviar</button>
 </div>
 </div>'''
-pagina("editor/index.html", "Personalizar | Johen Arte Gráfica", "Monte sua caneca, copo térmico, camiseta ou banner com a sua arte e veja em 3D antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script><script src="../assets/tour.js?v={VER}" defer></script>')
+pagina("editor/index.html", "Personalizar | Johen Arte Gráfica", "Monte sua caneca, copo térmico, camiseta ou banner com a sua arte e veja em 3D antes de pedir.", corpo, "canecas", f'<script src="../assets/editor.js?v={VER}" defer></script><script type="module" src="../assets/mockup3d.js?v={VER}"></script><script src="../assets/tour.js?v={VER}" defer></script>', classe="pag-editor")  # no editor a busca vira lupa (mais espaço pra montar)
 
 # ---------- home (cinematográfica: o vídeo da bancada anda com a rolagem) ----------
 # Frames em cine/frames/ (gerados do vídeo com o fatiar_frames.sh do Site Cinematográfico) e artes em img/cine/

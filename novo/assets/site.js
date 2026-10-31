@@ -82,6 +82,15 @@ function iniciarBusca() {
     }, 180);
   });
   document.addEventListener("click", e => { if (!e.target.closest(".busca")) box.hidden = true; });
+  // editor: a barra de busca some e vira uma lupa no topo; só abre pra digitar ao tocar nela
+  const lupa = $(".lupa-btn");
+  if (lupa && document.body.classList.contains("pag-editor")) {
+    lupa.hidden = false;
+    const abrir = v => { document.body.classList.toggle("busca-aberta", v); lupa.setAttribute("aria-expanded", v); lupa.setAttribute("aria-label", v ? "Fechar busca" : "Buscar produto"); if (v) inp.focus(); else { box.hidden = true; inp.blur(); } };
+    lupa.addEventListener("click", () => abrir(!document.body.classList.contains("busca-aberta")));
+    document.addEventListener("click", e => { if (!e.target.closest(".busca, .lupa-btn") && !inp.value.trim()) abrir(false); });
+    inp.addEventListener("keydown", e => { if (e.key === "Escape") abrir(false); });
+  }
 }
 
 /* ---------- hero (vídeo ou slides) ---------- */
