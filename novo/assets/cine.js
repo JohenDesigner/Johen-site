@@ -62,9 +62,13 @@
       if (j < 0 || (j === desenhado && !forcar)) return;
       const img = quadros[j];
       const cw = canvas.width, ch = canvas.height;
-      const escala = Math.max(cw / img.naturalWidth, ch / img.naturalHeight); // "cover"
-      const w = img.naturalWidth * escala, h = img.naturalHeight * escala;
-      ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+      // Os quadros do vídeo têm ~5px de faixa preta em cima e embaixo (sobra da gravação):
+      // corta 6px de cada lado da imagem de origem para não aparecer uma linha escura sob o cabeçalho.
+      const corte = Math.min(6, Math.floor(img.naturalHeight * 0.01));
+      const sw = img.naturalWidth, sh = img.naturalHeight - corte * 2;
+      const escala = Math.max(cw / sw, ch / sh); // "cover"
+      const w = sw * escala, h = sh * escala;
+      ctx.drawImage(img, 0, corte, sw, sh, (cw - w) / 2, (ch - h) / 2, w, h);
       desenhado = j;
     }
 
