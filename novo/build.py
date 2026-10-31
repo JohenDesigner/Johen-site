@@ -330,7 +330,8 @@ corpo = f'''<div class="wrap editor">
       <div id="bloco-texto" class="campo" hidden><label for="texto">Texto na caneca</label><input id="texto" type="text" maxlength="40" placeholder="Ex.: Melhor pai do mundo" style="height:50px;border:1.5px solid #c9d0d2;border-radius:10px;padding:0 14px"><label for="cor-texto" style="font-weight:600;font-size:14px">Cor do texto</label><input id="cor-texto" type="color" value="#1d2427" style="width:64px;height:40px;border:0;background:none"></div>
       <div id="cores" class="campo" hidden><span class="rot">Cor da alça e de dentro</span><div class="cores"></div></div>
       <label class="check campo"><input type="checkbox" id="caixinha"> Caixinha personalizada (+ R$ 5,00)</label>
-      <div class="total"><small>Valor</small><strong id="total">R$ 0,00</strong></div>
+      <div class="campo campo-qtd"><span class="rot" id="ed-qtd-rot">Quantas peças?</span><div class="qtd"><button id="ed-menos" type="button" aria-label="Menos">−</button><output id="ed-qtd" aria-labelledby="ed-qtd-rot">1</output><button id="ed-mais" type="button" aria-label="Mais">+</button></div></div>
+      <div class="total"><small>Valor</small><strong id="total">R$ 0,00</strong><span id="total-un"></span></div>
     </div>
   </div>
 </div>

@@ -229,7 +229,15 @@
   const opcao = () => produto && produto.opcoes.length > 1 ? produto.opcoes[Math.min(opIdx, produto.opcoes.length - 1)] : null;
   const precoUn = () => produto ? (opcao() || produto.opcoes[0]).preco + (cx.checked ? produto.caixinha || 0 : 0) : 0;
   const totalEl = document.getElementById("total");
-  const atualizarPreco = () => { totalEl.textContent = brl(precoUn()); };
+  // quantas peças iguais: vem da página do produto (?q=) e pode mudar aqui; vai junto pro pedido
+  let qtd = Math.max(1, parseInt(q.get("q"), 10) || 1);
+  const qtdEl = document.getElementById("ed-qtd"), unEl = document.getElementById("total-un");
+  const atualizarPreco = () => { totalEl.textContent = brl(precoUn() * qtd); if (qtdEl) qtdEl.textContent = qtd; if (unEl) unEl.textContent = qtd > 1 ? `(${brl(precoUn())} cada)` : ""; };
+  const mudarQtd = n => { qtd = Math.max(1, n); atualizarPreco(); salvarDepois();
+    // recarregar a página mantém a quantidade escolhida aqui (e não a que veio do produto)
+    try { const u = new URL(location.href); qtd > 1 ? u.searchParams.set("q", qtd) : u.searchParams.delete("q"); history.replaceState(history.state, "", u); } catch (err) {} };
+  document.getElementById("ed-menos")?.addEventListener("click", () => mudarQtd(qtd - 1));
+  document.getElementById("ed-mais")?.addEventListener("click", () => mudarQtd(qtd + 1));
   cx.addEventListener("change", atualizarPreco);
   const descricao = () => { guardar();
     const comArte = LADOS.filter(l => est[l].fotos.length || est[l].texto);
@@ -251,14 +259,14 @@
     if (!produto) return;
     const artes = [];
     for (const l of ladosPrevia()) artes.push(await paraURL(await previa(260, l)));
-    Pedido.add({ c: cId, id: pId, nome: produto.nome, img: produto.img, arte: artes[0], artes: artes.length > 1 ? artes : undefined, desc: descricao(), qtd: 1, total: precoUn() });
+    Pedido.add({ c: cId, id: pId, nome: produto.nome, img: produto.img, arte: artes[0], artes: artes.length > 1 ? artes : undefined, desc: descricao(), qtd, total: precoUn() * qtd });
     await apagarSalvo();
     location.href = ROOT + "pedido/";
   }
   document.getElementById("add-pedido").addEventListener("click", comprar);
   document.getElementById("comprar").addEventListener("click", comprar);
   document.getElementById("enviar-arte").addEventListener("click", async () => {
-    const msg = `Olá! Montei ${SEU.replace("sua", "minha").replace("seu", "meu")} no site:\n• ${produto.nome}\n• ${descricao()}\n• Valor: ${brl(precoUn())}\n\nSegue a prévia, a arte posicionada e a arte original.`;
+    const msg = `Olá! Montei ${SEU.replace("sua", "minha").replace("seu", "meu")} no site:\n• ${produto.nome}\n• ${descricao()}${qtd > 1 ? `\n• Quantidade: ${qtd} un.` : ""}\n• Valor: ${brl(precoUn() * qtd)}\n\nSegue a prévia, a arte posicionada e a arte original.`;
     const files = [];
     for (const l of ladosPrevia()) files.push(new File([await previa(1080, l)], `previa-${MOD.obj}${l ? "-" + l : ""}.png`, { type: "image/png" }));
     const prev = files[0]; guardar();
@@ -318,7 +326,7 @@
     tmSalvar = setTimeout(() => {
       guardar();
       const lados = {}; for (const l of LADOS) lados[l] = { sel: est[l].sel, texto: est[l].texto, corTexto: est[l].corTexto, fotos: est[l].fotos.map(f => ({ arquivo: f.arquivo, ix: f.ix, iy: f.iy, esc: f.esc, inverter: f.inverter })) };
-      op("readwrite", s => s.put({ lados, ordem: [...LADOS], lado, corNome, cx: cx.checked, op: opIdx }, CHAVE)).catch(() => {});
+      op("readwrite", s => s.put({ lados, ordem: [...LADOS], lado, corNome, cx: cx.checked, op: opIdx, qtd }, CHAVE)).catch(() => {});
     }, 400);
   }
   function apagarSalvo() { return op("readwrite", s => s.delete(CHAVE)).catch(() => {}); }
@@ -338,6 +346,7 @@
     campoTxt.value = texto; document.getElementById("cor-texto").value = corTexto; document.getElementById("bloco-texto").hidden = !texto;
     if (m.cx && !cx.closest("label").hidden) { cx.checked = true; atualizarPreco(); }
     if (!q.has("o") && m.op && opcao()) { opIdx = m.op; const so = document.getElementById("ed-opcao"); if (so) so.selectedIndex = Math.min(opIdx, so.options.length - 1); atualizarPreco(); }
+    if (!q.has("q") && m.qtd > 1) mudarQtd(m.qtd);
     const b = document.querySelector(`#cores .cor[data-n="${m.corNome}"]`); if (b) b.click();
     mostrarAjustes(); desenhar();
     if (fotos.length || texto) toast("Sua arte foi recuperada.");

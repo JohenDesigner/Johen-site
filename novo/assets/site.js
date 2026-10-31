@@ -149,6 +149,9 @@ function iniciarProduto() {
     if (unEl) unEl.textContent = multiplica && qtd > 1 ? `(${brl(r.un)} cada)` : (p.un || "");  // ex.: "por cartela"
     if (qtdOut) qtdOut.textContent = qtd;
     const pa = $("#pedir-agora"); if (pa) pa.href = wppLink(msgPedir());
+    // leva a quantidade escolhida para o editor (senão o pedido montado lá sai com 1 peça só)
+    const pers = $("#personalizar");
+    if (pers) { const u = new URL(pers.href); qtd > 1 ? u.searchParams.set("q", qtd) : u.searchParams.delete("q"); pers.href = u.toString(); }
   }
   [sel, larg, alt, cx].forEach(el => el?.addEventListener("input", render));
   // leva a escolha da caixinha para o editor
