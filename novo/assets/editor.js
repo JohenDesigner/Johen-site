@@ -43,7 +43,7 @@
       : pId === "p7" ? { ...MODELOS.camiseta, propria: true, sub: "estampa até 25 x 40 cm", limites: ESTAMPA([25, 40, "estampa até 25 x 40 cm"]) }
       : MODELOS[pId === "p1" ? "camisetaSub" : ["p8", "p9", "p10"].includes(pId) ? "camiseta2" : "camiseta"])
     : pId === "p7nt99ze" ? MODELOS.copo360
-    : ["p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13"].includes(pId) ? { ...MODELOS.copo, ...(pId === "p5" ? { w: 4, sub: "frente da garrafa · 4 x 12 cm" } : ["p7", "p9"].includes(pId) ? { sub: "frente da garrafa · 4,8 x 12 cm" } : ["p10", "p11", "p12", "p13"].includes(pId) ? { sub: "frente da peça · 4,8 x 12 cm" } : {}),
+    : ["p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13"].includes(pId) ? { ...MODELOS.copo, verso: true, versoOp: true, ...(["p5", "p7", "p9"].includes(pId) ? { w: 4, sub: "frente da garrafa · 4 x 12 cm" } : ["p10", "p11", "p12", "p13"].includes(pId) ? { sub: "frente da peça · 4,8 x 12 cm" } : {}),
         propria: ["p10", "p11", "p12", "p13"].includes(pId), obj: ["p5", "p7", "p9"].includes(pId) ? "garrafa" : ["p10", "p11", "p12", "p13"].includes(pId) ? "peca" : "copo" }
     : MODELOS.caneca);
   // artigo + nome de cada peça: "o banner", "seu banner", "no banner"
@@ -104,6 +104,10 @@
   // camiseta frente e verso: cada lado guarda a própria arte; as variáveis acima são sempre as do lado aberto
   // camiseta só de um lado: LADOS tem um lado só, e o cliente escolhe se é a frente ou as costas
   const LADOS = MOD.verso ? ["frente", "costas"] : ["frente"];
+  // térmicos (copo, garrafa, gravação avulsa): o verso só vale quando a opção escolhida é "Frente e Verso"
+  let versoOn = !MOD.versoOp;
+  const ATIVOS = () => MOD.versoOp && !versoOn ? ["frente"] : LADOS;
+  const nomeLado = l => MOD.versoOp && l === "costas" ? "verso" : l;
   const est = {}; let lado = "frente";
   const guardar = () => { sincronizar(); est[lado] = { fotos, sel, texto, corTexto }; };
   const carregar = l => { const e = est[l]; sel = -1; fotos = e.fotos; texto = e.texto; corTexto = e.corTexto; lado = l; selecionar(e.sel); };
@@ -126,9 +130,10 @@
   }
   window.CanecaArte = {
     area: A,
-    temArte: () => { guardar(); return LADOS.some(l => est[l].fotos.length || est[l].texto); },
+    temArte: () => { guardar(); return ATIVOS().some(l => est[l].fotos.length || est[l].texto); },
     pintar: (c, l) => comLado(l, () => pintarArte(c)),
     lados: LADOS,
+    ativos: () => ATIVOS(),
     cores: () => ({ corpo: fundoCaneca, detalhe }),
     nome: () => produto ? produto.nome : MOD.obj,
     modelo: MOD,
@@ -289,23 +294,23 @@
   document.getElementById("ed-mais")?.addEventListener("click", () => mudarQtd(qtd + 1));
   cx.addEventListener("change", atualizarPreco);
   const descricao = () => { guardar();
-    const comArte = LADOS.filter(l => est[l].fotos.length || est[l].texto);
-    const nFotos = LADOS.reduce((n, l) => n + est[l].fotos.length, 0);
+    const comArte = ATIVOS().filter(l => est[l].fotos.length || est[l].texto);
+    const nFotos = ATIVOS().reduce((n, l) => n + est[l].fotos.length, 0);
     const gemeo = (catalogo?.[cId] || []).some(o => o.id !== produto.id && o.nome.trim() === produto.nome.trim());  // dois produtos com o mesmo nome: o acabamento diz qual é
     if (MOD.tipo === "plano") return [MED ? medidaTxt() : opcao() ? opcao().label : "", MOD.verso ? (comArte.length > 1 ? "arte na frente e no verso" : comArte[0] === "costas" ? "arte só no verso" : "arte só na frente") : "",  ...LADOS.map(l => est[l].texto ? `texto: "${est[l].texto}"` : ""), nFotos > Math.max(1, comArte.length) ? `${nFotos} fotos` : ""].filter(Boolean).join(" · ");
-    return `${gemeo && produto.acab ? produto.acab.trim() + " · " : ""}${opcao() ? opcao().label.replace(/\s*\(\+R\$\s*\d+\)/, "") + " · " : ""}${MOD.propria ? "na peça do cliente" : "Cor: " + corNome}${cx.checked ? " · caixinha personalizada" : ""}${MOD.verso ? ` · estampa: ${comArte.join(" e ")}` : MOD.tipo === "camiseta" ? ` · estampa ${lado === "costas" ? "nas costas" : "na frente"}` : ""}${LADOS.map(l => est[l].texto ? ` · texto${MOD.verso ? " (" + l + ")" : ""}: "${est[l].texto}"` : "").join("")}${nFotos > comArte.length ? ` · ${nFotos} fotos` : ""}`; };
+    return `${gemeo && produto.acab ? produto.acab.trim() + " · " : ""}${opcao() ? opcao().label.replace(/\s*\(\+R\$\s*\d+\)/, "") + " · " : ""}${MOD.propria ? "na peça do cliente" : "Cor: " + corNome}${cx.checked ? " · caixinha personalizada" : ""}${MOD.versoOp ? (versoOn ? (comArte.length > 1 ? " · arte na frente e no verso" : comArte[0] === "costas" ? " · arte só no verso" : " · arte só na frente") : "") : MOD.verso ? ` · estampa: ${comArte.join(" e ")}` : MOD.tipo === "camiseta" ? ` · estampa ${lado === "costas" ? "nas costas" : "na frente"}` : ""}${ATIVOS().map(l => est[l].texto ? ` · texto${ATIVOS().length > 1 ? " (" + nomeLado(l) + ")" : ""}: "${est[l].texto}"` : "").join("")}${nFotos > comArte.length ? ` · ${nFotos} fotos` : ""}`; };
 
   // foto da caneca 3D (se o aparelho abriu o 3D); senão, a faixa da área de impressão
   async function previa(tam, l) {
     if (window.Caneca3D) { try { return await window.Caneca3D.foto(tam, l); } catch (e) { } }
     return await comLado(l, () => { desenhar(true); return new Promise(r => cv.toBlob(r, "image/png")); });
   }
-  // camiseta frente e verso com arte nos dois lados: uma prévia de cada lado (senão a das costas some)
-  const ladosPrevia = () => { guardar(); const c = LADOS.filter(l => est[l].fotos.length || est[l].texto); return MOD.verso && c.length > 1 ? c : [null]; };
+  // frente e verso (camiseta, cartão, térmico) com arte nos dois lados: uma prévia de cada lado (senão a das costas some)
+  const ladosPrevia = () => { guardar(); const c = ATIVOS().filter(l => est[l].fotos.length || est[l].texto); return MOD.verso && c.length ? c : [null]; };   // um lado só com arte: a prévia vira pra ele (senão sai o lado vazio)
   const paraURL = b => new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
   // Comprar: coloca no pedido com a prévia e abre a página do pedido
   // enquanto a prévia é preparada, os botões travam e dizem "Preparando…": tocar de novo não põe o mesmo item duas vezes no pedido
-  let comprando = false;
+  let comprando = false, avisouVerso = false;
   const btsComprar = () => ["comprar", "add-pedido"].map(id => document.getElementById(id)).filter(Boolean);
   const travarComprar = on => btsComprar().forEach(b => {
     if (on) { b.dataset.rot = b.textContent; b.textContent = "Preparando…"; } else if (b.dataset.rot) b.textContent = b.dataset.rot;
@@ -315,6 +320,8 @@
     if (comprando) return;
     if (!window.CanecaArte.temArte()) { toast("Adicione uma imagem ou um texto antes de comprar."); return; }
     if (!produto) return;
+    if (MOD.versoOp && versoOn && !avisouVerso) { guardar(); const f = ATIVOS().filter(l => est[l].fotos.length || est[l].texto);
+      if (f.length < 2) { avisouVerso = true; toast(`Você escolheu Frente e Verso, mas só tem arte ${f[0] === "costas" ? "no verso" : "na frente"}. Toque em ${f[0] === "costas" ? "Frente" : "Verso"} pra pôr a outra, ou em Comprar de novo pra seguir assim.`); return; } }
     comprando = true; travarComprar(true);
     await new Promise(r => requestAnimationFrame(() => setTimeout(r, 30)));   // mostra o "Preparando…" antes do trabalho pesado
     try {
@@ -332,10 +339,10 @@
     const files = [];
     for (const l of ladosPrevia()) files.push(new File([await previa(1080, l)], `previa-${MOD.obj}${l ? "-" + l : ""}.png`, { type: "image/png" }));
     const prev = files[0]; guardar();
-    for (const l of LADOS) {
+    for (const l of ATIVOS()) {
       if (!est[l].fotos.length && !est[l].texto) continue;
       const blob = await comLado(l, () => { desenhar(true); return new Promise(r => cv.toBlob(r, "image/png")); });
-      files.push(new File([blob], `arte-posicionada-${MOD.obj}${MOD.tipo === "camiseta" ? "-" + l : ""}.png`, { type: "image/png" }));
+      files.push(new File([blob], `arte-posicionada-${MOD.obj}${MOD.tipo === "camiseta" || ATIVOS().length > 1 ? "-" + nomeLado(l) : ""}.png`, { type: "image/png" }));
       est[l].fotos.forEach(f => f.arquivo && files.push(f.arquivo));
     }
     desenhar(true);
@@ -358,12 +365,12 @@
       campoTxt.value = texto; document.getElementById("cor-texto").value = corTexto;
       document.getElementById("bloco-texto").hidden = !texto;
       document.getElementById("qualidade").hidden = true; mostrarAjustes();
-      document.querySelector(".ed-faixa-tit small").textContent = MOD.limites ? MOD.limites[lado][2] : MOD.total ? `${lado} · camiseta inteira` : MOD.tipo === "plano" ? `${lado === "costas" ? "verso" : "frente"} · ${MOD.sub}` : `${lado} · até ${MOD.w} x ${MOD.h} cm`;
+      document.querySelector(".ed-faixa-tit small").textContent = MOD.versoOp ? MOD.sub.replace(/^frente/, nomeLado(lado)) : MOD.limites ? MOD.limites[lado][2] : MOD.total ? `${lado} · camiseta inteira` : MOD.tipo === "plano" ? `${lado === "costas" ? "verso" : "frente"} · ${MOD.sub}` : `${lado} · até ${MOD.w} x ${MOD.h} cm`;
       document.dispatchEvent(new CustomEvent("mockup-lado", { detail: lado }));
       desenhar();
     });
-    document.querySelector(".ed-faixa-tit small").textContent = MOD.limites ? MOD.limites.frente[2] : MOD.total ? "frente · camiseta inteira" : MOD.tipo === "plano" ? `frente · ${MOD.sub}` : `frente · até ${MOD.w} x ${MOD.h} cm`;
-    if (MOD.tipo === "plano") { abas.setAttribute("aria-label", "Lado"); abas.querySelector('[data-l="costas"]').textContent = "Verso"; }
+    document.querySelector(".ed-faixa-tit small").textContent = MOD.versoOp ? MOD.sub : MOD.limites ? MOD.limites.frente[2] : MOD.total ? "frente · camiseta inteira" : MOD.tipo === "plano" ? `frente · ${MOD.sub}` : `frente · até ${MOD.w} x ${MOD.h} cm`;
+    if (MOD.tipo === "plano" || MOD.versoOp) { abas.setAttribute("aria-label", "Lado"); abas.querySelector('[data-l="costas"]').textContent = "Verso"; }
   } else if (abas && MOD.tipo === "camiseta") {
     // camiseta de um lado só: o cliente escolhe onde vai a estampa; a mesma arte muda de lado
     abas.hidden = false; abas.setAttribute("aria-label", "Onde vai a estampa");
@@ -457,9 +464,19 @@
     if (m.cx && !cx.closest("label").hidden) { cx.checked = true; atualizarPreco(); }
     if (!MED && !q.has("o") && m.op && opcao()) { opIdx = m.op; const so = document.getElementById("ed-opcao"); if (so) so.selectedIndex = Math.min(opIdx, so.options.length - 1); atualizarPreco(); }
     if (!POR_UN && !q.has("q") && m.qtd > 1) mudarQtd(m.qtd);
+    ajustarVerso();
     const b = document.querySelector(`#cores .cor[data-n="${m.corNome}"]`); if (b) b.click();
     mostrarAjustes(); desenhar();
     if (fotos.length || texto) toast("Sua arte foi recuperada.");
+  }
+
+  // térmicos: abas Frente / Verso só aparecem com a opção "Frente e Verso"; voltou pra 1 lado, volta pra frente (a arte do verso fica guardada)
+  function ajustarVerso() {
+    if (!MOD.versoOp || !abas) return;
+    versoOn = /verso/i.test((opcao() || {}).label || "");
+    abas.hidden = !versoOn;
+    if (!versoOn && lado === "costas") abas.querySelector('[data-l="frente"]').click();
+    desenhar();
   }
 
   // carregar produto
@@ -484,7 +501,7 @@
       bloco.innerHTML = `<label for="ed-opcao">${produto.opcoes[0].label.startsWith("Gravação") ? "Gravação" : POR_UN ? "Quantidade" : "Escolha a opção"}</label><select id="ed-opcao">${produto.opcoes.map(o => `<option>${o.label} — ${brl(o.preco)}</option>`).join("")}</select>`;
       painel.querySelector(".total").before(bloco);
       const so = bloco.querySelector("select"); opIdx = Math.min(opIdx, produto.opcoes.length - 1); so.selectedIndex = opIdx;
-      so.addEventListener("change", () => { opIdx = so.selectedIndex; atualizarPreco(); salvarDepois();
+      so.addEventListener("change", () => { opIdx = so.selectedIndex; atualizarPreco(); ajustarVerso(); salvarDepois();
         // recarregar a página (no celular, abrir a galeria pode recarregar) mantém a opção escolhida aqui, e não a que veio do produto
         try { const u = new URL(location.href); u.searchParams.set("o", opIdx); history.replaceState(history.state, "", u); } catch (err) {} });
     }
@@ -498,7 +515,7 @@
       coresBox.addEventListener("click", e => { const b = e.target.closest(".cor"); if (!b) return;
         coresBox.querySelectorAll(".cor").forEach(x => x.setAttribute("aria-pressed", x === b)); if (corDoCorpo) fundoCaneca = b.dataset.c; else detalhe = b.dataset.c; corNome = b.dataset.n; desenhar(); });
     }
-    atualizarPreco(); desenhar();
+    atualizarPreco(); ajustarVerso(); desenhar();
     return restaurar().catch(() => {});
   }).then(() => { pronto = true; }).catch(() => { document.getElementById("nome-produto").textContent = "Não deu pra carregar o produto. Atualize a página."; });
   document.fonts && document.fonts.ready.then(() => desenhar());

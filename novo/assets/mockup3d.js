@@ -175,7 +175,10 @@ async function iniciar() {
       gx.clearRect(0, 0, TW, TH);
       if (E) {
         const A = E.area, w = MOD.w / 10 * pxU, h = MOD.h / 10 * pxV, x0 = TW / 2 - w / 2, y0 = TH / 2 - h / 2;
-        for (const c of [tx, gx]) { c.save(); c.translate(x0, y0); c.scale(w / A.w, h / A.h); c.translate(-A.x, -A.y); E.pintar(c); c.restore(); }
+        // frente no meio da textura; verso (térmicos com "Frente e Verso") do lado oposto, dividido entre as duas pontas
+        const lados = E.ativos ? E.ativos() : [null];
+        for (const l of lados) for (const dx of l === "costas" ? [-TW / 2, TW / 2] : [0])
+          for (const c of [tx, gx]) { c.save(); c.translate(x0 + dx, y0); c.scale(w / A.w, h / A.h); c.translate(-A.x, -A.y); E.pintar(c, l); c.restore(); }
         gx.save(); gx.globalCompositeOperation = "source-in"; gx.fillStyle = "rgb(0,70,255)"; gx.fillRect(0, 0, TW, TH); gx.restore();
         px.drawImage(gc, 0, 0);
       }
