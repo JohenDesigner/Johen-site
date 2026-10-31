@@ -47,6 +47,7 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 .resultados a:last-child{border-bottom:0}
 .resultados img{width:44px;height:44px;object-fit:cover;border-radius:8px;flex-shrink:0}
 .resultados small{color:var(--tinta-2);display:block}
+.res-wpp{width:44px;height:44px;border-radius:8px;flex-shrink:0;display:grid;place-items:center;background:#e8f5ec;color:#1e9e55}.res-wpp svg{width:24px;height:24px}
 .resultados p{margin:0;padding:14px;color:var(--tinta-2);font-size:15px}
 .nav-cat{display:flex;gap:24px;overflow-x:auto;scrollbar-width:none;white-space:nowrap;padding-bottom:11px;font-size:14px;font-weight:500;color:var(--tinta-2)}
 .nav-cat::-webkit-scrollbar{display:none}

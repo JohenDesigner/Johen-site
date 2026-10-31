@@ -114,7 +114,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head="", head="", class
       <a class="icone-btn" href="{R}pedido/" aria-label="Meu pedido">{ICO['sacola']}<span class="contador" hidden>0</span></a>
       <button class="icone-btn" data-abrir-menu aria-label="Abrir menu">{ICO['menu']}</button>
     </div>
-    <div class="busca">{ICO['busca']}<label class="sr" for="busca">Buscar produto</label><input id="busca" type="search" placeholder="O que você quer imprimir?" autocomplete="off"><div class="resultados" id="resultados" hidden></div></div>
+    <div class="busca">{ICO['busca']}<label class="sr" for="busca">Buscar produto</label><input id="busca" type="search" placeholder="O que você quer imprimir?" autocomplete="off"><div class="resultados" id="resultados" data-tambem='{E(json.dumps(TAMBEM, ensure_ascii=False))}' hidden></div></div>
     <nav class="nav-cat" aria-label="Categorias">{nav}</nav>
   </div>
 </header>

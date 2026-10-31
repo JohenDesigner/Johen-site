@@ -53,6 +53,8 @@ const BUSCA_SERV = [
   ["envelopamento", "Envelopamento e Vitrine", "envelopamento frota carro moto van caminhao vitrine fachada jateado", "img/produtos/adesivos-p16.webp"],
   ["design", "Criação de Arte", "criacao arte logo logotipo marca post instagram", "img/produtos/panfletos-p2.webp"],
   ["comercio", "Para seu Comércio", "comercio cardapio 3d site mensalidade comunicacao visual", "img/produtos/adesivos-p12.webp"]];
+// "adesivo pro carro/moto/van": quem busca assim procura o envelopamento (frota)
+BUSCA_SERV[1][2] += " adesivo";
 const PAL_VAZIA = new Set(["de", "da", "do", "das", "dos", "e", "com", "pra", "para", "o", "a", "um", "uma"]);
 // "cartões"/"cartão" → "cartao", "canecas" → "caneca"
 const raizes = s => s.split(/[^a-z0-9]+/).filter(Boolean).map(w => w.length > 3 ? w.replace(/(oes|aes)$/, "ao").replace(/s$/, "") : w);
@@ -69,15 +71,20 @@ function iniciarBusca() {
       try { cat = await carregarCatalogo(); } catch (e) { box.innerHTML = "<p>Não deu pra buscar agora. Confira sua internet e tente de novo.</p>"; box.hidden = false; return; }
       // palavra por palavra, sem ligar pra plural ("cartão" acha "cartões", "panfleto a4" acha o A4)
       const pals = raizes(q).filter(w => !PAL_VAZIA.has(w));
-      const bate = txt => { const h = raizes(norm(txt)).join(" "); return pals.length && pals.every(w => h.includes(w)); };
+      // cada palavra digitada tem que ser o começo de uma palavra do produto ("tag" não acha "instagram")
+      const bate = txt => { const h = raizes(norm(txt)); return pals.length && pals.every(w => h.some(x => x.startsWith(w))); };
       const res = [];
       for (const [c, ps] of Object.entries(cat)) for (const p of ps)
         if (bate([p.nome, p.subNome, p.material, p.acab, p.impressao, BUSCA_CAT[c] || c].join(" "))) res.push([c, p]);
       const serv = BUSCA_SERV.filter(s => bate(s[1] + " " + s[2]));
-      box.innerHTML = (res.length || serv.length) ? res.slice(0, 12).map(([c, p]) =>
+      // "Também fazemos" do rodapé (convites, crachás, carimbos…): sem página própria, vai direto pro orçamento no WhatsApp
+      let tambem = []; try { tambem = JSON.parse(box.dataset.tambem || "[]").filter(bate); } catch (e) {}
+      box.innerHTML = (res.length || serv.length || tambem.length) ? res.slice(0, 12).map(([c, p]) =>
         `<a href="${ROOT}${c}/${p.id}/"><img src="${ROOT}${p.img}" alt="" loading="lazy"><span>${TIPO[c] ? TIPO[c] + " " : ""}${p.nome}<small>a partir de ${brl(precoMin(p))}${p.m2 ? " o m²" : ""}</small></span></a>`).join("") +
         serv.map(([slug, nome, , img]) =>
-        `<a href="${ROOT}${slug}/"><img src="${ROOT}${img}" alt="" loading="lazy"><span>${nome}<small>orçamento pelo WhatsApp</small></span></a>`).join("")
+        `<a href="${ROOT}${slug}/"><img src="${ROOT}${img}" alt="" loading="lazy"><span>${nome}<small>orçamento pelo WhatsApp</small></span></a>`).join("") +
+        tambem.map(nome =>
+        `<a href="${wppLink(`Olá! Quero um orçamento de ${nome}.`)}"><span class="res-wpp" aria-hidden="true">${$(".wpp-flut svg")?.outerHTML || ""}</span><span>${nome}<small>orçamento pelo WhatsApp</small></span></a>`).join("")
         : `<p>Nada encontrado pra "${inp.value}". Tente "caneca", "cartão" ou "adesivo", ou <a href="${wppLink("Olá! Procurei no site e não achei: " + inp.value)}">pergunte no WhatsApp</a>.</p>`;
       box.hidden = false;
     }, 180);

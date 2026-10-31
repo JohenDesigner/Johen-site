@@ -18,3 +18,6 @@ Para atualizar produtos e preços: editar `dados/produtos.json` e rodar `python3
 11. Editor nos produtos novos: usei 9 x 5 cm pro cartão de visita (medida padrão) e a proporção A4 pras cartelas de etiquetas e folha adesiva (Etiquetas Meio-corte, Corte Redondo e Folha Adesiva), que não têm a medida escrita no site. Se o seu cartão ou a sua cartela forem de outra medida, me diga que eu ajusto. Na sublimação total a área cobre a camiseta inteira, só pra prévia.
 
 12. Arquivos do editor no Google Drive: publicar o Apps Script (passo a passo em `drive/COMO-LIGAR.md`) e mandar o endereço que termina em `/exec`. Até lá, o site funciona como antes.
+
+13. Adesivo DTF — Laminação UV (Cartela A3): a descrição no produtos.json está "Adesivo resiste contra temperatura alta e lavagens, Extremamente duradouro." (E maiúsculo depois da vírgula) e o nome tem dois espaços antes do travessão. Sugestão: "Resiste a temperatura alta e a lavagens. Extremamente duradouro." Não mexi porque é dado do produto.
+14. Adesivo de Vitrine: o cliente manda a arte normal (vocês espelham) ou já espelhada? Hoje o produto pede espelhada, mas o editor mostra do jeito que ele subiu. Me diga e eu ajusto o aviso.
