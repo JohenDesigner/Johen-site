@@ -304,14 +304,26 @@
   const ladosPrevia = () => { guardar(); const c = LADOS.filter(l => est[l].fotos.length || est[l].texto); return MOD.verso && c.length > 1 ? c : [null]; };
   const paraURL = b => new Promise(r => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
   // Comprar: coloca no pedido com a prévia e abre a página do pedido
+  // enquanto a prévia é preparada, os botões travam e dizem "Preparando…": tocar de novo não põe o mesmo item duas vezes no pedido
+  let comprando = false;
+  const btsComprar = () => ["comprar", "add-pedido"].map(id => document.getElementById(id)).filter(Boolean);
+  const travarComprar = on => btsComprar().forEach(b => {
+    if (on) { b.dataset.rot = b.textContent; b.textContent = "Preparando…"; } else if (b.dataset.rot) b.textContent = b.dataset.rot;
+    b.disabled = on; b.setAttribute("aria-busy", on); });
+  addEventListener("pageshow", () => { if (comprando) { comprando = false; travarComprar(false); } });   // voltou do pedido pelo botão de voltar
   async function comprar() {
+    if (comprando) return;
     if (!window.CanecaArte.temArte()) { toast("Adicione uma imagem ou um texto antes de comprar."); return; }
     if (!produto) return;
-    const artes = [];
-    for (const l of ladosPrevia()) artes.push(await paraURL(await previa(260, l)));
-    Pedido.add({ c: cId, id: pId, nome: produto.nome, img: produto.img, arte: artes[0], artes: artes.length > 1 ? artes : undefined, desc: descricao(), qtd, qn: QN, total: precoTotal() });
-    await apagarSalvo();
-    location.href = ROOT + "pedido/";
+    comprando = true; travarComprar(true);
+    await new Promise(r => requestAnimationFrame(() => setTimeout(r, 30)));   // mostra o "Preparando…" antes do trabalho pesado
+    try {
+      const artes = [];
+      for (const l of ladosPrevia()) artes.push(await paraURL(await previa(260, l)));
+      Pedido.add({ c: cId, id: pId, nome: produto.nome, img: produto.img, arte: artes[0], artes: artes.length > 1 ? artes : undefined, desc: descricao(), qtd, qn: QN, total: precoTotal() });
+      await apagarSalvo();
+      location.href = ROOT + "pedido/";
+    } catch (e) { comprando = false; travarComprar(false); toast("Não deu pra preparar a prévia. Tente de novo."); }
   }
   document.getElementById("add-pedido").addEventListener("click", comprar);
   document.getElementById("comprar").addEventListener("click", comprar);
