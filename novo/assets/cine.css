@@ -25,6 +25,7 @@
 .momento--centro{left:50%;right:auto;transform:translate(-50%,24px);text-align:center;width:min(640px,calc(100% - 2 * var(--gutter)))}
 .momento--centro.ativo{transform:translate(-50%,0)}
 .momento h1{font-size:clamp(44px,6.2vw,100px);margin-bottom:.3em}
+.momento h1 .sem-quebra{white-space:nowrap}
 .momento p{margin:0;font-size:clamp(16px,1.3vw,20px)}
 .destaque-cine{font-family:var(--titulo);font-size:clamp(32px,3.4vw,54px)!important;line-height:1;margin:0 0 .4em!important}
 .cine-dica{position:absolute;bottom:calc(22px + var(--promo-h,0px));left:50%;transform:translateX(-50%);display:grid;justify-items:center;gap:8px;font-size:11px;letter-spacing:.3em;text-transform:uppercase;opacity:.6;transition:opacity .5s}

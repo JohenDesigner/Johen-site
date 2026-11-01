@@ -401,7 +401,7 @@ corpo = f'''
     <canvas class="cine-canvas" aria-hidden="true"></canvas>
     <div class="cine-vinheta"></div>
     <div class="momento" data-de="0" data-ate="0.3"><div class="painel painel--vidro">
-      <h1>Seja bem-vindo ao catálogo da Johen</h1>
+      <h1>Seja <span class="sem-quebra">bem-vindo</span> ao catálogo da Johen</h1>
       <p>Gráfica rápida e personalizados no Jardim Selma, zona sul de São Paulo. Cartão, adesivo, camiseta, banner, caneca e gravação a laser.</p>
     </div></div>
     <div class="momento momento--direita" data-de="0.38" data-ate="0.66"><div class="painel painel--vidro">
