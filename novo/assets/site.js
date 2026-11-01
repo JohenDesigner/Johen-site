@@ -49,7 +49,9 @@ const norm = s => (s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase
 const BUSCA_CAT = { cartoes: "cartao de visita", panfletos: "panfleto folheto flyer", banners: "banner",
   adesivos: "adesivo plotagem", camisetas: "camiseta camisa", canecas: "caneca" };
 // palavras do cliente por tipo de produto: toda lona é banner/faixa; placa PS é placa de sinalização
-const BUSCA_SUB = { lona_brilho: "faixa", lona_fosco: "faixa", lona_ilhos: "faixa", placas_ps: "placa sinalizacao" };
+// cartão: hot stamping é a folha dourada/prateada; verniz localizado é o relevo brilhante (como diz a página do produto)
+const BUSCA_SUB = { lona_brilho: "faixa", lona_fosco: "faixa", lona_ilhos: "faixa", placas_ps: "placa sinalizacao",
+  hot_stamping: "dourado prateado prata metalizado", fosco_verniz: "relevo" };
 const BUSCA_SERV = [
   ["gravacao-laser", "Gravação a Laser", "gravacao laser garrafa copo madeira acrilico placa chaveiro tabua trofeu", "img/produtos/canecas-p9.webp"],
   ["envelopamento", "Envelopamento e Vitrine", "envelopamento frota carro moto van caminhao vitrine fachada jateado plotagem", "img/produtos/adesivos-p16.webp"],
@@ -72,9 +74,13 @@ function iniciarBusca() {
       let cat;
       try { cat = await carregarCatalogo(); } catch (e) { box.innerHTML = "<p>Não deu pra buscar agora. Confira sua internet e tente de novo.</p>"; box.hidden = false; return; }
       // palavra por palavra, sem ligar pra plural ("cartão" acha "cartões", "panfleto a4" acha o A4)
-      const pals = raizes(q).filter(w => !PAL_VAZIA.has(w));
-      // cada palavra digitada tem que ser o começo de uma palavra do produto ("tag" não acha "instagram")
-      const bate = txt => { const h = raizes(norm(txt)); return pals.length && pals.every(w => h.some(x => x.startsWith(w))); };
+      // "personalizada" não separa nada (tudo aqui é personalizado): "caneca personalizada" busca as canecas
+      const pals0 = raizes(q).filter(w => !PAL_VAZIA.has(w)), pals1 = pals0.filter(w => !w.startsWith("personaliz"));
+      // masculino/feminino ("etiqueta redonda" acha "Corte Redondo", "cartão dourado" acha o dourado)
+      const pals = (pals1.length ? pals1 : pals0).map(w => w.length > 4 && !/\d/.test(w) ? w.replace(/[ao]$/, "") : w);
+      // cada palavra digitada tem que ser o começo de uma palavra do produto ("tag" não acha "instagram"); "redondo" também acha "arredondado"
+      const comeca = (x, w) => x.startsWith(w) || (w.startsWith("redond") && x.startsWith("ar" + w));
+      const bate = txt => { const h = raizes(norm(txt)); return pals.length && pals.every(w => h.some(x => comeca(x, w))); };
       const txtP = (c, p) => [p.nome, p.subNome, p.material, p.acab, p.impressao, BUSCA_SUB[p.sub], BUSCA_CAT[c] || c].join(" ");
       let res = [];
       for (const [c, ps] of Object.entries(cat)) for (const p of ps) if (bate(txtP(c, p))) res.push([c, p]);
@@ -85,7 +91,7 @@ function iniciarBusca() {
       let aprox = false;
       if (!res.length && !serv.length && !tambem.length && pals.length > 1) {
         const chave = pals.filter(w => w.length >= 4 && !/\d/.test(w));
-        const bateUma = txt => { const h = raizes(norm(txt)); return chave.some(w => h.some(x => x.startsWith(w))); };
+        const bateUma = txt => { const h = raizes(norm(txt)); return chave.some(w => h.some(x => comeca(x, w))); };
         for (const [c, ps] of Object.entries(cat)) for (const p of ps) if (bateUma(txtP(c, p))) res.push([c, p]);
         serv = BUSCA_SERV.filter(s => bateUma(s[1] + " " + s[2]));
         aprox = res.length + serv.length > 0;
