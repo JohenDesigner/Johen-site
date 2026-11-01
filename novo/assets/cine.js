@@ -8,7 +8,13 @@
   const cine = document.querySelector(".cine");
   const canvas = cine && cine.querySelector(".cine-canvas");
   const topo = document.querySelector(".topo");
-  const medirTopo = () => topo && document.documentElement.style.setProperty("--topo-h", `${topo.offsetHeight}px`);
+  const promo = document.querySelector(".promo");
+  const medirTopo = () => {
+    const raiz = document.documentElement.style;
+    if (topo) raiz.setProperty("--topo-h", `${topo.offsetHeight}px`);
+    /* a faixa laranja empurra o palco na primeira tela; a dica "role" e o primeiro painel sobem esse tanto */
+    if (promo) raiz.setProperty("--promo-h", `${promo.offsetHeight}px`);
+  };
   medirTopo();
   addEventListener("resize", medirTopo);
 

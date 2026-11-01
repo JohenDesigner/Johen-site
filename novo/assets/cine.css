@@ -20,13 +20,15 @@
 .momento{position:absolute;inset:auto var(--gutter) 12vh;max-width:640px;opacity:0;transform:translateY(24px);filter:blur(6px);transition:opacity .7s var(--ease),transform .9s var(--ease),filter .7s var(--ease);pointer-events:none}
 .momento.ativo{opacity:1;transform:none;filter:none;pointer-events:auto}
 .momento--direita{left:auto;right:var(--gutter)}
+/* 1º painel e dica "role": só aparecem antes de rolar, quando a faixa laranja ainda empurra o palco para baixo */
+.momento[data-de="0"]{bottom:calc(12vh + var(--promo-h,0px))}
 .momento--centro{left:50%;right:auto;transform:translate(-50%,24px);text-align:center;width:min(640px,calc(100% - 2 * var(--gutter)))}
 .momento--centro.ativo{transform:translate(-50%,0)}
 .momento h1{font-size:clamp(44px,6.2vw,100px);margin-bottom:.3em}
 .momento p{margin:0;font-size:clamp(16px,1.3vw,20px)}
 .destaque-cine{font-family:var(--titulo);font-size:clamp(32px,3.4vw,54px)!important;line-height:1;margin:0 0 .4em!important}
-.cine-dica{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:grid;justify-items:center;gap:8px;font-size:11px;letter-spacing:.3em;text-transform:uppercase;opacity:.6;transition:opacity .5s}
-.cine-dica span{width:1px;height:38px;background:linear-gradient(var(--tinta),transparent);animation:dica 2s var(--ease) infinite}
+.cine-dica{position:absolute;bottom:calc(22px + var(--promo-h,0px));left:50%;transform:translateX(-50%);display:grid;justify-items:center;gap:8px;font-size:11px;letter-spacing:.3em;text-transform:uppercase;opacity:.6;transition:opacity .5s}
+.cine-dica span{width:1px;height:30px;background:linear-gradient(var(--tinta),transparent);animation:dica 2s var(--ease) infinite}
 @keyframes dica{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 .cine.andou .cine-dica{opacity:0}
 
@@ -136,7 +138,7 @@
   .cin-grade,.cin-grade--direita{grid-template-columns:1fr}
   .cin-grade--direita>.painel{grid-column:1}
   .arte--direita,.arte--esquerda{left:0;right:0;width:100%;height:70%;opacity:.55;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 25%,#000 55%,transparent);mask-image:linear-gradient(to bottom,transparent,#000 25%,#000 55%,transparent)}
-  .momento,.momento--direita{left:var(--gutter);right:var(--gutter);bottom:calc(150px + env(safe-area-inset-bottom,0px))} /* acima dos botões flutuantes */
+  .momento,.momento--direita,.momento[data-de="0"]{left:var(--gutter);right:var(--gutter);bottom:calc(150px + env(safe-area-inset-bottom,0px))} /* acima dos botões flutuantes */
   .momento--centro{left:50%;right:auto}
   .momento .painel{padding:22px}
 }
