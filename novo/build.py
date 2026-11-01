@@ -265,7 +265,7 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
 
 # ---------- serviços (rascunhos) ----------
 SERV_TXT = {
- "gravacao-laser": [("Garrafas e copos", "Térmicos com nome, logo da empresa ou frase. Ótimo pra brinde corporativo."), ("Sua peça", "Traga seu copo, garrafa ou objeto e a gente grava."), ("Madeira e acrílico", "Placas, chaveiros, tábuas e troféus.")],
+ "gravacao-laser": [("Garrafas e copos", "Térmicos com nome, logo da empresa ou frase. Ótimo pra brinde corporativo.", "Ver modelos e preços", "../canecas/?f=termicos"), ("Sua peça", "Traga seu copo, garrafa ou objeto e a gente grava.", "Ver preços da gravação", "../canecas/?f=gravacao_avulsa"), ("Madeira e acrílico", "Placas, chaveiros, tábuas e troféus.")],
  "envelopamento": [("Frota e carros", "Adesivo com sua marca em carro, moto, van e caminhão."), ("Vitrine e fachada", "Adesivo de vitrine, jateado e recorte em vinil aplicado no local."), ("Medida no local", "A gente mede, cria a arte e aplica.")],
  "design": [("Logo", "Criação ou redesenho da sua marca."), ("Arte pra impressão", "Cartão, panfleto, banner e adesivo prontos pra imprimir."), ("Posts", "Artes pro Instagram e WhatsApp do seu negócio.")],
 }
@@ -278,7 +278,8 @@ for slug, nome, foto, fundo, resumo in SERVS:
 <div><b>Comunicação visual completa</b><span>Fachada, adesivo de vitrine, banner, cardápio impresso e uniforme num pacote só.</span><p><a class="link-seta" href="{wpp('Olá! Quero um pacote de comunicação visual pro meu comércio.')}">Montar meu pacote</a></p></div>
 </div></div>'''
     else:
-        itens = "".join(f"<div><b>{E(a)}</b><span>{E(b)}</span></div>" for a,b in SERV_TXT[slug])
+        # item com link (ex.: gravação → garrafas e copos com preço e editor, já filtrados na categoria Canecas)
+        itens = "".join(f"<div><b>{E(t[0])}</b><span>{E(t[1])}</span>" + (f'<p><a class="link-seta" href="{t[3]}">{E(t[2])}</a></p>' if len(t) > 2 else "") + "</div>" for t in SERV_TXT[slug])
         corpo = f'''<div class="wrap"><section class="cabeca-cat"><div class="migalha"><a href="../">Início</a> › {E(nome)}</div><h1>{E(nome)}</h1><p>{E(resumo)}</p></section>
 <div class="produto"><div class="foto {fundo}"><img src="../{foto}" alt=""></div>
 <div class="conf"><div class="serv-lista" style="grid-template-columns:1fr">{itens}</div>

@@ -135,6 +135,9 @@ function iniciarFiltros() {
     const f = b.dataset.f;
     $$(".grade .pcard").forEach(c => c.hidden = f !== "todos" && c.dataset.sub !== f);
   });
+  // ?f=termicos (link da página de Gravação a Laser) já abre a categoria com esse filtro marcado
+  const qf = new URLSearchParams(location.search).get("f");
+  const bq = qf && $$("button", bar).find(x => x.dataset.f === qf); if (bq) bq.click();
 }
 
 /* ---------- página de produto ---------- */
