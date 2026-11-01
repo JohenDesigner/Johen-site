@@ -200,7 +200,7 @@ for slug, nome, masc, fundo, resumo, foto in CATS:
 <section class="cabeca-cat"><div class="migalha"><a href="../">Início</a> › {E(nome)}</div><h1>{E(nome)}</h1><p>{E(resumo)} Produção em {E(prazo)}.</p></section>
 <div class="filtros" role="group" aria-label="Filtrar por tipo">{filtros}</div>
 <div class="grade">{"".join(pcard(slug,p,fundo) for p in ps)}</div>
-<p class="envio-arte" style="margin-top:22px">Não achou o que precisa? <a href="{wpp(f'Olá! Procuro algo em {nome} que não achei no site.')}">Fale conosco no WhatsApp</a></p>
+<p class="envio-arte nao-achou">Não achou o que precisa? <a href="{wpp(f'Olá! Procuro algo em {nome} que não achei no site.')}">Fale conosco no WhatsApp</a></p>
 </div>'''
     pagina(f"{slug}/index.html", f"{nome} | Johen Arte Gráfica", f"{nome} personalizados em São Paulo. {resumo}", corpo, slug)
 

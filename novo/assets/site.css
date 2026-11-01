@@ -172,6 +172,7 @@ h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.15;letter-spac
 @media(prefers-reduced-motion:reduce){.filtros button{transition:none}}
 .grade{display:grid;grid-template-columns:1fr 1fr;gap:24px 14px}
 @media(min-width:760px){.grade{grid-template-columns:repeat(3,1fr);gap:34px 22px}}
+.envio-arte.nao-achou{margin-top:40px;padding-top:20px;border-top:1px solid var(--linha)}
 @media(min-width:760px){.grade-4{grid-template-columns:repeat(4,1fr)}}
 .pcard{text-decoration:none;display:flex;flex-direction:column;gap:10px}
 .pcard-img{aspect-ratio:1;border-radius:var(--raio);overflow:hidden;transition:opacity .18s ease}
