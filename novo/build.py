@@ -1,9 +1,20 @@
 # Gera as páginas do site novo a partir de dados/produtos.json
 # Rodar: python3 build.py   (dentro da pasta novo/)
 import json, os, re, html, shutil, hashlib
-VER = hashlib.md5((open("assets/site.css","rb").read()+open("assets/site.js","rb").read()+open("assets/editor.js","rb").read()+open("assets/mockup3d.js","rb").read()+open("assets/tour.js","rb").read()+open("assets/cine.css","rb").read()+open("assets/cine.js","rb").read())).hexdigest()[:8]
+VER = hashlib.md5((open("assets/site.css","rb").read()+open("assets/site.js","rb").read()+open("assets/editor.js","rb").read()+open("assets/mockup3d.js","rb").read()+open("assets/tour.js","rb").read()+open("assets/cine.css","rb").read()+open("assets/cine.js","rb").read()+open("assets/natal.css","rb").read()+open("assets/natal.js","rb").read())).hexdigest()[:8]
 
 D = json.load(open("dados/produtos.json", encoding="utf-8"))
+# Tema de Natal: logo com gorro, faixa vermelha, varal de luzes e a seção "Promoções de Natal" na home.
+# Depois do Natal é só trocar para False e rodar o build de novo (as artes ficam em img/natal/).
+NATAL = True
+NATAL_PROMOS = [  # (id, selo, nome, medida, [(quantidade, preço)], mídia, obs) — valores do vídeo de 2026-11-05
+  ("bolinha", "Mais pedido", "Bolinha de Natal com foto", "7 x 7 cm, com laço e flocos de neve",
+   [("1 unidade", 9), ("3 unidades", 25), ("10 unidades", 67), ("15 unidades", 84)], "video", "Quantidade maior? Fale com a gente."),
+  ("guirlanda", "Promoção", "Guirlanda personalizada", "Com 1 imagem · 20 cm",
+   [("1 unidade", 29)], "video", "Sua foto vira ilustração natalina, com cordão e laço."),
+  ("guirlanda-maior", "Novidade", "Guirlanda maior com 2 imagens", "20 cm + placa de 9 x 20 cm",
+   [("1 unidade", 39)], "foto", "Placa \"Feliz Natal\" em cima e a foto da família embaixo."),
+]
 WPP = "5511982877142"
 FORM = "https://docs.google.com/forms/d/e/1FAIpQLScD3J8Bchik66my8m5rNnE-41UHjbVFUAQBomOY7XPBzrBkwA/viewform"
 E = html.escape
@@ -79,6 +90,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head="", head="", class
     nav += "".join(f'<a href="{R}{s}/"{" aria-current=page" if atual==s else ""}>{E(n.split(" e ")[0])}</a>' for s,n,*_ in SERVS)
     menu = "".join(f'<a href="{R}{s}/"><img src="{R}img/mascotes/{m}.webp" alt="">{E(n)}</a>' for s,n,m,*_ in CATS)
     menu += "".join(f'<a href="{R}{s}/">{E(n)}</a>' for s,n,*_ in SERVS)
+    if NATAL: menu = f'<a href="{R}#natal">Promoções de Natal</a>' + menu
     menu += f'<a href="{R}../cardapio-ar/">Cardápio em 3D (demo)</a><a href="{R}pedido/">Meu pedido</a>'
     doc = f"""<!doctype html>
 <!--
@@ -102,14 +114,14 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head="", head="", class
 <link rel="icon" href="{R}img/marca/logo-icone.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Outfit:wght@500;600&display=swap">
-<link rel="stylesheet" href="{R}assets/site.css?v={VER}">
+<link rel="stylesheet" href="{R}assets/site.css?v={VER}">{f'<link rel="stylesheet" href="{R}assets/natal.css?v={VER}">' if NATAL else ""}
 {head}</head>
 <body{f' class="{classe}"' if classe else ""}>
-<div class="promo">5% OFF na primeira compra</div>
+{f'<div class="promo promo-natal"><span class="floco" aria-hidden="true">❄</span><b>Natal Johen:</b> enfeites com a sua foto a partir de R$ 9,00 · <a href="{R}#natal">Ver promoções</a><span class="floco" aria-hidden="true">❄</span></div>' if NATAL else '<div class="promo">5% OFF na primeira compra</div>'}
 <header class="topo">
   <div class="wrap">
     <div class="topo-linha">
-      <a class="logo" href="{R}" aria-label="Johen Arte Gráfica, início"><img src="{R}img/marca/logo-wordmark.webp" alt="Johen Arte Gráfica" width="94" height="30"></a>
+      <a class="logo" href="{R}" aria-label="Johen Arte Gráfica, início">{f'<img class="logo-natal" src="{R}img/natal/logo-natal.webp" alt="Johen Arte Gráfica" width="95" height="44">' if NATAL else f'<img src="{R}img/marca/logo-wordmark.webp" alt="Johen Arte Gráfica" width="94" height="30">'}</a>
       <button class="icone-btn lupa-btn" type="button" aria-label="Buscar produto" aria-controls="busca" aria-expanded="false" hidden>{ICO['busca']}</button>
       <a class="icone-btn" href="{R}pedido/" aria-label="Meu pedido">{ICO['sacola']}<span class="contador" hidden>0</span></a>
       <button class="icone-btn" data-abrir-menu aria-label="Abrir menu">{ICO['menu']}</button>
@@ -124,7 +136,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head="", head="", class
 </main>
 <footer class="rodape">
   <div class="wrap">
-    <div class="rod-marca"><img class="marca" src="{R}img/marca/logo-wordmark.webp" alt="Johen Arte Gráfica"><p>Gráfica e personalizados no Jardim Selma, São Paulo.</p></div>
+    <div class="rod-marca">{f'<img class="marca marca-natal" src="{R}img/natal/logo-natal-branco.webp" alt="Johen Arte Gráfica">' if NATAL else f'<img class="marca" src="{R}img/marca/logo-wordmark.webp" alt="Johen Arte Gráfica">'}<p>Gráfica e personalizados no Jardim Selma, São Paulo.</p></div>
     <div><h3>Produtos</h3>
       <ul>{"".join(f'<li><a href="{R}{sl}/">{E(n)}</a></li>' for sl,n,*_ in CATS)}</ul>
       <p class="rod-sub">Também fazemos</p>
@@ -159,7 +171,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head="", head="", class
 </footer>
 <a class="insta-flut" href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener" aria-label="Instagram @johen_artgrafica">{ICO['insta']}</a>
 <a class="wpp-flut" href="{wpp('Olá! Vim pelo site e quero um orçamento.')}" aria-label="Falar no WhatsApp">{ICO['wpp']}</a>
-<script src="{R}assets/site.js?v={VER}" defer></script>
+<script src="{R}assets/site.js?v={VER}" defer></script>{f'<script src="{R}assets/natal.js?v={VER}" defer></script>' if NATAL else ""}
 {extra_head}
 </body>
 </html>"""
@@ -395,6 +407,33 @@ opcoes_form = "".join(f"<option>{E(n)}</option>" for _, n, *_ in CATS + SERVS)
 MAPA_EMBED = "https://www.google.com/maps?q=R.+Pedro+Fernandes+Arag%C3%A3o,+269+-+Jardim+Selma,+S%C3%A3o+Paulo+-+SP,+04431-160&output=embed"
 ROTA = "https://www.google.com/maps/dir/?api=1&destination=R.+Pedro+Fernandes+Arag%C3%A3o,+269,+S%C3%A3o+Paulo+-+SP,+04431-160"
 
+def natal_card(i, selo, nome, medida, precos, midia, obs):
+    m = (f'<video src="img/natal/{i}.mp4" poster="img/natal/{i}.webp" muted loop playsinline preload="none" aria-label="{E(nome)} em vídeo"></video>' if midia == "video"
+         else f'<img src="img/natal/{i}.webp" alt="{E(nome)}" loading="lazy">')
+    unico = len(precos) == 1
+    lis = "".join(f'<li{" class=unico" if unico else ""}><span>{E(q)}</span><b>{brl(v)}</b></li>' for q, v in precos)
+    if not unico:  # mostra quanto sai cada uma no pacote maior
+        q, v = precos[-1]; n = int(q.split()[0])
+        lis = lis.replace(f'<span>{E(q)}</span>', f'<span>{E(q)}<small>sai {brl(v/n)} cada</small></span>')
+    msg = f"Olá! Vi no site a promoção de Natal e quero encomendar: {nome} ({medida})."
+    return f'''<article class="natal-card revelar"><div class="natal-midia">{m}<span class="natal-selo{" natal-selo--verde" if selo=="Novidade" else ""}">{E(selo)}</span></div>
+  <div class="natal-corpo"><h3>{E(nome)}</h3><p class="natal-medida">{E(medida)}</p><ul class="natal-precos">{lis}</ul><p class="natal-obs">{TX(obs)}</p>
+  <a class="btn" href="{wpp(msg)}">{ICO["wpp"]}Encomendar no WhatsApp</a></div></article>'''
+natal_html = f'''
+<section id="natal" class="natal-secao" aria-labelledby="natal-tit">
+  <div class="natal-neve" aria-hidden="true"></div>
+  <div class="natal-wrap">
+    <div class="natal-cab revelar">
+      <img src="img/natal/logo-natal-branco.webp" alt="" width="435" height="200" loading="lazy">
+      <span class="natal-tag">Natal 2026</span>
+      <h2 id="natal-tit">Enfeites de Natal com a sua foto</h2>
+      <p>Tudo personalizado, pra decorar a casa ou dar de brinde pra família e pra empresa. Escolha, mande sua foto no WhatsApp e a gente faz.</p>
+    </div>
+    <div class="natal-cards">{"".join(natal_card(*x) for x in NATAL_PROMOS)}</div>
+    <p class="natal-pe">Encomende já: quanto antes você mandar a foto, mais garantido chega antes do Natal. Retire na loja, no Jardim Selma. <a href="{wpp("Olá! Quero saber mais sobre os enfeites de Natal personalizados.")}">Tirar dúvidas no WhatsApp</a></p>
+  </div>
+</section>''' if NATAL else ""
+
 corpo = f'''
 <section id="inicio" class="cine" style="--altura:420vh" data-total="{CINE_FRAMES}" data-desktop="cine/frames/desktop/f_{{n}}.webp" data-mobile="cine/frames/mobile/f_{{n}}.webp">
   <div class="cine-palco">
@@ -416,6 +455,7 @@ corpo = f'''
   </div>
 </section>
 
+{natal_html}
 <section id="produtos" class="cin-secao cin-larga">
   <img class="arte arte--fundo" src="img/cine/categorias.webp" alt="" loading="lazy">
   <div class="painel revelar"><span class="rotulo">01</span><h2>Escolha o que vamos fazer pra você</h2></div>

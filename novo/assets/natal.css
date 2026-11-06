@@ -1,0 +1,65 @@
+/* Tema de Natal (liga/desliga em build.py: NATAL = True/False) */
+:root{--natal:#c41626;--natal-esc:#8f0d1a;--natal-verde:#1f7a4a;--natal-ouro:#f2c14e}
+
+/* faixa do topo */
+.promo.promo-natal{background:linear-gradient(90deg,var(--natal-esc),var(--natal) 30%,var(--natal) 70%,var(--natal-esc));position:relative;overflow:hidden}
+.promo-natal b{font-weight:700}
+.promo-natal a{font-weight:700;white-space:nowrap}
+.promo-natal .floco{display:inline-block;margin:0 6px;opacity:.9}
+
+/* logo com gorro */
+.logo img.logo-natal{height:44px}
+@media(max-width:420px){.logo img.logo-natal{height:40px}}
+.rodape img.marca.marca-natal{height:40px;filter:none;opacity:1}
+
+/* varal de luzes embaixo do cabeçalho */
+.topo{position:sticky}
+.topo::after{content:"";position:absolute;left:0;right:0;bottom:-13px;height:16px;pointer-events:none;z-index:1;
+  background:
+    radial-gradient(circle at 12px 10px,#ff4d5e 0 3.6px,rgba(255,77,94,.35) 4.6px,transparent 7px),
+    radial-gradient(circle at 36px 10px,var(--natal-ouro) 0 3.6px,rgba(242,193,78,.35) 4.6px,transparent 7px),
+    radial-gradient(circle at 60px 10px,#3fbf73 0 3.6px,rgba(63,191,115,.35) 4.6px,transparent 7px),
+    radial-gradient(ellipse 40px 9px at 24px -3px,transparent 7.4px,rgba(40,40,40,.45) 8px,transparent 9px);
+  background-size:72px 16px,72px 16px,72px 16px,24px 16px;background-repeat:repeat-x;
+  animation:piscar 2.4s steps(2,jump-none) infinite}
+@keyframes piscar{0%{filter:brightness(1)}50%{filter:brightness(1.35) saturate(1.2)}100%{filter:brightness(.8)}}
+.pag-editor .topo::after{display:none}
+
+/* seção de promoções da home */
+.natal-secao{position:relative;isolation:isolate;overflow:clip;color:#fff;padding:clamp(72px,12vh,140px) var(--gutter,16px);
+  background:radial-gradient(ellipse 70% 55% at 50% 40%,#f0182b 0%,var(--natal) 45%,#7d0a15 100%)}
+.natal-secao::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.18;mix-blend-mode:multiply;
+  background:radial-gradient(circle at 20% 30%,#000 0 1px,transparent 2px) 0 0/23px 23px,radial-gradient(circle at 70% 80%,#000 0 1px,transparent 2px) 0 0/31px 31px}
+.natal-neve{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.natal-neve i{position:absolute;top:-12px;left:var(--x);width:var(--s);height:var(--s);border-radius:50%;background:#fff;opacity:var(--o);
+  animation:cair var(--t) linear var(--d) infinite;will-change:transform}
+@keyframes cair{to{transform:translate3d(var(--dx),110vh,0)}}
+.natal-wrap{max-width:1180px;margin:0 auto}
+.natal-cab{text-align:center;max-width:720px;margin:0 auto 40px}
+.natal-cab img{width:min(300px,70%);height:auto;margin:0 auto 22px;display:block;filter:drop-shadow(0 6px 18px rgba(0,0,0,.25))}
+.natal-tag{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--natal-ouro);margin-bottom:10px}
+.natal-tag::before,.natal-tag::after{content:"";width:22px;height:1px;background:currentColor;opacity:.7}
+.natal-secao h2{color:#fff;font-size:clamp(42px,6vw,84px);margin:0 0 .25em}
+.natal-cab p{color:rgba(255,255,255,.88);font-size:17px;margin:0 auto;max-width:560px}
+.natal-cards{display:grid;gap:22px;grid-template-columns:1fr}
+@media(min-width:760px){.natal-cards{grid-template-columns:repeat(3,1fr)}}
+.natal-card{background:#fff;color:var(--tinta);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 18px 50px rgba(60,0,8,.35)}
+.natal-midia{position:relative;aspect-ratio:4/5;background:#2a0b0f;overflow:hidden}
+.natal-midia video,.natal-midia img{width:100%;height:100%;object-fit:cover;display:block}
+.natal-selo{position:absolute;top:14px;left:14px;background:var(--natal);color:#fff;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.natal-selo--verde{background:var(--natal-verde)}
+.natal-corpo{padding:22px 22px 24px;display:flex;flex-direction:column;gap:12px;flex:1}
+.natal-card h3{font-family:var(--display);font-size:22px!important;font-weight:600;letter-spacing:-.01em!important;line-height:1.2!important;margin:0!important;color:var(--tinta)}
+.natal-medida{font-size:14px;color:var(--tinta-2);margin:-6px 0 0}
+.natal-precos{list-style:none;margin:0;padding:0;border-top:1px solid var(--linha)}
+.natal-precos li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-bottom:1px solid var(--linha);font-size:15px}
+.natal-precos b{color:var(--natal);font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.natal-precos li.unico b{font-size:30px}
+.natal-precos small{display:block;color:var(--natal-verde);font-size:12px;font-weight:700}
+.natal-obs{font-size:13px;color:var(--tinta-2);margin:0}
+.natal-card .btn{margin-top:auto;background:var(--natal);color:#fff;width:100%}
+.natal-card .btn:hover{background:var(--natal-esc)}
+.natal-card .btn svg{width:20px;height:20px}
+.natal-pe{text-align:center;margin:36px auto 0;color:rgba(255,255,255,.9);font-size:15px;max-width:620px}
+.natal-pe a{color:#fff;font-weight:700}
+@media(prefers-reduced-motion:reduce){.natal-neve{display:none}.topo::after{animation:none}}
