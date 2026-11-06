@@ -49,7 +49,7 @@
   // Papai Noel desce a escada da janela até o chão conforme a rolagem; no chão libera o cupom
   var trilho = document.querySelector(".noel-trilho"), chao = document.querySelector(".noel-chao");
   if (trilho && chao) {
-    var noel = trilho.querySelector(".noel"), main = trilho.parentNode, topoT = 0, alturaT = 0, fim = 0, alturaNoel = 0, aberto = false, ultimo = -1, pedidoQuadro = 0;
+    var noel = trilho.querySelector(".noel"), main = trilho.parentNode, topoT = 0, alturaT = 0, fim = 0, alturaNoel = 0, aberto = false, pedidoQuadro = 0;
     function medir() {
       var rm = main.getBoundingClientRect(), rc = chao.getBoundingClientRect(), y = window.scrollY;
       topoT = rm.top + y;
@@ -60,25 +60,32 @@
       fim = Math.max(1, Math.min(superficie + 34 - window.innerHeight, document.documentElement.scrollHeight - window.innerHeight));  // rolagem em que ele pisa no chão
       mover();
     }
+    var timerDesliza = 0, caiu = false;
     function abrir() {
       if (aberto) return; aberto = true;
-      chao.classList.add("aberto"); noel.classList.add("chegou");
-      var ab = chao.querySelector(".cupom-aberto"); if (ab) ab.removeAttribute("aria-hidden");
+      // o cupom aparece depois que ele cai e o saco espalha os presentes
+      setTimeout(function () {
+        chao.classList.add("aberto");
+        var ab = chao.querySelector(".cupom-aberto"); if (ab) ab.removeAttribute("aria-hidden");
+      }, calmo ? 0 : 1100);
       try { localStorage.setItem("johen-cupom-liberado", "1"); } catch (e) {}
     }
     function mover() {
       pedidoQuadro = 0;
       var inicio = trilho.querySelector(".noel-janela").offsetHeight * 0.45;
       var p = calmo ? 1 : Math.min(1, Math.max(0, window.scrollY / fim));
-      var y = inicio + p * (alturaT - alturaNoel - inicio);
+      // ele escorrega até o pé da escada; nos últimos 3% da rolagem fica parado ali e cai
+      var q = Math.min(1, p / 0.97);
+      var y = inicio + q * (alturaT - alturaNoel - inicio);
       noel.style.setProperty("--noel-y", y.toFixed(1) + "px");
-      var degrau = Math.floor(y / 28);
-      if (degrau !== ultimo) { noel.classList.toggle("passo", degrau % 2 === 0); ultimo = degrau; }
-      if (p >= 0.995) abrir();
-      else if (aberto && p < 0.9) { noel.classList.remove("chegou"); }
-      else if (aberto && p >= 0.995) noel.classList.add("chegou");
+      if (p >= 0.995) { if (!caiu) { caiu = true; noel.classList.remove("desliza"); noel.classList.add("caiu"); abrir(); } }
+      else if (caiu && p < 0.9) { caiu = false; noel.classList.remove("caiu"); }   // subiu a tela: volta pra escada
     }
-    window.addEventListener("scroll", function () { if (!pedidoQuadro) pedidoQuadro = requestAnimationFrame(mover); }, { passive: true });
+    function rolou() {
+      if (!caiu && !calmo) { noel.classList.add("desliza"); clearTimeout(timerDesliza); timerDesliza = setTimeout(function () { noel.classList.remove("desliza"); }, 160); }
+      if (!pedidoQuadro) pedidoQuadro = requestAnimationFrame(mover);
+    }
+    window.addEventListener("scroll", rolou, { passive: true });
     window.addEventListener("resize", medir);
     window.addEventListener("load", medir);
     if ("ResizeObserver" in window) new ResizeObserver(medir).observe(document.body);
