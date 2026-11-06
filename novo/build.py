@@ -12,8 +12,8 @@ NATAL_PROMOS = [  # (id, selo, nome, medida, [(quantidade, preço)], mídia, obs
    [("1 unidade", 9), ("3 unidades", 25), ("10 unidades", 67), ("15 unidades", 84)], "video", "Quantidade maior? Fale com a gente."),
   ("guirlanda", "Promoção", "Guirlanda personalizada", "Com 1 imagem · 20 cm",
    [("1 unidade", 29)], "video", "Sua foto vira ilustração natalina, com cordão e laço."),
-  ("guirlanda-maior", "Novidade", "Guirlanda maior com 2 imagens", "20 cm + placa de 9 x 20 cm",
-   [("1 unidade", 39)], "foto", "Placa \"Feliz Natal\" em cima e a foto da família embaixo."),
+  ("guirlanda-maior", "Novidade", "Guirlanda Feliz Natal com 2 imagens", "20 cm + placa de 9 x 20 cm",
+   [("1 unidade", 39)], "video", "Placa \"Feliz Natal\" em cima e a foto da família embaixo."),
 ]
 WPP = "5511982877142"
 FORM = "https://docs.google.com/forms/d/e/1FAIpQLScD3J8Bchik66my8m5rNnE-41UHjbVFUAQBomOY7XPBzrBkwA/viewform"
