@@ -423,68 +423,13 @@ def natal_card(i, selo, nome, medida, precos, midia, obs):
     return f'''<article class="natal-card revelar"><div class="natal-midia pausado">{m}<span class="natal-selo{" natal-selo--verde" if selo=="Novidade" else ""}">{E(selo)}</span></div>
   <div class="natal-corpo"><h3>{E(nome)}</h3><p class="natal-medida">{E(medida)}</p><ul class="natal-precos">{lis}</ul><p class="natal-obs">{TX(obs)}</p>
   <a class="btn" href="{wpp(msg)}">{ICO["wpp"]}Encomendar no WhatsApp</a></div></article>'''
-NOEL_COSTAS = '''<svg class="noel-costas" viewBox="0 0 80 112" aria-hidden="true">
-  <path d="M30 76 13 99" stroke="#c21a27" stroke-width="10" stroke-linecap="round"/><path d="M50 76 67 99" stroke="#c21a27" stroke-width="10" stroke-linecap="round"/>
-  <ellipse cx="11" cy="102" rx="7.5" ry="5" fill="#1d1d1f"/><ellipse cx="69" cy="102" rx="7.5" ry="5" fill="#1d1d1f"/>
-  <path d="M27 48 13 22" stroke="#d61f2c" stroke-width="10" stroke-linecap="round"/><path d="M53 48 67 22" stroke="#d61f2c" stroke-width="10" stroke-linecap="round"/>
-  <circle cx="13" cy="23" r="6.5" fill="#fff"/><circle cx="67" cy="23" r="6.5" fill="#fff"/><circle cx="11.5" cy="18.5" r="5.5" fill="#1d1d1f"/><circle cx="68.5" cy="18.5" r="5.5" fill="#1d1d1f"/>
-  <rect x="22" y="40" width="36" height="42" rx="14" fill="#d61f2c"/>
-  <path d="M22 74h36v4a6 6 0 0 1-6 6H28a6 6 0 0 1-6-6z" fill="#fff"/>
-  <rect x="22" y="64" width="36" height="7" fill="#1d1d1f"/>
-  <g class="saco-costas"><path d="M27 44c4-6 22-6 26 0 5 8 4 20-2 24-6 3-16 3-22 0-6-4-7-16-2-24z" fill="#2f8a57"/><path d="M33 43c3-5 11-5 14 0" fill="none" stroke="#e8b931" stroke-width="3" stroke-linecap="round"/><path d="M31 52c4 3 14 3 18 0" fill="none" stroke="#257248" stroke-width="2"/></g>
-  <circle cx="40" cy="27" r="12.5" fill="#fff"/><path d="M28.5 30c1 7 5 11 11.5 11s10.5-4 11.5-11" fill="#f1f1f1"/>
-  <path d="M27 24c2-12 11-17 20-15 6 1 10 6 11 12l-5 2c-3-5-8-6-12-6" fill="#d61f2c"/>
-  <path d="M53 21c5 1 7 6 6 10" fill="none" stroke="#d61f2c" stroke-width="5" stroke-linecap="round"/><circle cx="59" cy="32" r="4.5" fill="#fff"/>
-  <rect x="26" y="20" width="29" height="6.5" rx="3.2" fill="#fff"/>
-</svg>'''
-NOEL_CAIDO = '''<svg class="noel-caido" viewBox="0 0 100 100" aria-hidden="true">
-  <g class="tontura"><path d="M30 6l1.6 3.4 3.7.5-2.7 2.6.6 3.7-3.2-1.8-3.3 1.8.7-3.7-2.7-2.6 3.7-.5z" fill="#f2c14e"/><path d="M58 2l1.3 2.7 3 .4-2.2 2.1.5 3-2.6-1.4-2.7 1.4.5-3-2.1-2.1 3-.4z" fill="#f2c14e"/><path d="M72 14l1 2.1 2.3.3-1.7 1.6.4 2.3-2-1.1-2.1 1.1.4-2.3-1.6-1.6 2.3-.3z" fill="#f2c14e"/></g>
-  <path d="M30 84h-20" stroke="#c21a27" stroke-width="11" stroke-linecap="round"/><path d="M70 84h20" stroke="#c21a27" stroke-width="11" stroke-linecap="round"/>
-  <rect x="2" y="74" width="12" height="16" rx="5" fill="#1d1d1f"/><rect x="86" y="74" width="12" height="16" rx="5" fill="#1d1d1f"/>
-  <path d="M30 56 14 40" stroke="#d61f2c" stroke-width="10" stroke-linecap="round"/><path d="M70 56 86 40" stroke="#d61f2c" stroke-width="10" stroke-linecap="round"/>
-  <circle cx="13" cy="39" r="6.5" fill="#fff"/><circle cx="87" cy="39" r="6.5" fill="#fff"/><circle cx="11" cy="35" r="5.5" fill="#1d1d1f"/><circle cx="89" cy="35" r="5.5" fill="#1d1d1f"/>
-  <ellipse cx="50" cy="68" rx="24" ry="22" fill="#d61f2c"/><rect x="47" y="48" width="6" height="40" fill="#fff"/>
-  <rect x="26" y="70" width="48" height="7" fill="#1d1d1f"/><rect x="44.5" y="69" width="11" height="9" rx="2" fill="none" stroke="#e8b931" stroke-width="2.5"/>
-  <circle cx="50" cy="36" r="13" fill="#f6c9a8"/>
-  <path d="M36 37c0 13 6 22 14 22s14-9 14-22c-3 4-8 6-14 6s-11-2-14-6z" fill="#fff"/>
-  <path d="M44 32l3 3m0-3-3 3M53 32l3 3m0-3-3 3" stroke="#1d1d1f" stroke-width="1.6" stroke-linecap="round"/>
-  <circle cx="50" cy="39" r="2.8" fill="#e9877a"/><ellipse cx="50" cy="47" rx="4" ry="3" fill="#8a2b2b"/>
-  <path d="M36 28c2-12 11-18 21-15 6 2 9 7 10 12l-4 2c-3-5-8-6-13-6" fill="#d61f2c"/>
-  <path d="M63 26c6 0 9 5 8 10" fill="none" stroke="#d61f2c" stroke-width="5" stroke-linecap="round"/><circle cx="71" cy="37" r="4.5" fill="#fff"/>
-  <rect x="35" y="25" width="31" height="7" rx="3.5" fill="#fff"/>
-</svg>'''
-SACO_SVG = '''<svg viewBox="0 0 90 70" aria-hidden="true">
-  <g class="pres p1"><rect x="2" y="46" width="18" height="16" rx="2" fill="#2199be"/><rect x="9" y="46" width="4" height="16" fill="#fff"/><path d="M11 46c-4-6-9-3-5 0m5 0c4-6 9-3 5 0" fill="none" stroke="#fff" stroke-width="2"/></g>
-  <g class="pres p2"><rect x="66" y="44" width="20" height="18" rx="2" fill="#f2c14e"/><rect x="74" y="44" width="4" height="18" fill="#d61f2c"/><path d="M76 44c-4-6-9-3-5 0m5 0c4-6 9-3 5 0" fill="none" stroke="#d61f2c" stroke-width="2"/></g>
-  <g class="pres p3"><rect x="56" y="10" width="15" height="14" rx="2" fill="#d61f2c"/><rect x="62" y="10" width="3" height="14" fill="#f2c14e"/></g>
-  <path d="M22 30c6-10 32-10 40 0 9 12 7 28-4 32-10 4-24 4-34 0-10-5-11-20-2-32z" fill="#2f8a57"/>
-  <path d="M30 28c4-5 20-5 24 0" fill="none" stroke="#e8b931" stroke-width="3.5" stroke-linecap="round"/>
-  <path d="M30 22c6-6 18-6 24 0" fill="#257248"/>
-  <path d="M30 44c6 4 18 4 24 0" fill="none" stroke="#257248" stroke-width="2"/>
-</svg>'''
-JANELA_SVG = '''<svg viewBox="0 0 110 100" aria-hidden="true">
-  <rect x="4" y="4" width="102" height="86" rx="10" fill="#f3e7d3" stroke="#c8ab84" stroke-width="3"/>
-  <rect x="14" y="14" width="82" height="62" rx="4" fill="#ffd98a"/>
-  <rect x="14" y="14" width="82" height="62" rx="4" fill="url(#luzjanela)"/>
-  <defs><radialGradient id="luzjanela" cx=".5" cy=".55" r=".7"><stop offset="0" stop-color="#fff3c4"/><stop offset="1" stop-color="#f4b860"/></radialGradient></defs>
-  <path d="M20 66c3-10 9-14 15-14s12 4 15 14z" fill="#b97a4a"/><circle cx="35" cy="47" r="8" fill="#b97a4a"/><circle cx="29" cy="40" r="3.5" fill="#b97a4a"/><circle cx="41" cy="40" r="3.5" fill="#b97a4a"/><circle cx="32.5" cy="46" r="1.2" fill="#3a2414"/><circle cx="37.5" cy="46" r="1.2" fill="#3a2414"/>
-  <path d="M70 26l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7z" fill="#fff" opacity=".9"/>
-  <path d="M84 48l1.4 2.9 3.2.5-2.3 2.2.5 3.2-2.8-1.5-2.8 1.5.5-3.2-2.3-2.2 3.2-.5z" fill="#fff" opacity=".8"/>
-  <path d="M14 14h20c-3 16-3 40 4 62H14z" fill="#f28cab"/><path d="M96 14H76c3 16 3 40-4 62h24z" fill="#f28cab"/>
-  <path d="M14 14h20c-3 16-3 40 4 62" fill="none" stroke="#e06e93" stroke-width="2"/><path d="M96 14H76c3 16 3 40-4 62" fill="none" stroke="#e06e93" stroke-width="2"/>
-  <rect x="53" y="14" width="4" height="62" fill="#f3e7d3"/><rect x="14" y="43" width="82" height="4" fill="#f3e7d3" opacity=".0"/>
-  <rect x="0" y="80" width="110" height="14" rx="6" fill="#e8d6ba" stroke="#c8ab84" stroke-width="2.5"/>
-  <path d="M2 82c10-7 22 3 34-2s22 4 36-1 26 2 36 0v-4H2z" fill="#fff"/>
-</svg>'''
 cod_cupom, pct_cupom, min_cupom = CUPOM_NATAL
-noel_html = f'''<div class="noel-trilho" aria-hidden="true"><div class="noel-janela">{JANELA_SVG}</div><div class="noel-escada"></div><div class="noel"><span class="noel-rastro"></span>{NOEL_COSTAS}{NOEL_CAIDO}<span class="noel-saco">{SACO_SVG}</span><span class="noel-hoho">Ho ho ho!</span></div></div>''' if NATAL else ""
 chao_html = f'''
 <section class="noel-chao" id="presente" aria-labelledby="presente-tit">
   <div class="noel-presente">
     <div class="cupom-card">
-      <p class="cupom-trava">Continue rolando: o Papai Noel está descendo com um presente pra você.</p>
-      <div class="cupom-aberto" aria-hidden="true">
-        <span class="natal-tag">Seu presente por ter rolado até aqui</span>
+      <div class="cupom-aberto">
+        <span class="natal-tag">Presente de Natal</span>
         <h2 id="presente-tit">{pct_cupom}% OFF</h2>
         <p>de desconto em pedidos acima de {brl(min_cupom)} feitos aqui no site</p>
         <div class="cupom-cod"><span>Cupom</span><b>{cod_cupom}</b></div>
@@ -509,7 +454,7 @@ natal_html = f'''
   </div>
 </section>''' if NATAL else ""
 
-corpo = noel_html + f'''
+corpo = f'''
 <section id="inicio" class="cine" style="--altura:420vh" data-total="{CINE_FRAMES}" data-desktop="cine/frames/desktop/f_{{n}}.webp" data-mobile="cine/frames/mobile/f_{{n}}.webp">
   <div class="cine-palco">
     <canvas class="cine-canvas" aria-hidden="true"></canvas>
