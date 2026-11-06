@@ -116,3 +116,14 @@
 .cupom-status.ok{color:var(--natal-verde);font-weight:600}.cupom-status.erro{color:var(--natal)}
 .cupom-desc{display:flex;justify-content:space-between;margin:10px 0 0;font-size:15px;color:var(--natal-verde)}
 
+
+/* botão de som (música do vídeo) */
+.natal-som{position:absolute;left:12px;bottom:12px;z-index:2;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 13px 0 10px;border-radius:999px;
+  border:1.5px solid rgba(255,255,255,.7);background:rgba(20,10,12,.32);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;font:600 13px/1 var(--corpo,inherit);cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.natal-som svg{width:20px;height:20px;fill:currentColor}
+.natal-som .ic-onda{display:none}
+.natal-som.on .ic-onda{display:block}.natal-som.on .ic-mudo{display:none}
+.natal-som.on{background:var(--natal);border-color:var(--natal)}
+.natal-som:not(.on){animation:chamar 2.2s ease-in-out 1.5s 3}
+@keyframes chamar{0%,100%{transform:none}50%{transform:scale(1.08)}}

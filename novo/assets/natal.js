@@ -25,9 +25,26 @@
     v.addEventListener("playing", function () { m.classList.remove("carregando"); marcar(); });
     v.addEventListener("canplay", function () { if (v.paused) m.classList.remove("carregando"); });
     m.addEventListener("click", function (e) {
-      if (e.target.closest("a")) return;
+      if (e.target.closest("a, .natal-som")) return;
       if (v.paused) { v.dataset.manual = ""; baixar(); if (v.readyState < 3) m.classList.add("carregando"); tocar(v); }
       else { v.dataset.manual = "1"; v.pause(); }   // pausou na mão: a rolagem não toca de novo sozinha
+    });
+  });
+  // música: o navegador só deixa tocar com som depois de um toque, então começa mudo.
+  // Tocou no alto-falante: liga o som desse vídeo e deixa os outros mudos; ao rolar, o som passa pro vídeo que aparece.
+  var somLigado = false;
+  function marcarSom(v) { var b = v.parentNode.querySelector(".natal-som"); if (!b) return; var on = !v.muted; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.setAttribute("aria-label", on ? "Desligar a música do vídeo" : "Ligar a música do vídeo"); b.querySelector("span").textContent = on ? "Som ligado" : "Ouvir"; }
+  function somEm(v) {
+    vids.forEach(function (o) { if (o !== v && !o.muted) { o.muted = true; marcarSom(o); } });
+    v.muted = false; marcarSom(v);
+    var p = v.play(); if (p) p.catch(function () { v.muted = true; marcarSom(v); tocar(v); });   // celular recusou som: volta mudo e segue tocando
+  }
+  vids.forEach(function (v) {
+    var b = v.parentNode.querySelector(".natal-som"); if (!b) return;
+    b.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (v.muted) { somLigado = true; v.dataset.manual = ""; baixar(); somEm(v); }
+      else { somLigado = false; v.muted = true; marcarSom(v); }
     });
   });
   if (vids.length) {
@@ -38,8 +55,8 @@
       var io = new IntersectionObserver(function (es) {
         es.forEach(function (e) {
           var v = e.target;
-          if (e.isIntersecting) { if (calmo || v.dataset.manual === "1") return; baixar(); if (v.readyState < 3) v.parentNode.classList.add("carregando"); tocar(v); }
-          else v.pause();
+          if (e.isIntersecting) { if (calmo || v.dataset.manual === "1") return; baixar(); if (v.readyState < 3) v.parentNode.classList.add("carregando"); if (somLigado) somEm(v); else tocar(v); }
+          else { v.pause(); if (!v.muted) { v.muted = true; marcarSom(v); } }
         });
       }, { threshold: 0.2 });
       vids.forEach(function (v) { io.observe(v); });

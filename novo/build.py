@@ -412,7 +412,8 @@ ROTA = "https://www.google.com/maps/dir/?api=1&destination=R.+Pedro+Fernandes+Ar
 def natal_card(i, selo, nome, medida, precos, midia, obs):
     m = (f'<video src="img/natal/{i}.mp4" poster="img/natal/{i}.webp" muted loop playsinline preload="metadata" aria-label="{E(nome)} em vídeo"></video>'
          f'<span class="natal-carrega" aria-hidden="true"><i></i></span>'
-         f'<button class="natal-play" type="button" aria-label="Tocar o vídeo: {E(nome)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ic-play" d="M8 5.5v13l11-6.5z"/><path class="ic-pausa" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></button>' if midia == "video"
+         f'<button class="natal-play" type="button" aria-label="Tocar o vídeo: {E(nome)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ic-play" d="M8 5.5v13l11-6.5z"/><path class="ic-pausa" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></button>'
+         f'<button class="natal-som" type="button" aria-pressed="false" aria-label="Ligar a música do vídeo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="ic-onda" d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="ic-mudo" d="m15.5 9.5 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Ouvir</span></button>' if midia == "video"
          else f'<img src="img/natal/{i}.webp" alt="{E(nome)}" loading="lazy">')
     unico = len(precos) == 1
     lis = "".join(f'<li{" class=unico" if unico else ""}><span>{E(q)}</span><b>{brl(v)}</b></li>' for q, v in precos)
