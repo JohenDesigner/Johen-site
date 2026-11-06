@@ -399,7 +399,7 @@ masc_html = "".join(f'''<a class="cin-masc revelar" href="{s}/" style="--cor:{CO
 serv_html = "".join(f'<a class="mcard revelar" href="{s}/"><div class="mcard-img"><img src="{f}" alt="" loading="lazy"></div><span>{E(n)}</span></a>' for s, n, f, *_ in SERVS)
 def port_item(a, t, tipo=""):
     if tipo == "video":
-        return f'<figure class="revelar"><video src="img/portfolio/{a}.mp4" poster="img/portfolio/{a}.webp" autoplay muted loop playsinline preload="none" aria-label="{E(t)}"></video></figure>'
+        return f'<figure class="revelar"><video src="img/portfolio/{a}.mp4" poster="img/portfolio/{a}.webp" autoplay muted loop playsinline preload="metadata" aria-label="{E(t)}"></video></figure>'
     return f'<figure class="revelar"><img src="img/portfolio/{a}.webp" alt="{E(t)}" loading="lazy"></figure>'
 port_html = "".join(port_item(*x) for x in PORTFOLIO)
 depo_html = "".join(f'<figure class="painel cin-depo revelar"><span class="estrelas" aria-label="{n} de 5 estrelas">{"★"*n}</span><blockquote>{E(t)}</blockquote><figcaption>{E(a)} · Google</figcaption></figure>' for a, t, n in AVALIACOES)
@@ -408,7 +408,7 @@ MAPA_EMBED = "https://www.google.com/maps?q=R.+Pedro+Fernandes+Arag%C3%A3o,+269+
 ROTA = "https://www.google.com/maps/dir/?api=1&destination=R.+Pedro+Fernandes+Arag%C3%A3o,+269,+S%C3%A3o+Paulo+-+SP,+04431-160"
 
 def natal_card(i, selo, nome, medida, precos, midia, obs):
-    m = (f'<video src="img/natal/{i}.mp4" poster="img/natal/{i}.webp" muted loop playsinline preload="none" aria-label="{E(nome)} em vídeo"></video>' if midia == "video"
+    m = (f'<video src="img/natal/{i}.mp4" poster="img/natal/{i}.webp" muted loop playsinline preload="metadata" aria-label="{E(nome)} em vídeo"></video>' if midia == "video"
          else f'<img src="img/natal/{i}.webp" alt="{E(nome)}" loading="lazy">')
     unico = len(precos) == 1
     lis = "".join(f'<li{" class=unico" if unico else ""}><span>{E(q)}</span><b>{brl(v)}</b></li>' for q, v in precos)
