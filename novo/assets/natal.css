@@ -14,7 +14,9 @@
 
 /* varal de luzes embaixo do cabeçalho */
 .topo{position:sticky}
-.topo::after{content:"";position:absolute;left:0;right:0;bottom:-13px;height:16px;pointer-events:none;z-index:1;
+.topo{padding-bottom:14px}
+.pag-editor .topo{padding-bottom:0}
+.topo::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:16px;pointer-events:none;z-index:1;
   background:
     radial-gradient(circle at 12px 10px,#ff4d5e 0 3.6px,rgba(255,77,94,.35) 4.6px,transparent 7px),
     radial-gradient(circle at 36px 10px,var(--natal-ouro) 0 3.6px,rgba(242,193,78,.35) 4.6px,transparent 7px),
@@ -63,3 +65,85 @@
 .natal-pe{text-align:center;margin:36px auto 0;color:rgba(255,255,255,.9);font-size:15px;max-width:620px}
 .natal-pe a{color:#fff;font-weight:700}
 @media(prefers-reduced-motion:reduce){.natal-neve{display:none}.topo::after{animation:none}}
+
+/* botão de play transparente + carregando, nos vídeos */
+.natal-midia{cursor:pointer}
+.natal-play{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:1.5px solid rgba(255,255,255,.75);
+  background:rgba(255,255,255,.16);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;cursor:pointer;padding:0;
+  box-shadow:0 8px 28px rgba(0,0,0,.25);transition:opacity .3s,transform .3s;color:#fff}
+.natal-play svg{width:32px;height:32px;fill:currentColor;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4))}
+.natal-play .ic-play{transform:translateX(1.5px)}
+.natal-play .ic-pausa{display:none}
+.natal-midia:not(.pausado) .natal-play{opacity:0;transform:scale(.85);pointer-events:none}
+.natal-midia:not(.pausado):hover .natal-play{opacity:.85;transform:none;pointer-events:auto}
+.natal-midia:not(.pausado):hover .natal-play .ic-play{display:none}
+.natal-midia:not(.pausado):hover .natal-play .ic-pausa{display:block}
+@media(hover:none){.natal-midia:not(.pausado):hover .natal-play{opacity:0;pointer-events:none}}
+.natal-midia.carregando .natal-play{opacity:0;pointer-events:none}
+.natal-carrega{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;opacity:0;transition:opacity .25s}
+.natal-midia.carregando .natal-carrega{opacity:1}
+.natal-carrega i{width:58px;height:58px;border-radius:50%;border:4px solid rgba(255,255,255,.28);border-top-color:#fff;border-right-color:var(--natal-ouro);animation:girar .8s linear infinite;
+  box-shadow:0 0 0 10px rgba(0,0,0,.12)}
+@keyframes girar{to{transform:rotate(360deg)}}
+
+/* Papai Noel descendo a escada (home) */
+.home-cine main{position:relative}
+.noel-trilho{--lw:64px;position:absolute;left:max(6px,calc((100vw - 1400px)/2 - 70px));top:0;width:calc(var(--lw) * 1.25);height:var(--trilho-h,100%);z-index:45;pointer-events:none}
+.noel-janela{position:absolute;top:10px;left:50%;width:calc(var(--lw) * 1.75);transform:translateX(-50%);z-index:1;filter:drop-shadow(0 6px 14px rgba(0,0,0,.18))}
+.noel-janela svg,.noel svg{display:block;width:100%;height:auto}
+.noel-escada{position:absolute;top:calc(var(--lw) * 1.2);bottom:0;left:50%;width:var(--lw);transform:translateX(-50%);
+  background:
+    linear-gradient(90deg,#8a5428 0 5px,transparent 5px calc(100% - 5px),#8a5428 calc(100% - 5px)),
+    repeating-linear-gradient(180deg,transparent 0 20px,#a8692f 20px 25px,transparent 25px 28px);
+  filter:drop-shadow(1px 2px 1.5px rgba(0,0,0,.25))}
+.noel{position:absolute;left:0;top:0;width:100%;z-index:2;will-change:transform;transform:translate3d(0,var(--noel-y,0px),0)}
+.noel .perna-e,.noel .perna-d,.noel .braco-e,.noel .braco-d{transition:transform .12s}
+.noel.passo .perna-e{transform:translateY(-5px)}.noel.passo .braco-d{transform:translateY(4px)}
+.noel:not(.passo) .perna-d{transform:translateY(-5px)}.noel:not(.passo) .braco-e{transform:translateY(4px)}
+.noel.chegou{animation:pulo .7s cubic-bezier(.3,1.6,.5,1) both}
+.noel.chegou .braco-e{transform:rotate(-25deg);transform-origin:27px 50px}.noel.chegou .braco-d{transform:rotate(25deg);transform-origin:53px 50px}
+@keyframes pulo{0%{translate:0 0}40%{translate:0 -26px}100%{translate:0 0}}
+@media(max-width:760px){.noel-trilho{--lw:36px;left:2px}.noel-chao{padding-left:60px;padding-right:14px}}
+
+/* chão com o presente (fim da home) */
+.noel-chao{position:relative;padding:60px var(--gutter,16px) 110px;margin-top:40px;text-align:center;isolation:isolate;
+  background:linear-gradient(#fbfaf8,#eef3f6 60%,#fff)}
+.noel-chao::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:70px;z-index:-1;
+  background:radial-gradient(60px 34px at 10% 100%,#fff 98%,transparent),radial-gradient(90px 40px at 35% 100%,#fff 98%,transparent),radial-gradient(70px 30px at 62% 100%,#fff 98%,transparent),radial-gradient(100px 44px at 90% 100%,#fff 98%,transparent),linear-gradient(transparent 60%,#fff 60%)}
+.noel-presente{max-width:560px;margin:0 auto;position:relative}
+.noel-caixa{position:relative;width:96px;height:86px;margin:0 auto 18px}
+.noel-caixa .corpo-caixa{position:absolute;left:8px;right:8px;bottom:0;height:56px;border-radius:6px;background:linear-gradient(90deg,transparent 42%,var(--natal-ouro) 42% 58%,transparent 58%),var(--natal);box-shadow:0 10px 24px rgba(140,10,25,.25)}
+.noel-caixa .tampa{position:absolute;left:0;right:0;top:16px;height:20px;border-radius:5px;background:linear-gradient(90deg,transparent 42%,var(--natal-ouro) 42% 58%,transparent 58%),#e0273a;transform-origin:10% 100%;transition:transform .8s cubic-bezier(.3,1.5,.5,1),top .8s}
+.noel-caixa .tampa::before,.noel-caixa .tampa::after{content:"";position:absolute;top:-16px;width:26px;height:20px;border:5px solid var(--natal-ouro);border-radius:50% 50% 0 50%;left:calc(50% - 30px)}
+.noel-caixa .tampa::after{left:calc(50% + 4px);border-radius:50% 50% 50% 0}
+.cupom-card{background:#fff;border-radius:24px;padding:28px 22px;box-shadow:0 18px 50px rgba(30,40,50,.12);border:1px solid var(--linha);position:relative;overflow:hidden}
+.cupom-trava{position:absolute;inset:0;z-index:2;margin:0;display:grid;place-items:center;padding:24px;color:var(--tinta);font-size:17px;font-weight:600;text-wrap:balance;
+  background:rgba(255,255,255,.55);transition:opacity .5s}
+.cupom-aberto{filter:blur(7px);opacity:.55;transition:filter .7s,opacity .7s;pointer-events:none;user-select:none}
+.noel-chao.aberto .cupom-trava{opacity:0;pointer-events:none}
+.noel-chao.aberto .cupom-aberto{filter:none;opacity:1;pointer-events:auto;user-select:auto;animation:surge .7s cubic-bezier(.2,1.3,.4,1) both}
+.noel-chao.aberto .tampa{transform:rotate(-28deg) translate(-6px,-26px);top:6px}
+@keyframes surge{from{opacity:0;transform:scale(.85) translateY(16px)}to{opacity:1;transform:none}}
+.cupom-aberto .natal-tag{color:var(--natal)}
+.cupom-aberto h2{font-size:clamp(56px,10vw,96px)!important;color:var(--natal);margin:0 0 .05em!important;line-height:1!important}
+.cupom-aberto p{margin:0 0 16px;font-size:17px;color:var(--tinta)}
+.cupom-cod{display:inline-flex;align-items:center;gap:12px;border:2px dashed var(--natal);border-radius:14px;padding:10px 18px;margin-bottom:18px;background:#fff6f6}
+.cupom-cod span{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-2)}
+.cupom-cod b{font-size:26px;letter-spacing:.12em;color:var(--natal);font-variant-numeric:tabular-nums}
+.cupom-acoes{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:12px}
+.cupom-copiar{background:var(--natal);color:#fff}.cupom-copiar:hover{background:var(--natal-esc)}
+.cupom-usar{background:#fff;color:var(--natal);border:1.5px solid var(--natal)}
+.cupom-aberto small{color:var(--tinta-2);font-size:13px}
+.home-cine .rodape{margin-top:0}
+
+/* cupom na página do pedido */
+.cupom{margin-top:18px;background:#fff;border:1px dashed #e7a3aa;border-radius:var(--raio);padding:14px 16px}
+.cupom label{font-weight:600;font-size:15px;display:block;margin-bottom:8px}
+.cupom-linha-form{display:flex;gap:8px}
+.cupom-linha-form input{flex:1;min-width:0;height:46px;border:1px solid var(--linha);border-radius:12px;padding:0 14px;font:inherit;text-transform:uppercase;letter-spacing:.06em}
+.cupom-linha-form .btn{min-height:46px;padding:0 18px}
+.cupom-status{margin:8px 0 0;font-size:14px;color:var(--tinta-2)}
+.cupom-status:empty{display:none}
+.cupom-status.ok{color:var(--natal-verde);font-weight:600}.cupom-status.erro{color:var(--natal)}
+.cupom-desc{display:flex;justify-content:space-between;margin:10px 0 0;font-size:15px;color:var(--natal-verde)}
+@media(prefers-reduced-motion:reduce){.noel.chegou,.noel-chao.aberto .cupom-aberto{animation:none}}

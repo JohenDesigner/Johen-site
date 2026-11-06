@@ -7,6 +7,7 @@ D = json.load(open("dados/produtos.json", encoding="utf-8"))
 # Tema de Natal: logo com gorro, faixa vermelha, varal de luzes e a seção "Promoções de Natal" na home.
 # Depois do Natal é só trocar para False e rodar o build de novo (as artes ficam em img/natal/).
 NATAL = True
+CUPOM_NATAL = ("NATAL5", 5, 40)  # código, % de desconto, pedido acima de (R$) — liberado pelo Papai Noel no fim da home
 NATAL_PROMOS = [  # (id, selo, nome, medida, [(quantidade, preço)], mídia, obs) — valores do vídeo de 2026-11-05
   ("bolinha", "Mais pedido", "Bolinha de Natal com foto", "7 x 7 cm, com laço e flocos de neve",
    [("1 unidade", 9), ("3 unidades", 25), ("10 unidades", 67), ("15 unidades", 84)], "video", "Quantidade maior? Fale com a gente."),
@@ -322,6 +323,7 @@ corpo = f'''<div class="wrap" style="max-width:720px">
 <div id="pedido-vazio" class="vazio" hidden><span class="vazio-ico" aria-hidden="true">{ICO['sacola']}</span><b>Seu pedido está vazio.</b><span>Escolha um produto e toque em “Adicionar ao pedido”.</span><a class="btn btn-pri" href="../">Ver produtos</a></div>
 <div id="pedido-cheio" hidden>
   <div class="itens" id="itens"></div>
+  {f'''<div class="cupom" id="cupom" data-codigo="{CUPOM_NATAL[0]}" data-pct="{CUPOM_NATAL[1]}" data-min="{CUPOM_NATAL[2]}"><form id="cupom-form"><label for="cupom-cod">Tem cupom?</label><div class="cupom-linha-form"><input id="cupom-cod" autocomplete="off" autocapitalize="characters" placeholder="Ex.: {CUPOM_NATAL[0]}"><button class="btn btn-sec" type="submit">Aplicar</button></div></form><p class="cupom-status" id="cupom-status" role="status" aria-live="polite"></p><p class="cupom-desc" id="cupom-linha" hidden><span>Desconto do cupom</span><b id="cupom-valor"></b></p></div>''' if NATAL else ""}
   <div class="total" style="margin-top:18px"><small>Total do pedido</small><strong id="pedido-total">R$ 0,00</strong></div>
   {PAGAMENTO}
   <div class="acoes" style="margin-top:18px">
@@ -408,7 +410,9 @@ MAPA_EMBED = "https://www.google.com/maps?q=R.+Pedro+Fernandes+Arag%C3%A3o,+269+
 ROTA = "https://www.google.com/maps/dir/?api=1&destination=R.+Pedro+Fernandes+Arag%C3%A3o,+269,+S%C3%A3o+Paulo+-+SP,+04431-160"
 
 def natal_card(i, selo, nome, medida, precos, midia, obs):
-    m = (f'<video src="img/natal/{i}.mp4" poster="img/natal/{i}.webp" muted loop playsinline preload="metadata" aria-label="{E(nome)} em vídeo"></video>' if midia == "video"
+    m = (f'<video src="img/natal/{i}.mp4" poster="img/natal/{i}.webp" muted loop playsinline preload="metadata" aria-label="{E(nome)} em vídeo"></video>'
+         f'<span class="natal-carrega" aria-hidden="true"><i></i></span>'
+         f'<button class="natal-play" type="button" aria-label="Tocar o vídeo: {E(nome)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ic-play" d="M8 5.5v13l11-6.5z"/><path class="ic-pausa" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></button>' if midia == "video"
          else f'<img src="img/natal/{i}.webp" alt="{E(nome)}" loading="lazy">')
     unico = len(precos) == 1
     lis = "".join(f'<li{" class=unico" if unico else ""}><span>{E(q)}</span><b>{brl(v)}</b></li>' for q, v in precos)
@@ -416,9 +420,61 @@ def natal_card(i, selo, nome, medida, precos, midia, obs):
         q, v = precos[-1]; n = int(q.split()[0])
         lis = lis.replace(f'<span>{E(q)}</span>', f'<span>{E(q)}<small>sai {brl(v/n)} cada</small></span>')
     msg = f"Olá! Vi no site a promoção de Natal e quero encomendar: {nome} ({medida})."
-    return f'''<article class="natal-card revelar"><div class="natal-midia">{m}<span class="natal-selo{" natal-selo--verde" if selo=="Novidade" else ""}">{E(selo)}</span></div>
+    return f'''<article class="natal-card revelar"><div class="natal-midia pausado">{m}<span class="natal-selo{" natal-selo--verde" if selo=="Novidade" else ""}">{E(selo)}</span></div>
   <div class="natal-corpo"><h3>{E(nome)}</h3><p class="natal-medida">{E(medida)}</p><ul class="natal-precos">{lis}</ul><p class="natal-obs">{TX(obs)}</p>
   <a class="btn" href="{wpp(msg)}">{ICO["wpp"]}Encomendar no WhatsApp</a></div></article>'''
+NOEL_SVG = '''<svg viewBox="0 0 80 112" aria-hidden="true">
+  <g class="saco"><path d="M54 40c10-4 22 2 22 16s-8 22-18 22-14-8-12-20 0-16 8-18z" fill="#2f8a57"/><path d="M58 40c2-4 8-5 10-1" fill="none" stroke="#c9a227" stroke-width="2.5" stroke-linecap="round"/></g>
+  <g class="braco-e"><path d="M27 50 13 26" stroke="#d61f2c" stroke-width="10" stroke-linecap="round"/><circle cx="12" cy="25" r="6.5" fill="#fff"/><circle cx="10.5" cy="21" r="5.5" fill="#1d1d1f"/></g>
+  <g class="braco-d"><path d="M53 50 67 26" stroke="#d61f2c" stroke-width="10" stroke-linecap="round"/><circle cx="68" cy="25" r="6.5" fill="#fff"/><circle cx="69.5" cy="21" r="5.5" fill="#1d1d1f"/></g>
+  <g class="perna-e"><rect x="28" y="76" width="11" height="20" rx="4" fill="#c21a27"/><rect x="25" y="93" width="15" height="9" rx="4" fill="#1d1d1f"/></g>
+  <g class="perna-d"><rect x="41" y="76" width="11" height="20" rx="4" fill="#c21a27"/><rect x="40" y="93" width="15" height="9" rx="4" fill="#1d1d1f"/></g>
+  <rect x="22" y="44" width="36" height="38" rx="14" fill="#d61f2c"/>
+  <rect x="37" y="46" width="6" height="34" fill="#fff"/>
+  <rect x="22" y="66" width="36" height="7" fill="#1d1d1f"/><rect x="35" y="65" width="10" height="9" rx="2" fill="none" stroke="#e8b931" stroke-width="2.5"/>
+  <circle cx="40" cy="30" r="12" fill="#f6c9a8"/>
+  <path d="M27 31c0 12 6 21 13 21s13-9 13-21c-3 4-7 5-13 5s-10-1-13-5z" fill="#fff"/>
+  <path d="M34 37c3-2 9-2 12 0-3 2-9 2-12 0z" fill="#f2f2f2" stroke="#e2e2e2"/>
+  <circle cx="35.5" cy="28" r="1.7" fill="#1d1d1f"/><circle cx="44.5" cy="28" r="1.7" fill="#1d1d1f"/>
+  <circle cx="40" cy="32.5" r="2.6" fill="#e9877a"/><circle cx="32" cy="32" r="2.4" fill="#f4a3a0" opacity=".7"/><circle cx="48" cy="32" r="2.4" fill="#f4a3a0" opacity=".7"/>
+  <path d="M27 22c2-11 10-16 19-14 6 1 10 6 12 12l-4 2c-3-5-8-6-12-6" fill="#d61f2c"/>
+  <path d="M54 20c5 1 8 6 7 11" fill="none" stroke="#d61f2c" stroke-width="5" stroke-linecap="round"/><circle cx="61" cy="32" r="4.5" fill="#fff"/>
+  <rect x="26" y="19" width="29" height="6.5" rx="3.2" fill="#fff"/>
+</svg>'''
+JANELA_SVG = '''<svg viewBox="0 0 110 100" aria-hidden="true">
+  <rect x="4" y="4" width="102" height="86" rx="10" fill="#f3e7d3" stroke="#c8ab84" stroke-width="3"/>
+  <rect x="14" y="14" width="82" height="62" rx="4" fill="#ffd98a"/>
+  <rect x="14" y="14" width="82" height="62" rx="4" fill="url(#luzjanela)"/>
+  <defs><radialGradient id="luzjanela" cx=".5" cy=".55" r=".7"><stop offset="0" stop-color="#fff3c4"/><stop offset="1" stop-color="#f4b860"/></radialGradient></defs>
+  <path d="M20 66c3-10 9-14 15-14s12 4 15 14z" fill="#b97a4a"/><circle cx="35" cy="47" r="8" fill="#b97a4a"/><circle cx="29" cy="40" r="3.5" fill="#b97a4a"/><circle cx="41" cy="40" r="3.5" fill="#b97a4a"/><circle cx="32.5" cy="46" r="1.2" fill="#3a2414"/><circle cx="37.5" cy="46" r="1.2" fill="#3a2414"/>
+  <path d="M70 26l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7z" fill="#fff" opacity=".9"/>
+  <path d="M84 48l1.4 2.9 3.2.5-2.3 2.2.5 3.2-2.8-1.5-2.8 1.5.5-3.2-2.3-2.2 3.2-.5z" fill="#fff" opacity=".8"/>
+  <path d="M14 14h20c-3 16-3 40 4 62H14z" fill="#f28cab"/><path d="M96 14H76c3 16 3 40-4 62h24z" fill="#f28cab"/>
+  <path d="M14 14h20c-3 16-3 40 4 62" fill="none" stroke="#e06e93" stroke-width="2"/><path d="M96 14H76c3 16 3 40-4 62" fill="none" stroke="#e06e93" stroke-width="2"/>
+  <rect x="53" y="14" width="4" height="62" fill="#f3e7d3"/><rect x="14" y="43" width="82" height="4" fill="#f3e7d3" opacity=".0"/>
+  <rect x="0" y="80" width="110" height="14" rx="6" fill="#e8d6ba" stroke="#c8ab84" stroke-width="2.5"/>
+  <path d="M2 82c10-7 22 3 34-2s22 4 36-1 26 2 36 0v-4H2z" fill="#fff"/>
+</svg>'''
+cod_cupom, pct_cupom, min_cupom = CUPOM_NATAL
+noel_html = f'''<div class="noel-trilho" aria-hidden="true"><div class="noel-janela">{JANELA_SVG}</div><div class="noel-escada"></div><div class="noel">{NOEL_SVG}</div></div>''' if NATAL else ""
+chao_html = f'''
+<section class="noel-chao" id="presente" aria-labelledby="presente-tit">
+  <div class="noel-neve-chao" aria-hidden="true"></div>
+  <div class="noel-presente">
+    <div class="noel-caixa" aria-hidden="true"><span class="tampa"></span><span class="corpo-caixa"></span></div>
+    <div class="cupom-card">
+      <p class="cupom-trava">Role até o fim com o Papai Noel pra ele deixar um presente aqui.</p>
+      <div class="cupom-aberto" aria-hidden="true">
+        <span class="natal-tag">Presente do Papai Noel</span>
+        <h2 id="presente-tit">{pct_cupom}% OFF</h2>
+        <p>em pedidos acima de {brl(min_cupom)} feitos aqui no site</p>
+        <div class="cupom-cod"><span>Cupom</span><b>{cod_cupom}</b></div>
+        <div class="cupom-acoes"><button class="btn cupom-copiar" type="button" data-cupom="{cod_cupom}">Copiar cupom</button><a class="btn cupom-usar" href="pedido/?cupom={cod_cupom}">Usar no meu pedido</a></div>
+        <small>Válido até o Natal. O desconto aparece no total do pedido.</small>
+      </div>
+    </div>
+  </div>
+</section>''' if NATAL else ""
 natal_html = f'''
 <section id="natal" class="natal-secao" aria-labelledby="natal-tit">
   <div class="natal-neve" aria-hidden="true"></div>
@@ -434,7 +490,7 @@ natal_html = f'''
   </div>
 </section>''' if NATAL else ""
 
-corpo = f'''
+corpo = noel_html + f'''
 <section id="inicio" class="cine" style="--altura:420vh" data-total="{CINE_FRAMES}" data-desktop="cine/frames/desktop/f_{{n}}.webp" data-mobile="cine/frames/mobile/f_{{n}}.webp">
   <div class="cine-palco">
     <canvas class="cine-canvas" aria-hidden="true"></canvas>
@@ -543,7 +599,7 @@ corpo = f'''
       <a class="link-seta" href="{ROTA}" target="_blank" rel="noopener">Traçar rota</a>
     </div>
   </div>
-</section>'''
+</section>{chao_html}'''
 head_home = f'''<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap">
 <link rel="stylesheet" href="assets/cine.css?v={VER}">
 <link rel="preload" as="image" href="cine/frames/desktop/f_0001.webp">

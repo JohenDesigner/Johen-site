@@ -272,16 +272,38 @@ function iniciarPedido() {
         <div><b>${nomeItem(x)}</b><small>${linhaItem(x)}</small>${x.artes ? "<small>Com sua arte (prévia dos dois lados)</small>" : x.arte ? "<small>Com sua arte (prévia)</small>" : ""}<button data-tirar="${x.uid}">Remover</button></div>
         <div class="valor">${brl(x.total)}</div>
       </div>`).join("");
-    $("#pedido-total").textContent = brl(tot);
+    // cupom de Natal (NATAL5): 5% OFF em pedidos acima de R$ 40,00, liberado pelo Papai Noel na home
+    const cb = $("#cupom"); let desc = 0, cupomTxt = "";
+    if (cb) {
+      const cod = cb.dataset.codigo, pct = +cb.dataset.pct, min = +cb.dataset.min;
+      let usado = ""; try { usado = localStorage.getItem("johen-cupom") || ""; } catch (e) {}
+      const inp = $("#cupom-cod"), st = $("#cupom-status"), linha = $("#cupom-linha");
+      if (usado && !inp.value) inp.value = usado;
+      const ok = usado.toUpperCase() === cod;
+      if (ok && tot > min) {
+        desc = Math.round(tot * pct) / 100;
+        st.textContent = `Cupom ${cod} aplicado: ${pct}% OFF.`; st.className = "cupom-status ok";
+        cupomTxt = `\nCupom ${cod} (${pct}% OFF): − ${brl(desc)}`;
+      } else if (ok) {
+        st.textContent = `O cupom ${cod} vale para pedidos acima de ${brl(min)}. Falta pouco: adicione mais ${brl(min - tot + 0.01)}.`; st.className = "cupom-status";
+      } else if (usado) { st.textContent = "Esse cupom não existe. Confira o código."; st.className = "cupom-status erro"; }
+      else { st.textContent = ""; st.className = "cupom-status"; }
+      linha.hidden = !desc; $("#cupom-valor").textContent = "− " + brl(desc);
+    }
+    const totF = Math.round((tot - desc) * 100) / 100;
+    $("#pedido-total").textContent = brl(totF);
     // itens montados no editor com a arte já enviada pro Drive levam o código da pasta; o resto o cliente manda na conversa
     const faltaArte = itens.some(x => !x.cod);
     const msg = "Olá! Quero fazer este pedido pelo site:\n\n" + itens.map((x, n) => `${n + 1}. ${nomeItem(x)}\n   ${linhaItem(x)} — ${brl(x.total)}${x.cod ? `\n   Arte enviada pelo site: ${x.cod}` : ""}`).join("\n")
-      + `\n\nTotal: ${brl(tot)}\n\n${faltaArte ? (itens.some(x => x.cod) ? "Vou mandar as outras artes aqui na conversa." : "Vou mandar as artes aqui na conversa.") : "As artes já foram enviadas pelo site."}`;
+      + `${cupomTxt}\n\nTotal: ${brl(totF)}\n\n${faltaArte ? (itens.some(x => x.cod) ? "Vou mandar as outras artes aqui na conversa." : "Vou mandar as artes aqui na conversa.") : "As artes já foram enviadas pelo site."}`;
     $("#enviar-pedido").href = wppLink(msg);
     const bp = $("#bloco-pix");
-    if (bp) { const v = Math.round(tot * 100) / 100; $("#pix-codigo").textContent = pixCopiaECola(bp.dataset.chave, bp.dataset.nome, bp.dataset.cidade, v); $("#pix-valor").textContent = brl(v); }
+    if (bp) { const v = totF; $("#pix-codigo").textContent = pixCopiaECola(bp.dataset.chave, bp.dataset.nome, bp.dataset.cidade, v); $("#pix-valor").textContent = brl(v); }
   }
   lista.addEventListener("click", e => { const b = e.target.closest("[data-tirar]"); if (b) { Pedido.tirar(b.dataset.tirar); render(); } });
+  // ?cupom=NATAL5 (botão "Usar no meu pedido" do Papai Noel) já aplica o cupom
+  try { const q = new URLSearchParams(location.search).get("cupom"); if (q) localStorage.setItem("johen-cupom", q.trim().toUpperCase()); } catch (e) {}
+  $("#cupom-form")?.addEventListener("submit", e => { e.preventDefault(); try { localStorage.setItem("johen-cupom", $("#cupom-cod").value.trim().toUpperCase()); } catch (err) {} render(); });
   $("#copiar-pix")?.addEventListener("click", async e => {
     const alvo = $("#pix-codigo") || $("#chave-pix"); const txt = alvo.textContent.trim();
     try { await navigator.clipboard.writeText(txt); toast("Código Pix copiado. Agora cole no app do banco."); }

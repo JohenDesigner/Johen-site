@@ -147,3 +147,10 @@ Uma melhoria pequena por rodada. Não repetir o que já está aqui.
 - 2026-11-05 — A pedido do Johen (vídeos do Natal): resolução subiu de 540 para 720 px de largura, com mais qualidade (antes ficava borrado no celular), e as capas também. Antes o vídeo só começava a baixar quando aparecia na tela, então demorava e parecia que um esperava o outro acabar. Agora os dois começam a baixar juntos quando a seção está chegando, e cada um toca na hora sempre que aparece na tela (e pausa quando sai). (assets/natal.js; build.py: `preload="metadata"`; img/natal/*.mp4)
 
 - 2026-11-05 — A pedido do Johen: o card da guirlanda de 2 imagens era só foto e parecia que "não carregava". Agora usa o vídeo que ele mandou (caixa, guirlanda na árvore e na porta, fecha com "Guirlanda Feliz Natal R$ 39,00") e o nome no card virou "Guirlanda Feliz Natal com 2 imagens", como no vídeo. (img/natal/guirlanda-maior.mp4/.webp; build.py: `NATAL_PROMOS`)
+
+- 2026-11-05 — A pedido do Johen (Natal):
+  - Vídeos: botão de play transparente (círculo de vidro) quando o vídeo está parado e um círculo girando enquanto carrega. Tocar no vídeo pausa ou continua; se o cliente pausar, a rolagem não toca de novo sozinha.
+  - Papai Noel na escada: na home, uma escada de madeira sai de uma janela de quarto de criança (cortina rosa, ursinho, estrelinhas) no topo e desce pela lateral esquerda até a neve no fim da página. O Papai Noel desce degrau por degrau conforme a rolagem e, ao pisar no chão, o presente abre e libera o cupom NATAL5 (antes aparece borrado com "Role até o fim com o Papai Noel…").
+  - Cupom: 5% OFF em pedidos acima de R$ 40,00. Botões "Copiar cupom" e "Usar no meu pedido" (abre o pedido já com o cupom). A página Meu pedido ganhou o campo "Tem cupom?": mostra o desconto, o total com desconto vai pro Pix e pra mensagem do WhatsApp; abaixo de R$ 40 avisa quanto falta.
+  - Varal de luzes agora fica dentro do cabeçalho (não cobre mais a primeira linha das páginas).
+  (build.py: `CUPOM_NATAL`, `NOEL_SVG`, `JANELA_SVG`, `noel_html`, `chao_html`, bloco `#cupom` no pedido; assets/natal.js, assets/natal.css; assets/site.js: cupom em `iniciarPedido`)
