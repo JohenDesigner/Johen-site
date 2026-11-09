@@ -456,7 +456,7 @@ natal_html = f'''
 </section>''' if NATAL else ""
 
 corpo = f'''
-<section id="inicio" class="cine" style="--altura:420vh" data-total="{CINE_FRAMES}" data-desktop="cine/frames/desktop/f_{{n}}.webp" data-mobile="cine/frames/mobile/f_{{n}}.webp">
+<section id="inicio" class="cine" style="--altura:420vh" data-total="{CINE_FRAMES}" data-desktop="cine/natal/desktop/f_{{n}}.webp" data-mobile="cine/natal/mobile/f_{{n}}.webp">
   <div class="cine-palco">
     <canvas class="cine-canvas" aria-hidden="true"></canvas>
     <div class="cine-vinheta"></div>
@@ -567,8 +567,8 @@ corpo = f'''
 </section>{chao_html}'''
 head_home = f'''<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap">
 <link rel="stylesheet" href="assets/cine.css?v={VER}">
-<link rel="preload" as="image" href="cine/frames/desktop/f_0001.webp">
-<meta property="og:image" content="cine/frames/desktop/f_0001.webp">
+<link rel="preload" as="image" href="cine/natal/desktop/f_0001.webp">
+<meta property="og:image" content="cine/natal/desktop/f_0001.webp">
 '''
 pagina("index.html", "Johen Arte Gráfica | Gráfica e personalizados no Jardim Selma, SP", "Cartões de visita, panfletos, banners, adesivos, camisetas e canecas personalizadas em São Paulo. Peça pelo site e acompanhe pelo WhatsApp.",
        corpo, extra_head=f'<script src="assets/cine.js?v={VER}" defer></script>', head=head_home, classe="home-cine")
