@@ -111,7 +111,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head="", head="", class
 <meta name="theme-color" content="#ffffff">
 <meta name="generator" content="Site Cinematográfico · Labrego IA">
 <meta name="author" content="Labrego IA · labregoia.com.br">
-<script>/* recarregou ou entrou direto (sem vir de outra página do site)? vai para a página inicial */(function(){{try{{var h=new URL(document.documentElement.dataset.root||"./",location.href).pathname;if(location.pathname===h||location.pathname===h+"index.html"||/[/](editor|pedido)[/]/.test(location.pathname))return;var n=performance.getEntriesByType("navigation")[0],t=n?n.type:"",r=document.referrer,doSite=false;try{{var u=new URL(r);doSite=u.origin===location.origin&&u.pathname.indexOf(h)===0}}catch(e){{}}if(t==="reload"||(t==="navigate"&&!doSite))location.replace(h)}}catch(e){{}}}})()</script>
+<script>/* recarregou ou entrou direto (sem vir de outra página do site)? vai para a página inicial */(function(){{try{{var h=new URL(document.documentElement.dataset.root||"./",location.href).pathname;if(location.pathname===h||location.pathname===h+"index.html"||/[/](editor|pedido|privacidade)[/]/.test(location.pathname))return;var n=performance.getEntriesByType("navigation")[0],t=n?n.type:"",r=document.referrer,doSite=false;try{{var u=new URL(r);doSite=u.origin===location.origin&&u.pathname.indexOf(h)===0}}catch(e){{}}if(t==="reload"||(t==="navigate"&&!doSite))location.replace(h)}}catch(e){{}}}})()</script>
 <link rel="icon" href="{R}img/marca/logo-icone.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Outfit:wght@500;600&display=swap">
@@ -166,7 +166,7 @@ def pagina(caminho, titulo, desc, corpo, atual="", extra_head="", head="", class
   <div class="rod-faixa"><div class="wrap">
     <div class="rod-pag" aria-label="Formas de pagamento"><span>{ICO['pix']}Pix</span><span>{ICO['cartao']}Débito</span><span>{ICO['cartao']}Crédito</span><span>{ICO['dinheiro']}Dinheiro</span></div>
     <a class="rod-insta" href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener">{ICO['insta']}@johen_artgrafica</a>
-    <p class="cnpj">Johen Arte Gráfica · CNPJ 65.480.613/0001-19</p>
+    <p class="cnpj">Johen Arte Gráfica · CNPJ 65.480.613/0001-19 · <a href="{R}privacidade/">Política de Privacidade</a></p>
     <a class="credito-lbg" href="https://labregoia.com.br" target="_blank" rel="noopener">Site por Labrego IA</a>
   </div></div>
 </footer>
@@ -332,6 +332,51 @@ corpo = f'''<div class="wrap" style="max-width:720px">
   </div>
 </div></div>'''
 pagina("pedido/index.html", "Meu pedido | Johen Arte Gráfica", "Revise seu pedido e envie pelo WhatsApp.", corpo)
+
+# Política de Privacidade (exigida pela Meta para o WhatsApp do hub) — pode ser aberta direto pelo link
+corpo = f"""<div class="wrap" style="max-width:760px">
+<section class="cabeca-cat"><div class="migalha"><a href="../">Início</a> › Política de Privacidade</div><h1>Política de Privacidade</h1><p>Atualizada em 9 de novembro de 2026.</p></section>
+<div class="texto-legal">
+<p>Esta política explica como a <b>Johen Arte Gráfica</b> (CNPJ 65.480.613/0001-19, R. Pedro Fernandes Aragão, 269, Jardim Selma, São Paulo - SP) coleta, usa e protege os dados de quem visita este site, pede orçamento ou fala com a gente pelo WhatsApp, de acordo com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).</p>
+<h2>1. Quais dados coletamos</h2>
+<ul>
+<li><b>Dados que você informa:</b> nome, número de WhatsApp, e-mail (quando informado), endereço (quando precisa de entrega ou instalação) e os detalhes do pedido, como quantidade, tamanho e prazo.</li>
+<li><b>Mensagens do WhatsApp:</b> o conteúdo das conversas, fotos, artes e arquivos que você nos envia pelos nossos números de WhatsApp, inclusive pelo número de atendimento automático.</li>
+<li><b>Artes e arquivos:</b> imagens, logos e textos enviados para produzir o seu pedido.</li>
+<li><b>Dados de pagamento:</b> registramos a forma de pagamento e o valor. Não guardamos número de cartão; pagamentos por cartão são processados pela maquininha ou pelo meio de pagamento escolhido.</li>
+<li><b>Navegação no site:</b> o seu pedido em andamento fica salvo apenas no seu próprio navegador. O site usa fontes do Google Fonts, que podem registrar dados técnicos de acesso, como o endereço IP.</li>
+</ul>
+<h2>2. Para que usamos</h2>
+<ul>
+<li>Fazer orçamentos, produzir e entregar os seus pedidos.</li>
+<li>Avisar sobre o andamento do pedido (por exemplo: em produção, pronto para retirar), prazos e pagamentos pendentes.</li>
+<li>Responder dúvidas e prestar atendimento.</li>
+<li>Cumprir obrigações legais e fiscais.</li>
+</ul>
+<p>Mensagens promocionais só são enviadas para quem já é cliente ou pediu para receber, e você pode pedir para parar a qualquer momento respondendo “SAIR”.</p>
+<h2>3. Com quem compartilhamos</h2>
+<p>Não vendemos os seus dados. Eles são usados apenas pelos serviços que fazem o nosso atendimento funcionar:</p>
+<ul>
+<li><b>WhatsApp / Meta Platforms</b>, para envio e recebimento de mensagens;</li>
+<li><b>Supabase</b>, onde fica o nosso sistema de pedidos e clientes;</li>
+<li><b>Google</b> (Formulários, Drive e Fonts) e <b>FormSubmit</b>, para receber orçamentos e arquivos pelo site;</li>
+<li>Autoridades públicas, quando a lei exigir.</li>
+</ul>
+<h2>4. Por quanto tempo guardamos</h2>
+<p>Guardamos os dados enquanto você for cliente e pelo tempo exigido pela legislação fiscal. Artes e arquivos podem ser mantidos para facilitar novos pedidos iguais; se preferir, pedimos para apagar.</p>
+<h2>5. Seus direitos</h2>
+<p>Você pode, a qualquer momento, pedir para <b>ver, corrigir ou apagar</b> os seus dados, saber com quem foram compartilhados ou parar de receber mensagens. Para isso, fale com a gente pelo WhatsApp <a href="{wpp('Olá! Quero falar sobre os meus dados (privacidade).')}">(11) 98287-7142</a> ou na loja. Respondemos em até 15 dias.</p>
+<h2>6. Como pedir a exclusão dos dados</h2>
+<p>Mande a mensagem “Quero apagar meus dados” para o WhatsApp (11) 98287-7142 ou para o número de onde você recebeu nossas mensagens. Apagamos o seu cadastro, as conversas e os arquivos do nosso sistema, mantendo apenas o que a lei obriga a guardar (como registros fiscais).</p>
+<h2>7. Segurança</h2>
+<p>Usamos acesso com senha, conexões criptografadas e serviços com controle de acesso para proteger os seus dados. Só o responsável pela loja acessa o sistema de pedidos.</p>
+<h2>8. Mudanças nesta política</h2>
+<p>Se esta política mudar, a nova versão será publicada nesta página com a data de atualização.</p>
+<h2>9. Contato</h2>
+<p>Johen Arte Gráfica · responsável: Johen · WhatsApp (11) 98287-7142 · R. Pedro Fernandes Aragão, 269, Jardim Selma, São Paulo - SP · segunda a sábado, das 11h às 20h.</p>
+</div></div>"""
+pagina("privacidade/index.html", "Política de Privacidade | Johen Arte Gráfica", "Como a Johen Arte Gráfica coleta, usa e protege os seus dados no site e no WhatsApp.", corpo,
+       head="<style>.texto-legal{line-height:1.65;padding-bottom:48px}.texto-legal h2{font-size:1.15rem;margin:28px 0 8px}.texto-legal ul{padding-left:20px;margin:8px 0}.texto-legal li{margin:6px 0}.texto-legal a{text-decoration:underline}</style>\n")
 
 
 # ---------- editor de caneca ----------
