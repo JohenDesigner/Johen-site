@@ -260,10 +260,20 @@ function pixCopiaECola(chave, nome, cidade, valor) {
 }
 
 /* ---------- página do pedido ---------- */
+// Pedido finalizado vai direto para o hub da gráfica (Supabase) e o cliente pode enviar o comprovante.
+const HUB = "https://arbebltdznrmgnqchctw.supabase.co/functions/v1";
+const ULTIMO = "johen-ultimo-pedido";
+let estadoPedido = { itens: [], total: 0, cupom: "" };
+const lerUltimo = () => { try { const u = JSON.parse(localStorage.getItem(ULTIMO) || "null"); return u && Date.now() - u.quando < 7 * 864e5 ? u : null; } catch (e) { return null; } };
+const fmtTel = d => d.length === 11 ? `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}` : d.length === 10 ? `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}` : d;
+
 function iniciarPedido() {
   const lista = $("#itens"); if (!lista) return;
   function render() {
     const itens = Pedido.ler();
+    const feito = lerUltimo();
+    if (!itens.length && feito && $("#pedido-feito")) { mostrarFeito(feito); return; }
+    if ($("#pedido-feito")) $("#pedido-feito").hidden = true;
     const tot = itens.reduce((s, x) => s + x.total, 0);
     $("#pedido-cheio").hidden = !itens.length; $("#pedido-vazio").hidden = !!itens.length;
     lista.innerHTML = itens.map(x => `
@@ -292,6 +302,7 @@ function iniciarPedido() {
     }
     const totF = Math.round((tot - desc) * 100) / 100;
     $("#pedido-total").textContent = brl(totF);
+    estadoPedido = { itens, total: totF, cupom: desc ? $("#cupom").dataset.codigo : "" };
     // itens montados no editor com a arte já enviada pro Drive levam o código da pasta; o resto o cliente manda na conversa
     const faltaArte = itens.some(x => !x.cod);
     const msg = "Olá! Quero fazer este pedido pelo site:\n\n" + itens.map((x, n) => `${n + 1}. ${nomeItem(x)}\n   ${linhaItem(x)} — ${brl(x.total)}${x.cod ? `\n   Arte enviada pelo site: ${x.cod}` : ""}`).join("\n")
@@ -309,6 +320,72 @@ function iniciarPedido() {
     try { await navigator.clipboard.writeText(txt); toast("Código Pix copiado. Agora cole no app do banco."); }
     catch (err) { const r = document.createRange(); r.selectNodeContents(alvo); getSelection().removeAllRanges(); getSelection().addRange(r); toast("Código selecionado, toque em Copiar"); }
   });
+  // ---- finalizar pedido ----
+  const form = $("#finalizar");
+  const msgF = $("#f-msg");
+  const erroF = (txt, campo) => { msgF.textContent = txt; msgF.className = "form-msg erro"; $$(".campo-f").forEach(c => c.classList.remove("erro")); if (campo) { campo.closest(".campo-f").classList.add("erro"); campo.focus(); } };
+  try { const salvo = JSON.parse(localStorage.getItem("johen-cliente") || "null"); if (salvo && form) { form.nome.value = salvo.nome || ""; form.whatsapp.value = salvo.whatsapp || ""; } } catch (e) {}
+  form?.addEventListener("input", e => { const c = e.target.closest(".campo-f"); if (c?.classList.contains("erro")) { c.classList.remove("erro"); msgF.textContent = ""; } });
+  form?.whatsapp.addEventListener("input", () => { const d = form.whatsapp.value.replace(/\D/g, "").slice(0, 11); if (d.length >= 10) form.whatsapp.value = fmtTel(d); });
+  form?.addEventListener("submit", async e => {
+    e.preventDefault();
+    const nome = form.nome.value.trim(), tel = form.whatsapp.value.replace(/\D/g, "");
+    if (nome.length < 2) return erroF("Escreva seu nome.", form.nome);
+    if (tel.length < 10 || tel.length > 11) return erroF("Confira o WhatsApp: DDD + número, ex.: (11) 90000-0000.", form.whatsapp);
+    if (!estadoPedido.itens.length) return erroF("Seu pedido está vazio.");
+    const btn = $("#f-enviar"); btn.disabled = true; btn.textContent = "Enviando…"; msgF.textContent = ""; msgF.className = "form-msg";
+    try {
+      const r = await fetch(HUB + "/site-pedido", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, whatsapp: tel, obs: form.obs.value.trim(), site: form.site.value, cupom: estadoPedido.cupom,
+          itens: estadoPedido.itens.map(x => ({ c: x.c, id: x.id, nome: x.nome, desc: linhaItem(x), qtd: x.qtd || 1, total: x.total, cod: x.cod || "" })) }) });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok || !d.ok) throw new Error(d.mensagem || "Não conseguimos registrar agora.");
+      const resumo = estadoPedido.itens.map(x => `• ${nomeItem(x)} — ${linhaItem(x)}`).join("\n");
+      const ult = { numero: d.numero, total: (d.total_centavos ?? Math.round(estadoPedido.total * 100)) / 100, whatsapp: tel, nome, resumo, comArte: estadoPedido.itens.every(x => x.cod), quando: Date.now() };
+      try { localStorage.setItem(ULTIMO, JSON.stringify(ult)); localStorage.setItem("johen-cliente", JSON.stringify({ nome, whatsapp: form.whatsapp.value })); localStorage.removeItem("johen-cupom"); } catch (err) {}
+      Pedido.salvar([]);
+      form.obs.value = "";
+      mostrarFeito(ult);
+      scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      erroF(`${err.message === "Failed to fetch" ? "Sem conexão." : err.message} Se preferir, envie pelo WhatsApp no link abaixo.`);
+    } finally { btn.disabled = false; btn.textContent = "Finalizar pedido"; }
+  });
+
+  // ---- pedido feito: Pix, comprovante e WhatsApp ----
+  function mostrarFeito(u) {
+    $("#pedido-cheio").hidden = true; $("#pedido-vazio").hidden = true; $("#pedido-feito").hidden = false;
+    $("#feito-num").textContent = u.numero; $("#feito-total").textContent = brl(u.total); $("#feito-wpp").textContent = fmtTel(u.whatsapp);
+    const bp = $("#bloco-pix");
+    if (bp) $("#feito-pix-codigo").textContent = pixCopiaECola(bp.dataset.chave, bp.dataset.nome, bp.dataset.cidade, u.total);
+    else $("#feito-pix").hidden = true;
+    $("#feito-wpp-link").href = wppLink(`Olá! Fiz o pedido nº ${u.numero} pelo site (${brl(u.total)}).\n\n${u.resumo || ""}\n\n${u.comArte ? "As artes já foram enviadas pelo site." : "Vou mandar a arte aqui."}`);
+    $("#feito-wpp-link").innerHTML = $("#feito-wpp-link").innerHTML.replace(/Mandar a arte no WhatsApp|Falar no WhatsApp/, u.comArte ? "Falar no WhatsApp" : "Mandar a arte no WhatsApp");
+  }
+  $("#feito-copiar")?.addEventListener("click", async () => {
+    const alvo = $("#feito-pix-codigo");
+    try { await navigator.clipboard.writeText(alvo.textContent.trim()); toast("Código Pix copiado. Agora cole no app do banco."); }
+    catch (err) { const r = document.createRange(); r.selectNodeContents(alvo); getSelection().removeAllRanges(); getSelection().addRange(r); toast("Código selecionado, toque em Copiar"); }
+  });
+  $("#comp-arq")?.addEventListener("change", async e => {
+    const arq = e.target.files[0]; const st = $("#comp-msg"); const u = lerUltimo();
+    e.target.value = "";
+    if (!arq || !u) return;
+    if (arq.size > 5 * 1024 * 1024) { st.textContent = "O arquivo passa de 5 MB. Tire um print ou mande pelo WhatsApp."; st.className = "form-msg erro"; return; }
+    const lab = $(".arquivo-btn"); lab.textContent = "Enviando…"; st.textContent = ""; st.className = "form-msg";
+    try {
+      const fd = new FormData(); fd.append("numero", u.numero); fd.append("whatsapp", u.whatsapp); fd.append("arquivo", arq);
+      const r = await fetch(HUB + "/site-comprovante", { method: "POST", body: fd });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok || !d.ok) throw new Error(d.mensagem || "Não deu para enviar agora.");
+      st.textContent = "Comprovante enviado! Obrigado. A gente confere e confirma no WhatsApp."; st.className = "form-msg ok";
+      lab.textContent = "Enviar outro comprovante";
+    } catch (err) {
+      st.textContent = `${err.message === "Failed to fetch" ? "Sem conexão." : err.message} Se preferir, mande pelo WhatsApp.`; st.className = "form-msg erro";
+      lab.textContent = "Escolher comprovante";
+    }
+  });
+  $("#feito-novo")?.addEventListener("click", () => { try { localStorage.removeItem(ULTIMO); } catch (e) {} location.href = ROOT; });
   render();
 }
 

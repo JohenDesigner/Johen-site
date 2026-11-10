@@ -326,12 +326,35 @@ corpo = f'''<div class="wrap" style="max-width:720px">
   {f'''<div class="cupom" id="cupom" data-codigo="{CUPOM_NATAL[0]}" data-pct="{CUPOM_NATAL[1]}" data-min="{CUPOM_NATAL[2]}"><form id="cupom-form"><label for="cupom-cod">Tem cupom?</label><div class="cupom-linha-form"><input id="cupom-cod" autocomplete="off" autocapitalize="characters" placeholder="Ex.: {CUPOM_NATAL[0]}"><button class="btn btn-sec" type="submit">Aplicar</button></div></form><p class="cupom-status" id="cupom-status" role="status" aria-live="polite"></p><p class="cupom-desc" id="cupom-linha" hidden><span>Desconto do cupom</span><b id="cupom-valor"></b></p></div>''' if NATAL else ""}
   <div class="total" style="margin-top:18px"><small>Total do pedido</small><strong id="pedido-total">R$ 0,00</strong></div>
   {PAGAMENTO}
-  <div class="acoes" style="margin-top:18px">
-    <a class="btn btn-wpp btn-bloco" id="enviar-pedido" href="https://wa.me/{WPP}">{ICO['wpp']} Enviar pedido no WhatsApp</a>
-    <p class="envio-arte">{POS_ENVIO} Arquivo grande? <a href="{FORM}">Envie pelo formulário</a>.</p>
-  </div>
-</div></div>'''
-pagina("pedido/index.html", "Meu pedido | Johen Arte Gráfica", "Revise seu pedido e envie pelo WhatsApp.", corpo)
+  <form class="finalizar" id="finalizar" novalidate>
+    <h2>Finalizar pedido</h2>
+    <p class="pag-txt">Seu pedido vai direto para a nossa equipe. A gente confere a arte e os valores e te chama no WhatsApp.</p>
+    <div class="campo-f"><label for="f-nome">Seu nome</label><input id="f-nome" name="nome" autocomplete="name" required maxlength="80"></div>
+    <div class="campo-f"><label for="f-wpp">Seu WhatsApp (com DDD)</label><input id="f-wpp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(11) 90000-0000" required></div>
+    <div class="campo-f"><label for="f-obs">Observação <span>(opcional)</span></label><textarea id="f-obs" name="obs" rows="2" maxlength="500" placeholder="Ex.: preciso para sexta, cor da camiseta, nome na caneca…"></textarea></div>
+    <div class="isca" aria-hidden="true"><label>Site <input name="site" tabindex="-1" autocomplete="off"></label></div>
+    <p class="form-msg" id="f-msg" role="alert" aria-live="assertive"></p>
+    <button class="btn btn-pri btn-bloco" id="f-enviar" type="submit">Finalizar pedido</button>
+    <p class="envio-arte">Prefere conversar antes? <a id="enviar-pedido" href="https://wa.me/{WPP}">Envie o pedido pelo WhatsApp</a>. Arquivo grande? <a href="{FORM}">Envie pelo formulário</a>.</p>
+  </form>
+</div>
+<div id="pedido-feito" class="feito" hidden>
+  <div class="feito-topo"><span class="feito-ico" aria-hidden="true">✓</span><div><h2>Pedido nº <span id="feito-num"></span> recebido!</h2><p class="pag-txt">Total de <b id="feito-total"></b>. A gente confere tudo e te chama no WhatsApp <b id="feito-wpp"></b>.</p></div></div>
+  <div class="pix" id="feito-pix"><b>Pague com Pix</b>
+    <p class="pag-txt">Copie o código e cole no app do seu banco em <b>Pix › Copia e cola</b>. O valor já vem preenchido.</p>
+    <code id="feito-pix-codigo"></code>
+    <button class="btn btn-turq" id="feito-copiar" type="button">Copiar código Pix</button>
+    <p class="pag-txt">Também aceitamos cartão de débito, crédito e dinheiro na loja.</p></div>
+  <div class="pix comprovante"><b>Já pagou? Envie o comprovante</b>
+    <p class="pag-txt">Foto ou PDF de até 5 MB. Ele vai direto para o seu pedido.</p>
+    <label class="btn btn-sec btn-bloco arquivo-btn" for="comp-arq">Escolher comprovante</label>
+    <input id="comp-arq" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" hidden>
+    <p class="form-msg" id="comp-msg" role="status" aria-live="polite"></p></div>
+  <a class="btn btn-wpp btn-bloco" id="feito-wpp-link" href="https://wa.me/{WPP}" target="_blank" rel="noopener">{ICO['wpp']} Mandar a arte no WhatsApp</a>
+  <button class="btn btn-sec btn-bloco" id="feito-novo" type="button">Fazer outro pedido</button>
+</div>
+</div>'''
+pagina("pedido/index.html", "Meu pedido | Johen Arte Gráfica", "Revise e finalize seu pedido. Pague com Pix e envie o comprovante.", corpo)
 
 # Política de Privacidade (exigida pela Meta para o WhatsApp do hub) — pode ser aberta direto pelo link
 corpo = f"""<div class="wrap" style="max-width:760px">

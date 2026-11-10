@@ -9,9 +9,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Meu pedido | Johen Arte Gráfica</title>
-<meta name="description" content="Revise seu pedido e envie pelo WhatsApp.">
+<meta name="description" content="Revise e finalize seu pedido. Pague com Pix e envie o comprovante.">
 <meta property="og:title" content="Meu pedido | Johen Arte Gráfica">
-<meta property="og:description" content="Revise seu pedido e envie pelo WhatsApp.">
+<meta property="og:description" content="Revise e finalize seu pedido. Pague com Pix e envie o comprovante.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#ffffff">
 <meta name="generator" content="Site Cinematográfico · Labrego IA">
@@ -20,7 +20,7 @@
 <link rel="icon" href="../img/marca/logo-icone.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Outfit:wght@500;600&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=522d924b"><link rel="stylesheet" href="../assets/natal.css?v=522d924b">
+<link rel="stylesheet" href="../assets/site.css?v=d247aa6a"><link rel="stylesheet" href="../assets/natal.css?v=d247aa6a">
 </head>
 <body>
 <div class="promo promo-natal"><span class="floco" aria-hidden="true">❄</span><b>Natal Johen:</b> enfeites com a sua foto a partir de R$ 9,00 · <a href="../#natal">Ver promoções</a><span class="floco" aria-hidden="true">❄</span></div>
@@ -46,11 +46,34 @@
   <div class="cupom" id="cupom" data-codigo="NATAL5" data-pct="5" data-min="40"><form id="cupom-form"><label for="cupom-cod">Tem cupom?</label><div class="cupom-linha-form"><input id="cupom-cod" autocomplete="off" autocapitalize="characters" placeholder="Ex.: NATAL5"><button class="btn btn-sec" type="submit">Aplicar</button></div></form><p class="cupom-status" id="cupom-status" role="status" aria-live="polite"></p><p class="cupom-desc" id="cupom-linha" hidden><span>Desconto do cupom</span><b id="cupom-valor"></b></p></div>
   <div class="total" style="margin-top:18px"><small>Total do pedido</small><strong id="pedido-total">R$ 0,00</strong></div>
   <div class="pix" id="bloco-pix" style="margin-top:18px" data-chave="65480613000119" data-nome="JOHEN ARTE GRAFICA" data-cidade="SAO PAULO"><b>Pague com Pix</b><p class="pag-txt">Copie o código, abra o app do seu banco em <b>Pix › Copia e cola</b> e cole. O valor de <b id="pix-valor"></b> já vem preenchido.</p><code id="pix-codigo"></code><button class="btn btn-turq" id="copiar-pix" type="button">Copiar código Pix</button><p class="pag-txt"><b>Primeira compra?</b> Você ganha 5% OFF. Avise no WhatsApp antes de pagar.</p><p class="pag-txt">Prefere outra forma? Também aceitamos cartão de débito ou crédito e dinheiro, é só pedir no WhatsApp. Chave Pix (CNPJ): 65.480.613/0001-19.</p></div>
-  <div class="acoes" style="margin-top:18px">
-    <a class="btn btn-wpp btn-bloco" id="enviar-pedido" href="https://wa.me/5511982877142"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.1 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg> Enviar pedido no WhatsApp</a>
-    <p class="envio-arte">Depois de pagar, envie o pedido e mande o comprovante e as artes na mesma conversa. Arquivo grande? <a href="https://docs.google.com/forms/d/e/1FAIpQLScD3J8Bchik66my8m5rNnE-41UHjbVFUAQBomOY7XPBzrBkwA/viewform">Envie pelo formulário</a>.</p>
-  </div>
-</div></div>
+  <form class="finalizar" id="finalizar" novalidate>
+    <h2>Finalizar pedido</h2>
+    <p class="pag-txt">Seu pedido vai direto para a nossa equipe. A gente confere a arte e os valores e te chama no WhatsApp.</p>
+    <div class="campo-f"><label for="f-nome">Seu nome</label><input id="f-nome" name="nome" autocomplete="name" required maxlength="80"></div>
+    <div class="campo-f"><label for="f-wpp">Seu WhatsApp (com DDD)</label><input id="f-wpp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(11) 90000-0000" required></div>
+    <div class="campo-f"><label for="f-obs">Observação <span>(opcional)</span></label><textarea id="f-obs" name="obs" rows="2" maxlength="500" placeholder="Ex.: preciso para sexta, cor da camiseta, nome na caneca…"></textarea></div>
+    <div class="isca" aria-hidden="true"><label>Site <input name="site" tabindex="-1" autocomplete="off"></label></div>
+    <p class="form-msg" id="f-msg" role="alert" aria-live="assertive"></p>
+    <button class="btn btn-pri btn-bloco" id="f-enviar" type="submit">Finalizar pedido</button>
+    <p class="envio-arte">Prefere conversar antes? <a id="enviar-pedido" href="https://wa.me/5511982877142">Envie o pedido pelo WhatsApp</a>. Arquivo grande? <a href="https://docs.google.com/forms/d/e/1FAIpQLScD3J8Bchik66my8m5rNnE-41UHjbVFUAQBomOY7XPBzrBkwA/viewform">Envie pelo formulário</a>.</p>
+  </form>
+</div>
+<div id="pedido-feito" class="feito" hidden>
+  <div class="feito-topo"><span class="feito-ico" aria-hidden="true">✓</span><div><h2>Pedido nº <span id="feito-num"></span> recebido!</h2><p class="pag-txt">Total de <b id="feito-total"></b>. A gente confere tudo e te chama no WhatsApp <b id="feito-wpp"></b>.</p></div></div>
+  <div class="pix" id="feito-pix"><b>Pague com Pix</b>
+    <p class="pag-txt">Copie o código e cole no app do seu banco em <b>Pix › Copia e cola</b>. O valor já vem preenchido.</p>
+    <code id="feito-pix-codigo"></code>
+    <button class="btn btn-turq" id="feito-copiar" type="button">Copiar código Pix</button>
+    <p class="pag-txt">Também aceitamos cartão de débito, crédito e dinheiro na loja.</p></div>
+  <div class="pix comprovante"><b>Já pagou? Envie o comprovante</b>
+    <p class="pag-txt">Foto ou PDF de até 5 MB. Ele vai direto para o seu pedido.</p>
+    <label class="btn btn-sec btn-bloco arquivo-btn" for="comp-arq">Escolher comprovante</label>
+    <input id="comp-arq" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" hidden>
+    <p class="form-msg" id="comp-msg" role="status" aria-live="polite"></p></div>
+  <a class="btn btn-wpp btn-bloco" id="feito-wpp-link" href="https://wa.me/5511982877142" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.1 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg> Mandar a arte no WhatsApp</a>
+  <button class="btn btn-sec btn-bloco" id="feito-novo" type="button">Fazer outro pedido</button>
+</div>
+</div>
 </main>
 <footer class="rodape">
   <div class="wrap">
@@ -89,7 +112,7 @@
 </footer>
 <a class="insta-flut" href="https://instagram.com/johen_artgrafica" target="_blank" rel="noopener" aria-label="Instagram @johen_artgrafica"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a>
 <a class="wpp-flut" href="https://wa.me/5511982877142?text=Ol%C3%A1%21%20Vim%20pelo%20site%20e%20quero%20um%20or%C3%A7amento." aria-label="Falar no WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.1 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg></a>
-<script src="../assets/site.js?v=522d924b" defer></script><script src="../assets/natal.js?v=522d924b" defer></script>
+<script src="../assets/site.js?v=d247aa6a" defer></script><script src="../assets/natal.js?v=d247aa6a" defer></script>
 
 </body>
 </html>

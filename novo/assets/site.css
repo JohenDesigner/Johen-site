@@ -469,3 +469,22 @@ body:has(.editor) .wpp-flut,body:has(.editor) .insta-flut{display:none}
 .pag-editor.busca-aberta .busca{display:block}
 .pag-editor.busca-aberta .lupa-btn{background:var(--fundo)}
 .lupa-btn{position:absolute;left:-8px;top:10px}  /* lado esquerdo do topo, longe da logo do centro */
+/* finalizar pedido + comprovante */
+.finalizar{margin-top:24px;background:#fff;border:1px solid var(--linha);border-radius:var(--raio);padding:20px;display:flex;flex-direction:column;gap:14px}
+.finalizar h2,.feito h2{font-family:var(--display);font-size:24px;font-weight:500;margin:0;letter-spacing:-.01em}
+.campo-f{display:grid;gap:6px}
+.campo-f label{font-size:14px;font-weight:600}
+.campo-f label span{font-weight:400;color:var(--tinta-2)}
+.campo-f input,.campo-f textarea{width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1px solid var(--linha);border-radius:12px;background:#fff;color:inherit}
+.campo-f input:focus,.campo-f textarea:focus{outline:2px solid var(--laranja);border-color:transparent}
+.campo-f.erro input{border-color:#B3261E}
+.isca{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.form-msg{margin:0;font-size:14px;min-height:0}
+.form-msg:empty{display:none}
+.form-msg.erro{color:#B3261E;font-weight:600}
+.form-msg.ok{color:var(--turquesa-esc);font-weight:600}
+.feito{display:flex;flex-direction:column;gap:16px;margin-top:8px}
+.feito-topo{display:flex;gap:14px;align-items:flex-start;background:#eaf7ef;border-radius:var(--raio);padding:18px}
+.feito-ico{flex:none;width:44px;height:44px;border-radius:50%;background:#1e9e55;color:#fff;display:grid;place-items:center;font-size:22px;font-weight:700}
+.feito-topo p{margin:6px 0 0}
+.arquivo-btn{cursor:pointer;text-align:center}
