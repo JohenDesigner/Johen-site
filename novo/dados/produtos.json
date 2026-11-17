@@ -786,7 +786,7 @@
 "id": "p8",
 "sub": "placas_ps",
 "subNome": "Placas PS",
-"nome": "Placa PS 2mm Laminado Brilho",
+"nome": "Placa PS 2mm Branco - Vinil Laminado",
 "material": "Poliestireno (PS) 2mm",
 "acab": "Laminado Brilho",
 "impressao": "",
@@ -795,7 +795,7 @@
 "curiosidade": "Combina a resistência do 2mm com a durabilidade da laminação — boa opção pra placas de uso mais pesado.",
 "alerta": "",
 "unidade": "por m²",
-"m2": 195.0,
+"m2": 285.0,
 "minimo": 85.0,
 "opcoes": [],
 "img": "img/produtos/banners-p8.webp"
