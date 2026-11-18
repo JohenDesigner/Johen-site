@@ -267,6 +267,9 @@ let estadoPedido = { itens: [], total: 0, cupom: "" };
 const lerUltimo = () => { try { const u = JSON.parse(localStorage.getItem(ULTIMO) || "null"); return u && Date.now() - u.quando < 7 * 864e5 ? u : null; } catch (e) { return null; } };
 const fmtTel = d => d.length === 11 ? `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}` : d.length === 10 ? `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}` : d;
 
+// sinal (50%) que o cliente paga no Pix pra começar a produção; sem bloco Pix, vale o total
+const sinalDe = (total, bp) => bp ? Math.round(total * (+bp.dataset.sinal || 100)) / 100 : total;
+
 function iniciarPedido() {
   const lista = $("#itens"); if (!lista) return;
   function render() {
@@ -305,11 +308,12 @@ function iniciarPedido() {
     estadoPedido = { itens, total: totF, cupom: desc ? $("#cupom").dataset.codigo : "" };
     // itens montados no editor com a arte já enviada pro Drive levam o código da pasta; o resto o cliente manda na conversa
     const faltaArte = itens.some(x => !x.cod);
-    const msg = "Olá! Quero fazer este pedido pelo site:\n\n" + itens.map((x, n) => `${n + 1}. ${nomeItem(x)}\n   ${linhaItem(x)} — ${brl(x.total)}${x.cod ? `\n   Arte enviada pelo site: ${x.cod}` : ""}`).join("\n")
-      + `${cupomTxt}\n\nTotal: ${brl(totF)}\n\n${faltaArte ? (itens.some(x => x.cod) ? "Vou mandar as outras artes aqui na conversa." : "Vou mandar as artes aqui na conversa.") : "As artes já foram enviadas pelo site."}`;
-    $("#enviar-pedido").href = wppLink(msg);
     const bp = $("#bloco-pix");
-    if (bp) { const v = totF; $("#pix-codigo").textContent = pixCopiaECola(bp.dataset.chave, bp.dataset.nome, bp.dataset.cidade, v); $("#pix-valor").textContent = brl(v); }
+    const sinal = sinalDe(totF, bp);
+    const msg = "Olá! Quero fazer este pedido pelo site:\n\n" + itens.map((x, n) => `${n + 1}. ${nomeItem(x)}\n   ${linhaItem(x)} — ${brl(x.total)}${x.cod ? `\n   Arte enviada pelo site: ${x.cod}` : ""}`).join("\n")
+      + `${cupomTxt}\n\nTotal: ${brl(totF)}${bp ? `\nSinal (${bp.dataset.sinal}%): ${brl(sinal)}\n\nVou pagar o sinal no Pix (recebedor ${bp.dataset.recebedor}) e mando o comprovante aqui.` : ""}\n\n${faltaArte ? (itens.some(x => x.cod) ? "Vou mandar as outras artes aqui na conversa." : "Vou mandar as artes aqui na conversa.") : "As artes já foram enviadas pelo site."}`;
+    $("#enviar-pedido").href = wppLink(msg);
+    if (bp) { const v = sinal; $("#pix-codigo").textContent = pixCopiaECola(bp.dataset.chave, bp.dataset.nome, bp.dataset.cidade, v); $("#pix-valor").textContent = brl(v); }
   }
   lista.addEventListener("click", e => { const b = e.target.closest("[data-tirar]"); if (b) { Pedido.tirar(b.dataset.tirar); render(); } });
   // ?cupom=NATAL5 (botão "Usar no meu pedido" do Papai Noel) já aplica o cupom
@@ -357,9 +361,10 @@ function iniciarPedido() {
     $("#pedido-cheio").hidden = true; $("#pedido-vazio").hidden = true; $("#pedido-feito").hidden = false;
     $("#feito-num").textContent = u.numero; $("#feito-total").textContent = brl(u.total); $("#feito-wpp").textContent = fmtTel(u.whatsapp);
     const bp = $("#bloco-pix");
-    if (bp) $("#feito-pix-codigo").textContent = pixCopiaECola(bp.dataset.chave, bp.dataset.nome, bp.dataset.cidade, u.total);
+    const sinal = sinalDe(u.total, bp);
+    if (bp) { $("#feito-pix-codigo").textContent = pixCopiaECola(bp.dataset.chave, bp.dataset.nome, bp.dataset.cidade, sinal); $("#feito-sinal").textContent = brl(sinal); }
     else $("#feito-pix").hidden = true;
-    $("#feito-wpp-link").href = wppLink(`Olá! Fiz o pedido nº ${u.numero} pelo site (${brl(u.total)}).\n\n${u.resumo || ""}\n\n${u.comArte ? "As artes já foram enviadas pelo site." : "Vou mandar a arte aqui."}`);
+    $("#feito-wpp-link").href = wppLink(`Olá! Fiz o pedido nº ${u.numero} pelo site (${brl(u.total)}).\n\n${u.resumo || ""}\n\n${bp ? `Vou mandar aqui o comprovante do sinal de ${bp.dataset.sinal}% (${brl(sinal)}), pago no Pix para ${bp.dataset.recebedor}.\n\n` : ""}${u.comArte ? "As artes já foram enviadas pelo site." : "Vou mandar a arte aqui."}`);
     $("#feito-wpp-link").innerHTML = $("#feito-wpp-link").innerHTML.replace(/Mandar a arte no WhatsApp|Falar no WhatsApp/, u.comArte ? "Falar no WhatsApp" : "Mandar a arte no WhatsApp");
   }
   $("#feito-copiar")?.addEventListener("click", async () => {

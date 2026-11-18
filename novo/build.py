@@ -39,7 +39,9 @@ SERVS = [  # slug, nome, foto, fundo, resumo
 ]
 
 # Pagamento online: preencha quando tiver. Vazio = a página do pedido explica que a chave/link vão pelo WhatsApp.
-PIX = "65.480.613/0001-19"  # chave Pix = CNPJ (informada pelo Johen em 2026-10-30)
+PIX = "johenartegrafica@gmail.com"  # chave Pix = e-mail (trocada pelo Johen em 2026-11-18; antes era o CNPJ)
+PIX_RECEBEDOR = "JOSÉ HENRIQUE"  # nome que aparece no app do banco: o cliente confere antes de pagar
+SINAL_PCT = 50  # sinal pago no Pix pra começar a produção; o restante na retirada
 MERCADO_PAGO = "" # link de pagamento do Mercado Pago
 # Arquivos do editor ("Personalize sem sair do site") → pasta "Pedidos do site" no Google Drive do Johen.
 # É o endereço do App da Web do Apps Script (drive/Code.gs, termina em /exec). Vazio = não envia (o cliente manda no WhatsApp).
@@ -301,20 +303,21 @@ for slug, nome, foto, fundo, resumo in SERVS:
 
 # ---------- pedido ----------
 # "Como pagar" sempre aparece; a chave Pix (e o Mercado Pago, se tiver) vem logo abaixo
-PIX_NOME, PIX_CIDADE = "JOHEN ARTE GRAFICA", "SAO PAULO"  # vão dentro do código Pix (até 25 e 15 letras, sem acento)
+PIX_NOME, PIX_CIDADE = "JOSE HENRIQUE", "SAO PAULO"  # vão dentro do código Pix (até 25 e 15 letras, sem acento)
 PIX_COPIA = re.sub(r"[^0-9]", "", PIX) if re.fullmatch(r"[0-9./-]+", PIX) else PIX  # CNPJ: só os números
 if PIX:
     # Pix copia e cola já com o valor do pedido (montado pelo site.js), como nos apps de delivery
-    PAGAMENTO = (f'<div class="pix" id="bloco-pix" style="margin-top:18px" data-chave="{E(PIX_COPIA)}" data-nome="{PIX_NOME}" data-cidade="{PIX_CIDADE}">'
-        '<b>Pague com Pix</b>'
-        '<p class="pag-txt">Copie o código, abra o app do seu banco em <b>Pix › Copia e cola</b> e cole. O valor de <b id="pix-valor"></b> já vem preenchido.</p>'
+    PAGAMENTO = (f'<div class="pix" id="bloco-pix" style="margin-top:18px" data-chave="{E(PIX_COPIA)}" data-nome="{PIX_NOME}" data-cidade="{PIX_CIDADE}" data-recebedor="{E(PIX_RECEBEDOR)}" data-sinal="{SINAL_PCT}">'
+        f'<b>Pague o sinal de {SINAL_PCT}% com Pix</b>'
+        f'<p class="pag-txt">Pra começar a produção, a gente pede {SINAL_PCT}% de sinal: <b id="pix-valor"></b>. O restante você paga na retirada. Copie o código, abra o app do seu banco em <b>Pix › Copia e cola</b> e cole. O valor do sinal já vem preenchido.</p>'
+        f'<p class="pag-txt"><b>Confira o recebedor:</b> no app do banco tem que aparecer <b>{E(PIX_RECEBEDOR)}</b>. Depois mande o comprovante do sinal no WhatsApp.</p>'
         '<code id="pix-codigo"></code>'
         '<button class="btn btn-turq" id="copiar-pix" type="button">Copiar código Pix</button>'
         '<p class="pag-txt"><b>Primeira compra?</b> Você ganha 5% OFF. Avise no WhatsApp antes de pagar.</p>'
-        f'<p class="pag-txt">Prefere outra forma? Também aceitamos cartão de débito ou crédito e dinheiro, é só pedir no WhatsApp. Chave Pix (CNPJ): {E(PIX)}.</p>'
+        f'<p class="pag-txt">Prefere outra forma? Também aceitamos cartão de débito ou crédito e dinheiro, é só pedir no WhatsApp. Chave Pix (e-mail): {E(PIX)}, recebedor {E(PIX_RECEBEDOR)}.</p>'
         + (f'<a class="btn btn-sec" href="{E(MERCADO_PAGO)}" target="_blank" rel="noopener">Pagar com cartão (Mercado Pago)</a>' if MERCADO_PAGO else '')
         + '</div>')
-    POS_ENVIO = "Depois de pagar, envie o pedido e mande o comprovante e as artes na mesma conversa."
+    POS_ENVIO = "Depois de pagar o sinal, envie o pedido e mande o comprovante do sinal e as artes na mesma conversa."
 else:
     PAGAMENTO = '<div class="pix" style="margin-top:18px"><b>Como pagar</b><p class="pag-txt">Pix, cartão de débito ou crédito e dinheiro. Depois que você enviar o pedido, a gente confere a arte e manda o Pix ou o link do cartão na mesma conversa.</p></div>'
     POS_ENVIO = "Depois de enviar, mande as artes na mesma conversa (o comprovante, só depois de pagar)."
@@ -340,12 +343,13 @@ corpo = f'''<div class="wrap" style="max-width:720px">
 </div>
 <div id="pedido-feito" class="feito" hidden>
   <div class="feito-topo"><span class="feito-ico" aria-hidden="true">✓</span><div><h2>Pedido nº <span id="feito-num"></span> recebido!</h2><p class="pag-txt">Total de <b id="feito-total"></b>. A gente confere tudo e te chama no WhatsApp <b id="feito-wpp"></b>.</p></div></div>
-  <div class="pix" id="feito-pix"><b>Pague com Pix</b>
-    <p class="pag-txt">Copie o código e cole no app do seu banco em <b>Pix › Copia e cola</b>. O valor já vem preenchido.</p>
+  <div class="pix" id="feito-pix"><b>Pague o sinal de {SINAL_PCT}% com Pix: <span id="feito-sinal"></span></b>
+    <p class="pag-txt">Copie o código e cole no app do seu banco em <b>Pix › Copia e cola</b>. O valor do sinal já vem preenchido. O restante você paga na retirada.</p>
+    <p class="pag-txt"><b>Confira o recebedor:</b> no app do banco tem que aparecer <b>{E(PIX_RECEBEDOR)}</b>. Chave Pix (e-mail): {E(PIX)}.</p>
     <code id="feito-pix-codigo"></code>
     <button class="btn btn-turq" id="feito-copiar" type="button">Copiar código Pix</button>
     <p class="pag-txt">Também aceitamos cartão de débito, crédito e dinheiro na loja.</p></div>
-  <div class="pix comprovante"><b>Já pagou? Envie o comprovante</b>
+  <div class="pix comprovante"><b>Já pagou o sinal? Envie o comprovante</b>
     <p class="pag-txt">Foto ou PDF de até 5 MB. Ele vai direto para o seu pedido.</p>
     <label class="btn btn-sec btn-bloco arquivo-btn" for="comp-arq">Escolher comprovante</label>
     <input id="comp-arq" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" hidden>
@@ -354,7 +358,7 @@ corpo = f'''<div class="wrap" style="max-width:720px">
   <button class="btn btn-sec btn-bloco" id="feito-novo" type="button">Fazer outro pedido</button>
 </div>
 </div>'''
-pagina("pedido/index.html", "Meu pedido | Johen Arte Gráfica", "Revise e finalize seu pedido. Pague com Pix e envie o comprovante.", corpo)
+pagina("pedido/index.html", "Meu pedido | Johen Arte Gráfica", "Revise e finalize seu pedido. Pague o sinal de 50% com Pix e envie o comprovante.", corpo)
 
 # Política de Privacidade (exigida pela Meta para o WhatsApp do hub) — pode ser aberta direto pelo link
 corpo = f"""<div class="wrap" style="max-width:760px">
